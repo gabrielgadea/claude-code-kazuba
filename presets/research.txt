@@ -1,0 +1,6 @@
+core
+hooks-essential
+skills-meta
+skills-planning
+skills-research
+contexts

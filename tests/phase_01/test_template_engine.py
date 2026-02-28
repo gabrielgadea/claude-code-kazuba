@@ -3,6 +3,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import jinja2
 import pytest
 
 from lib.template_engine import TemplateEngine, render_string
@@ -50,5 +51,5 @@ class TestTemplateEngine:
         assert "    line2" in result
 
     def test_missing_template_raises(self, engine: TemplateEngine) -> None:
-        with pytest.raises(Exception):
+        with pytest.raises((FileNotFoundError, jinja2.TemplateNotFound)):
             engine.render("nonexistent.j2", {})

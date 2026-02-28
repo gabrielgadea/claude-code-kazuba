@@ -6,8 +6,8 @@ import pytest
 from lib.patterns import (
     BashSafetyPatterns,
     Match,
-    PIIPatterns,
     PatternSet,
+    PIIPatterns,
     SecretPatterns,
 )
 

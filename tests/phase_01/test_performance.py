@@ -3,8 +3,6 @@ from __future__ import annotations
 
 import time
 
-import pytest
-
 from lib.performance import L0Cache, ParallelExecutor, rust_accelerator
 
 

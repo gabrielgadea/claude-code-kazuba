@@ -1,0 +1,14 @@
+core
+hooks-essential
+hooks-quality
+hooks-routing
+skills-meta
+skills-planning
+skills-dev
+skills-research
+agents-dev
+commands-dev
+commands-prp
+config-hypervisor
+contexts
+team-orchestrator

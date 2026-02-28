@@ -15,7 +15,7 @@ import json
 import sys
 import textwrap
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 try:
@@ -856,10 +856,10 @@ def generate_phase_content(phase: Phase) -> str:
         sections.append(f"\n{phase.implementation_notes}")
 
     if phase.tests:
-        sections.append(f"\n## Testing\n")
+        sections.append("\n## Testing\n")
         sections.append(f"- **Test directory**: `{phase.tests.test_dir}`")
         sections.append(f"- **Min coverage per file**: {phase.tests.min_coverage}%")
-        sections.append(f"- **Test files**:")
+        sections.append("- **Test files**:")
         for tf in phase.tests.test_files:
             sections.append(f"  - `{tf}`")
         sections.append("")
@@ -870,7 +870,7 @@ def generate_phase_content(phase: Phase) -> str:
     sections.append("")
 
     if phase.tools_required:
-        sections.append(f"\n## Tools Required\n")
+        sections.append("\n## Tools Required\n")
         sections.append(f"- {', '.join(phase.tools_required)}")
         if phase.mcp_servers:
             sections.append(f"- MCP: {', '.join(phase.mcp_servers)}")
@@ -884,11 +884,11 @@ def generate_phase_content(phase: Phase) -> str:
             sections.append(f"- {r}")
         sections.append("")
 
-    sections.append(f"\n## Checkpoint\n")
-    sections.append(f"After completing this phase, run:")
-    sections.append(f"```bash")
+    sections.append("\n## Checkpoint\n")
+    sections.append("After completing this phase, run:")
+    sections.append("```bash")
     sections.append(f"python plans/validation/validate_phase_{phase.id:02d}.py")
-    sections.append(f"```")
+    sections.append("```")
     sections.append(f"Checkpoint saved to: `checkpoints/phase_{phase.id:02d}.toon`\n")
 
     return "\n".join(sections)
@@ -938,7 +938,7 @@ def generate_index() -> str:
 
         | # | Title | Effort | Tokens | Group | Status |
         |---|-------|--------|--------|-------|--------|
-    """).format(now=datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"))]
+    """).format(now=datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"))]
 
     for phase in PHASES:
         group = phase.parallel_group or "sequential"

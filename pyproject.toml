@@ -50,6 +50,9 @@ target-version = "py312"
 select = ["E", "F", "W", "I", "N", "UP", "B", "A", "SIM", "TCH"]
 ignore = ["E501"]
 
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["TCH"]
+
 [tool.ruff.format]
 quote-style = "double"
 
