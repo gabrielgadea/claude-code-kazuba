@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+
+  "_comment": "Personal overrides — this file is gitignored.",
+  "_comment2": "Values here merge with / override settings.json.",
+
+  "permissions": {
+    "allow": [
+{% if local_permissions_allow %}
+{% for perm in local_permissions_allow %}
+      "{{ perm }}"{{ "," if not loop.last else "" }}
+{% endfor %}
+{% else %}
+{% endif %}
+    ],
+    "deny": [
+{% if local_permissions_deny %}
+{% for perm in local_permissions_deny %}
+      "{{ perm }}"{{ "," if not loop.last else "" }}
+{% endfor %}
+{% else %}
+{% endif %}
+    ]
+  },
+
+  "env": {
+{% if local_env_vars %}
+{% for key, value in local_env_vars.items() %}
+    "{{ key }}": "{{ value }}"{{ "," if not loop.last else "" }}
+{% endfor %}
+{% else %}
+{% endif %}
+  }
+}

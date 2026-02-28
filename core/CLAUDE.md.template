@@ -1,0 +1,165 @@
+# {{ project_name }}
+{% if description %}
+
+{{ description }}
+{% endif %}
+
+---
+
+## Project Identity
+
+| Key | Value |
+|-----|-------|
+| **Project** | {{ project_name }} |
+| **Stack** | {{ stack }} |
+{% if language %}| **Language** | {{ language }} |
+{% endif %}{% if version %}| **Version** | {{ version }} |
+{% endif %}
+
+---
+
+## Operating Principles
+
+1. **Code is instrument, not destination.** Quality = outcome + clarity + evolvability.
+2. **Untested code is hypothesis.** Execute, observe, validate. Always.
+3. **Co-evolution is law.** Code, docs, and skills change together. Drift = debt.
+4. **Fail loud, recover fast.** Silent failures are the most expensive bugs.
+5. **Simplicity is sophistication.** The simplest solution meeting all requirements wins.
+6. **Measure before optimizing.** Profile first, optimize second.
+7. **Plan before code.** Enter plan mode for any non-trivial task.
+8. **Small validated increments.** Prefer atomic changes over large batches.
+
+---
+
+## Continuous Refinement Cycle (CRC)
+
+Every task runs through this operational loop:
+
+```
+EXECUTE --> OBSERVE --> DIAGNOSE --> DECIDE --> ACT --> VALIDATE
+   ^                                                      |
+   +------------------ if validation fails ---------------+
+```
+
+- **EXECUTE**: Run code. Capture stdout, stderr, exit code, timing.
+- **OBSERVE**: Compare actual vs expected. Scan for warnings, deprecations, edge cases.
+- **DIAGNOSE**: Classify the gap by priority:
+  - Correction (P0) > Security (P0) > Robustness (P1) > Clarity (P2) > Performance (P3) > Elegance (P4)
+- **DECIDE**: P0-P1 fix now. P2-P4 assess cost vs benefit; if benefit < cost, log as TODO.
+- **ACT (The Triad)**: Every material change triggers:
+  1. Code updated and tested
+  2. Docs synchronized
+  3. Skill updated if applicable
+- **VALIDATE**: Gate with 6 dimensions — ALL must pass (see below).
+
+If any gate fails, the CRC restarts targeting that gate.
+
+---
+
+## Validation Gate
+
+All 6 dimensions must pass before declaring a task complete:
+
+| Gate | Pass Criteria |
+|------|---------------|
+| **Functional** | Tests pass, output matches specification |
+| **Robust** | Edge cases covered, errors handled gracefully |
+| **Readable** | Clear names, obvious flow, justified complexity |
+| **Documented** | No drift between code and documentation |
+| **Secure** | No secrets exposed, inputs sanitized at boundaries |
+| **No Regression** | Existing test suite remains green |
+
+---
+
+## Refinement Taxonomy
+
+Classify before you start. This calibrates effort and validation depth:
+
+| Level | Type | Scope | Validation |
+|-------|------|-------|------------|
+| **L1** | Bugfix | Single behavior correction | Targeted test |
+| **L2** | Optimization | Performance, no interface change | Benchmark before/after |
+| **L3** | Refactoring | Structure change, same behavior | Full test suite |
+| **L4** | Architecture | Fundamental structure change | Full suite + integration |
+| **L5** | Paradigm shift | New approach or abstraction | Exploratory spike first |
+
+---
+
+## Circuit Breakers
+
+Self-monitoring signals. When triggered, STOP and take corrective action:
+
+| Signal | Indicator | Action |
+|--------|-----------|--------|
+| **Context overflow** | Responses shorter/vaguer, forgetting prior context | `/clear` + reload from checkpoint |
+| **Loop detection** | Same error 3+ times after attempted fixes | STOP. Re-diagnose from scratch. Symptom or cause? |
+| **Scope creep** | Task growing beyond original request | STOP. Return to original spec. Ask user. |
+| **Hallucination risk** | Claiming API/file exists without verification | STOP. Verify with actual execution. |
+| **Yak shaving** | Fixing dependencies of dependencies | STOP. Does this serve the original objective? |
+| **Diminishing returns** | Each iteration yields marginal improvement | STOP. May be good enough. Ask user. |
+
+**Protocol**: `CIRCUIT BREAKER: [signal] | State: [desc] | Options: [A] [B] [C] | Recommendation: [reasoning]`
+
+---
+
+## Installed Modules
+
+{% if modules %}{% for mod in modules %}
+- **{{ mod.name }}** (v{{ mod.version }}) — {{ mod.description }}
+{% endfor %}{% else %}
+_No optional modules installed. Use `kazuba install <module>` to add modules._
+{% endif %}
+
+---
+
+## Commands
+
+{% if commands %}
+```bash
+{{ commands }}
+```
+{% else %}
+```bash
+# No custom commands configured yet.
+# Add commands via module installation or manual configuration.
+```
+{% endif %}
+
+---
+
+## Rules
+
+{% if rules %}
+{{ rules }}
+{% else %}
+_Rules are loaded from installed modules. See `core/rules/` for base rules._
+{% endif %}
+
+---
+
+## Hard Rules — Inviolable
+
+1. **NEVER** deliver untested code as final output.
+2. **NEVER** ignore errors silently — every error needs handling or documentation.
+3. **NEVER** modify code you don't understand — read first, change second.
+4. **NEVER** let documentation drift after material changes.
+5. **NEVER** hallucinate APIs, file paths, or behaviors — execute to verify.
+6. **NEVER** optimize without measuring first.
+7. **NEVER** expand scope without user consent.
+8. **ALWAYS** classify refinement level (L1-L5) before starting.
+9. **ALWAYS** pass validation gate before declaring task complete.
+10. **ALWAYS** treat the user's objective as supreme — everything else is instrumental.
+
+---
+
+## Delivery Checklist
+
+```
+[ ] FUNCTIONAL  — Code executes, output correct
+[ ] TESTED      — Happy path + key edge cases covered
+[ ] ROBUST      — Error handling present, inputs validated
+[ ] READABLE    — Clear names, obvious flow, justified complexity
+[ ] DOCUMENTED  — Docs synchronized with current code
+[ ] NO REGRESS  — Existing functionality preserved
+[ ] DELIVERABLE — User can use result immediately
+```

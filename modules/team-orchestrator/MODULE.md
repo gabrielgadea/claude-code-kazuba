@@ -12,6 +12,8 @@ provides:
     - agents.yaml
     - routing_rules.yaml
     - sla.yaml
+  src:
+    - models.py
   templates:
     - task-delegation.md
     - status-report.md
@@ -19,7 +21,7 @@ provides:
 
 # team-orchestrator
 
-Configuration and templates for multi-agent orchestration.
+Configuration, typed models, and templates for multi-agent orchestration.
 
 ## Contents
 
@@ -28,5 +30,6 @@ Configuration and templates for multi-agent orchestration.
 | `config/agents.yaml` | Agent registry with capabilities and SLA |
 | `config/routing_rules.yaml` | Declarative routing rules |
 | `config/sla.yaml` | SLA targets and rate limits |
+| `src/models.py` | Pydantic v2 typed models (TaskRequest, AgentConfig, etc.) |
 | `templates/task-delegation.md` | Task delegation template |
 | `templates/status-report.md` | Status report template |

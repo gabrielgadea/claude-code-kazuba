@@ -159,6 +159,54 @@ skills/hook-master/
 7. **Cross-references**: Link to related skills when they complement each other.
 8. **Keep frontmatter lean**: Description should be 1-3 sentences, not paragraphs.
 
+## Quick-Start Template
+
+Use this template when creating a new skill from scratch:
+
+```markdown
+---
+name: my-new-skill
+description: |
+  Brief description of what this skill does, when to use it,
+  and what output it produces.
+version: "1.0.0"
+author: "Your Name"
+tags: ["category"]
+triggers:
+  - "english trigger phrase"
+  - "frase gatilho em portugues"
+allowed-tools: Read, Write, Edit, Bash
+context: main
+---
+
+# My New Skill
+
+## When to Use
+
+Activate this skill when [conditions].
+
+## Workflow
+
+1. **Step One** -- Description of first action.
+2. **Step Two** -- Description of second action.
+3. **Step Three** -- Description of third action.
+
+## Output Format
+
+Describe expected output format or template.
+
+## Failure Modes
+
+- **Condition A**: Recovery action.
+- **Condition B**: Escalation path.
+
+## Checklist
+
+- [ ] Step 1 complete
+- [ ] Step 2 complete
+- [ ] Output validated
+```
+
 ## Validation Checklist
 
 Before shipping a skill, verify:

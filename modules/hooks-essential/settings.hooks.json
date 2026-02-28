@@ -1,0 +1,25 @@
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "type": "command",
+        "command": "python hooks/prompt_enhancer.py",
+        "timeout": 5000
+      }
+    ],
+    "SessionStart": [
+      {
+        "type": "command",
+        "command": "bash hooks/status_monitor.sh",
+        "timeout": 10000
+      }
+    ],
+    "PreCompact": [
+      {
+        "type": "command",
+        "command": "bash hooks/auto_compact.sh",
+        "timeout": 5000
+      }
+    ]
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "type": "command",
+        "command": "python hooks/quality_gate.py",
+        "timeout": 5000,
+        "matcher": "Write|Edit"
+      },
+      {
+        "type": "command",
+        "command": "python hooks/secrets_scanner.py",
+        "timeout": 5000,
+        "matcher": "Write|Edit"
+      },
+      {
+        "type": "command",
+        "command": "python hooks/pii_scanner.py",
+        "timeout": 5000,
+        "matcher": "Write|Edit"
+      },
+      {
+        "type": "command",
+        "command": "python hooks/bash_safety.py",
+        "timeout": 5000,
+        "matcher": "Bash"
+      }
+    ]
+  }
+}

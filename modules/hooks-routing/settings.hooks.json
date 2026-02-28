@@ -1,0 +1,25 @@
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "type": "command",
+        "command": "python hooks/cila_router.py",
+        "timeout": 5000
+      }
+    ],
+    "PreToolUse": [
+      {
+        "type": "command",
+        "command": "python hooks/knowledge_manager.py",
+        "timeout": 5000
+      }
+    ],
+    "PostToolUse": [
+      {
+        "type": "command",
+        "command": "python hooks/compliance_tracker.py",
+        "timeout": 5000
+      }
+    ]
+  }
+}

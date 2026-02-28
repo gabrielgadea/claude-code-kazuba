@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+
+  "permissions": {
+    "allow": [
+{% if permissions_allow %}
+{% for perm in permissions_allow %}
+      "{{ perm }}"{{ "," if not loop.last else "" }}
+{% endfor %}
+{% else %}
+      "Bash(git status)",
+      "Bash(git diff)",
+      "Bash(git log)",
+      "Read",
+      "Glob",
+      "Grep"
+{% endif %}
+    ],
+    "deny": [
+{% if permissions_deny %}
+{% for perm in permissions_deny %}
+      "{{ perm }}"{{ "," if not loop.last else "" }}
+{% endfor %}
+{% else %}
+      "Bash(rm -rf /)",
+      "Bash(chmod 777)",
+      "Bash(curl * | bash)"
+{% endif %}
+    ]
+  },
+
+  "hooks": {
+    "PreToolUse": [
+{% if hooks_pre_tool_use %}
+{% for hook in hooks_pre_tool_use %}
+      {
+        "matcher": "{{ hook.matcher }}",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "{{ hook.command }}"
+          }
+        ]
+      }{{ "," if not loop.last else "" }}
+{% endfor %}
+{% else %}
+{% endif %}
+    ],
+    "PostToolUse": [
+{% if hooks_post_tool_use %}
+{% for hook in hooks_post_tool_use %}
+      {
+        "matcher": "{{ hook.matcher }}",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "{{ hook.command }}"
+          }
+        ]
+      }{{ "," if not loop.last else "" }}
+{% endfor %}
+{% else %}
+{% endif %}
+    ],
+    "UserPromptSubmit": [
+{% if hooks_user_prompt_submit %}
+{% for hook in hooks_user_prompt_submit %}
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "{{ hook.command }}"
+          }
+        ]
+      }{{ "," if not loop.last else "" }}
+{% endfor %}
+{% else %}
+{% endif %}
+    ],
+    "Stop": [
+{% if hooks_stop %}
+{% for hook in hooks_stop %}
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "{{ hook.command }}"
+          }
+        ]
+      }{{ "," if not loop.last else "" }}
+{% endfor %}
+{% else %}
+{% endif %}
+    ]
+  },
+
+  "env": {
+{% if env_vars %}
+{% for key, value in env_vars.items() %}
+    "{{ key }}": "{{ value }}"{{ "," if not loop.last else "" }}
+{% endfor %}
+{% else %}
+{% endif %}
+  }
+}
