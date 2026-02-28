@@ -1,0 +1,79 @@
+# Universal Constants
+# Symbol legend, abbreviations, and standard references used across the framework.
+
+symbols:
+  status:
+    "PASS": "Check passed successfully"
+    "FAIL": "Check failed"
+    "SKIP": "Check skipped (not applicable)"
+    "WARN": "Warning — not blocking but needs attention"
+    "BLOCK": "Blocked — cannot proceed"
+    "TODO": "Not yet implemented"
+
+  priority:
+    "P0": "Critical — fix immediately"
+    "P1": "High — fix within 24h"
+    "P2": "Medium — fix within 1 week"
+    "P3": "Low — fix in next sprint"
+    "P4": "Minimal — backlog"
+
+  effort:
+    "S": "Small — < 1 hour"
+    "M": "Medium — 1-4 hours"
+    "L": "Large — 4-16 hours"
+    "XL": "Extra Large — 16+ hours"
+
+  refinement_levels:
+    "L1": "Bugfix — single behavior correction"
+    "L2": "Optimization — performance, no interface change"
+    "L3": "Refactoring — structure change, same behavior"
+    "L4": "Architecture — fundamental structure change"
+    "L5": "Paradigm shift — new approach/abstraction"
+
+abbreviations:
+  # Technical
+  API: "Application Programming Interface"
+  CI: "Continuous Integration"
+  CD: "Continuous Deployment"
+  CLI: "Command Line Interface"
+  CRC: "Continuous Refinement Cycle"
+  DAG: "Directed Acyclic Graph"
+  DX: "Developer Experience"
+  E2E: "End-to-End"
+  MCP: "Model Context Protocol"
+  PRP: "Product Requirements Prompt"
+  RCA: "Root Cause Analysis"
+  SLA: "Service Level Agreement"
+  TDD: "Test-Driven Development"
+  UX: "User Experience"
+
+  # Security
+  OWASP: "Open Web Application Security Project"
+  CVE: "Common Vulnerabilities and Exposures"
+  CWE: "Common Weakness Enumeration"
+  CVSS: "Common Vulnerability Scoring System"
+  PII: "Personally Identifiable Information"
+  LGPD: "Lei Geral de Protecao de Dados"
+  GDPR: "General Data Protection Regulation"
+
+  # Framework-specific
+  Pln1: "Initial plan (basic)"
+  Pln2: "Amplified plan (comprehensive)"
+  H0: "Horizon 0 — current scope"
+  H1: "Horizon 1 — expanded scope"
+  H2: "Horizon 2 — paradigm shift"
+
+standard_references:
+  conventional_commits: "https://www.conventionalcommits.org/en/v1.0.0/"
+  semver: "https://semver.org/"
+  owasp_top_10: "https://owasp.org/www-project-top-ten/"
+  ieee_citation: "https://ieeeauthorcenter.ieee.org/wp-content/uploads/IEEE-Reference-Guide.pdf"
+  python_style: "https://peps.python.org/pep-0008/"
+  type_hints: "https://peps.python.org/pep-0484/"
+
+file_conventions:
+  skill_definition: "SKILL.md"
+  module_manifest: "MODULE.md"
+  checkpoint_format: ".toon (msgpack)"
+  config_format: ".yaml"
+  plan_files: "NN-phase-{slug}.md"

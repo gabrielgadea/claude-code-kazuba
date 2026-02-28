@@ -1,0 +1,123 @@
+# Agent Triggers
+# Declarative rules for automatically activating specialized agents.
+
+triggers:
+  - name: quality_review
+    condition: "Task involves code changes > 100 lines"
+    agent_type: code-reviewer
+    model: sonnet
+    priority: high
+    background: false
+    skill_attachments:
+      - verification-loop
+    domain_keywords:
+      - "review"
+      - "PR"
+      - "merge"
+      - "code quality"
+
+  - name: security_audit
+    condition: "Task involves auth, crypto, user input, or network code"
+    agent_type: security-auditor
+    model: sonnet
+    priority: critical
+    background: false
+    skill_attachments:
+      - verification-loop
+    domain_keywords:
+      - "security"
+      - "auth"
+      - "password"
+      - "encryption"
+      - "vulnerability"
+      - "OWASP"
+
+  - name: performance_analysis
+    condition: "Task mentions latency, throughput, memory, or optimization"
+    agent_type: code-reviewer
+    model: sonnet
+    priority: medium
+    background: true
+    skill_attachments:
+      - eval-harness
+    domain_keywords:
+      - "performance"
+      - "latency"
+      - "throughput"
+      - "memory"
+      - "optimize"
+      - "benchmark"
+
+  - name: documentation
+    condition: "Code changes affect public API or user-facing behavior"
+    agent_type: code-reviewer
+    model: sonnet
+    priority: low
+    background: true
+    skill_attachments: []
+    domain_keywords:
+      - "docs"
+      - "documentation"
+      - "README"
+      - "API reference"
+
+  - name: testing
+    condition: "New feature or bugfix without corresponding tests"
+    agent_type: code-reviewer
+    model: sonnet
+    priority: high
+    background: false
+    skill_attachments:
+      - eval-harness
+    domain_keywords:
+      - "test"
+      - "coverage"
+      - "TDD"
+      - "regression"
+
+  - name: debugging
+    condition: "Error reported or test failing"
+    agent_type: code-reviewer
+    model: sonnet
+    priority: high
+    background: false
+    skill_attachments:
+      - supreme-problem-solver
+    domain_keywords:
+      - "bug"
+      - "error"
+      - "failing"
+      - "broken"
+      - "crash"
+      - "exception"
+
+  - name: architecture_review
+    condition: "L4+ changes affecting system structure"
+    agent_type: meta-orchestrator
+    model: opus
+    priority: critical
+    background: false
+    skill_attachments:
+      - plan-amplifier
+    domain_keywords:
+      - "architecture"
+      - "design"
+      - "refactor"
+      - "migration"
+      - "restructure"
+
+  - name: code_generation
+    condition: "New module, service, or component creation"
+    agent_type: meta-orchestrator
+    model: opus
+    priority: medium
+    background: false
+    skill_attachments:
+      - plan-execution
+      - verification-loop
+    domain_keywords:
+      - "create"
+      - "new module"
+      - "scaffold"
+      - "generate"
+      - "bootstrap"

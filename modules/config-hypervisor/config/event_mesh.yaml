@@ -1,0 +1,120 @@
+# Event Mesh Configuration
+# Event bus categories, priorities, and handler routing.
+
+categories:
+  lifecycle:
+    description: "Session and agent lifecycle events"
+    events:
+      - name: session_start
+        priority: 1
+        handler: "handlers.lifecycle.on_session_start"
+      - name: session_end
+        priority: 1
+        handler: "handlers.lifecycle.on_session_end"
+      - name: subagent_start
+        priority: 3
+        handler: "handlers.lifecycle.on_subagent_start"
+      - name: subagent_stop
+        priority: 3
+        handler: "handlers.lifecycle.on_subagent_stop"
+
+  tool_use:
+    description: "Tool execution events"
+    events:
+      - name: pre_tool_use
+        priority: 2
+        handler: "handlers.tools.on_pre_tool_use"
+      - name: post_tool_use
+        priority: 4
+        handler: "handlers.tools.on_post_tool_use"
+      - name: tool_use_failure
+        priority: 2
+        handler: "handlers.tools.on_tool_failure"
+
+  quality:
+    description: "Quality gate and verification events"
+    events:
+      - name: verification_started
+        priority: 5
+        handler: "handlers.quality.on_verification_start"
+      - name: verification_passed
+        priority: 5
+        handler: "handlers.quality.on_verification_pass"
+      - name: verification_failed
+        priority: 3
+        handler: "handlers.quality.on_verification_fail"
+      - name: quality_degradation
+        priority: 2
+        handler: "handlers.quality.on_degradation"
+
+  security:
+    description: "Security-related events"
+    events:
+      - name: secret_detected
+        priority: 1
+        handler: "handlers.security.on_secret_detected"
+      - name: vulnerability_found
+        priority: 2
+        handler: "handlers.security.on_vulnerability"
+      - name: audit_completed
+        priority: 6
+        handler: "handlers.security.on_audit_complete"
+
+  knowledge:
+    description: "Knowledge capture and retrieval events"
+    events:
+      - name: lesson_learned
+        priority: 7
+        handler: "handlers.knowledge.on_lesson"
+      - name: skill_updated
+        priority: 7
+        handler: "handlers.knowledge.on_skill_update"
+      - name: checkpoint_created
+        priority: 5
+        handler: "handlers.knowledge.on_checkpoint"
+
+  orchestration:
+    description: "Multi-agent coordination events"
+    events:
+      - name: task_delegated
+        priority: 3
+        handler: "handlers.orchestration.on_task_delegated"
+      - name: task_completed
+        priority: 4
+        handler: "handlers.orchestration.on_task_completed"
+      - name: agent_idle
+        priority: 8
+        handler: "handlers.orchestration.on_agent_idle"
+      - name: escalation
+        priority: 1
+        handler: "handlers.orchestration.on_escalation"
+
+  metrics:
+    description: "Performance and usage metrics"
+    events:
+      - name: latency_recorded
+        priority: 9
+        handler: "handlers.metrics.on_latency"
+      - name: token_usage_recorded
+        priority: 9
+        handler: "handlers.metrics.on_token_usage"
+      - name: error_rate_spike
+        priority: 2
+        handler: "handlers.metrics.on_error_spike"
+      - name: sla_breach
+        priority: 1
+        handler: "handlers.metrics.on_sla_breach"
+
+# Priority levels: 1 = highest (critical), 10 = lowest (background)
+# Lower number = higher priority = processed first
+priority_levels:
+  1: "Critical — immediate action required"
+  2: "High — process before normal operations"
+  3: "Medium-High — important coordination"
+  4: "Medium — standard processing"
+  5: "Normal — quality and verification"
+  6: "Low-Normal — completion tracking"
+  7: "Low — knowledge capture"
+  8: "Background — idle processing"
+  9: "Metrics — non-blocking telemetry"
+  10: "Trace — debug-only events"

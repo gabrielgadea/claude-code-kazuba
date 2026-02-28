@@ -1,0 +1,88 @@
+# Security Enforcement Patterns
+# Reusable patterns for security checks across commands and skills.
+
+patterns:
+  secrets_prevention:
+    description: "Prevent secrets from entering the codebase"
+    rules:
+      - name: no_hardcoded_secrets
+        pattern: '(password|secret|api_key|token)\s*=\s*["\x27][^"\x27]{8,}'
+        description: "Hardcoded secret in source code"
+        severity: critical
+        remediation: "Use environment variables or a secrets manager"
+
+      - name: no_env_files
+        pattern: '\.env$'
+        check: "Must be in .gitignore"
+        severity: critical
+        remediation: "Add .env to .gitignore, remove from git history"
+
+      - name: no_private_keys
+        pattern: '-----BEGIN.*PRIVATE KEY-----'
+        description: "Private key in source code"
+        severity: critical
+        remediation: "Move to secure key store, rotate the key"
+
+      - name: no_aws_keys
+        pattern: 'AKIA[0-9A-Z]{16}'
+        description: "AWS access key in source code"
+        severity: critical
+        remediation: "Use IAM roles or AWS Secrets Manager"
+
+  input_validation:
+    description: "Validate all external inputs"
+    rules:
+      - name: path_traversal
+        description: "User-supplied paths must be validated against base directory"
+        check: "os.path.realpath() + startswith(base_dir)"
+        severity: high
+
+      - name: sql_injection
+        description: "Use parameterized queries, never string concatenation"
+        pattern: 'f".*SELECT.*{.*}"'
+        severity: critical
+
+      - name: command_injection
+        description: "Never pass user input to shell commands"
+        pattern: 'subprocess with shell=True'
+        severity: critical
+        remediation: "Use subprocess with list args, shell=False"
+
+      - name: deserialization
+        description: "Never use unsafe deserialization on untrusted data"
+        check: "Use yaml.safe_load instead of yaml.load; avoid unsafe deserializers"
+        severity: high
+        remediation: "Use safe deserialization methods for all external data"
+
+  dependency_security:
+    description: "Keep dependencies secure and up to date"
+    rules:
+      - name: audit
+        description: "Run dependency audit before each release"
+        enforcement: "pip audit"
+        severity: high
+
+      - name: pinning
+        description: "Pin all production dependency versions"
+        check: "No unpinned deps in requirements.txt/pyproject.toml"
+        severity: medium
+
+      - name: license
+        description: "Verify license compatibility"
+        enforcement: "pip-licenses --allow-only 'MIT;BSD;Apache'"
+        severity: medium
+
+  authentication:
+    description: "Authentication and authorization patterns"
+    rules:
+      - name: no_default_credentials
+        description: "Never ship default passwords or API keys"
+        severity: critical
+
+      - name: least_privilege
+        description: "Each component gets minimum necessary permissions"
+        severity: high
+
+      - name: session_management
+        description: "Sessions expire, tokens rotate, logout invalidates"
+        severity: high

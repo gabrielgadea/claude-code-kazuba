@@ -1,0 +1,90 @@
+# Quality Enforcement Patterns
+# Reusable patterns for quality gates across commands and skills.
+
+patterns:
+  code_quality:
+    description: "Code quality standards"
+    rules:
+      - name: type_annotations
+        requirement: "All public functions must have complete type annotations"
+        enforcement: pyright --strict
+        severity: error
+
+      - name: test_coverage
+        requirement: "Minimum 90% line coverage per file"
+        enforcement: pytest --cov --cov-fail-under=90
+        severity: error
+
+      - name: linting
+        requirement: "Zero ruff errors"
+        enforcement: ruff check --select E,F,W,I,N,UP,B,A,SIM,TCH
+        severity: error
+
+      - name: formatting
+        requirement: "Consistent code formatting"
+        enforcement: ruff format --check
+        severity: warning
+
+      - name: complexity
+        requirement: "Cyclomatic complexity <= 10 per function"
+        enforcement: ruff check --select C901
+        severity: warning
+
+  documentation_quality:
+    description: "Documentation standards"
+    rules:
+      - name: docstrings
+        requirement: "All public modules, classes, and functions have docstrings"
+        enforcement: ruff check --select D
+        severity: warning
+
+      - name: sync
+        requirement: "Docs match current code behavior"
+        enforcement: manual review
+        severity: error
+
+      - name: examples
+        requirement: "Critical functions have usage examples in docstrings"
+        enforcement: manual review
+        severity: info
+
+  test_quality:
+    description: "Test standards"
+    rules:
+      - name: naming
+        requirement: "Test names describe behavior: test_{action}_{condition}_{expected}"
+        enforcement: manual review
+        severity: info
+
+      - name: isolation
+        requirement: "Tests do not depend on execution order"
+        enforcement: pytest --randomly
+        severity: error
+
+      - name: edge_cases
+        requirement: "Each function has at least 1 edge case test"
+        enforcement: manual review
+        severity: warning
+
+      - name: no_sleep
+        requirement: "Tests do not use time.sleep (use mocks instead)"
+        enforcement: "grep -r 'time.sleep' tests/"
+        severity: error
+
+  commit_quality:
+    description: "Commit standards"
+    rules:
+      - name: conventional
+        requirement: "Conventional commit format: type(scope): description"
+        enforcement: commit-msg hook
+        severity: error
+
+      - name: atomic
+        requirement: "One logical change per commit"
+        enforcement: manual review
+        severity: warning
+
+      - name: size
+        requirement: "Max 400 lines changed per commit"
+        enforcement: "git diff --stat"
+        severity: warning

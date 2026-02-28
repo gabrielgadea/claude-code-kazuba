@@ -1,0 +1,54 @@
+# Routing Rules
+# Declarative rules for routing tasks to the appropriate agent.
+
+rules:
+  - name: ignore_relay_echo
+    priority: 1
+    condition: "Message starts with '[relay' or contains relay metadata"
+    action: drop
+    description: "Prevent relay echo loops from triggering agent processing"
+
+  - name: code_tasks_to_self
+    priority: 2
+    condition: "Task involves writing, editing, or generating code"
+    action: route
+    target: self
+    description: "Standard code tasks stay with the primary agent"
+
+  - name: review_to_specialist
+    priority: 3
+    condition: "Task explicitly requests code review or PR review"
+    action: route
+    target: code-reviewer
+    description: "Dedicated review tasks go to the code-reviewer specialist"
+
+  - name: security_to_auditor
+    priority: 3
+    condition: "Task involves security audit, vulnerability check, or compliance"
+    action: route
+    target: security-auditor
+    description: "Security-focused tasks go to the security-auditor specialist"
+
+  - name: architecture_to_orchestrator
+    priority: 4
+    condition: "Task is L4+ involving system structure, multiple modules, or infrastructure"
+    action: route
+    target: meta-orchestrator
+    description: "Large architectural changes use the meta-orchestrator"
+
+  - name: broadcast_status
+    priority: 5
+    condition: "Task is a status request or health check"
+    action: broadcast
+    targets:
+      - self
+      - code-reviewer
+      - security-auditor
+    description: "Status requests broadcast to all active agents"
+
+  - name: default_to_self
+    priority: 99
+    condition: "No other rule matched"
+    action: route
+    target: self
+    description: "Unmatched tasks default to the primary agent"

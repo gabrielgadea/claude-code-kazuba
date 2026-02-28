@@ -1,0 +1,64 @@
+# SLA Targets
+# Service Level Agreement targets for orchestration operations.
+
+latency_targets:
+  routing_decision:
+    p50: "50ms"
+    p95: "200ms"
+    p99: "500ms"
+    description: "Time to decide which agent handles a task"
+
+  delegation_handoff:
+    p50: "200ms"
+    p95: "1s"
+    p99: "3s"
+    description: "Time from decision to agent receiving the task"
+
+  health_check:
+    p50: "100ms"
+    p95: "500ms"
+    p99: "1s"
+    description: "Time to complete a health check of all agents"
+
+  system_status:
+    p50: "500ms"
+    p95: "2s"
+    p99: "5s"
+    description: "Time to compile full system status report"
+
+rate_limits:
+  per_agent:
+    max_concurrent: 3
+    max_per_minute: 10
+    cooldown_on_failure: "30s"
+
+  global:
+    max_concurrent_agents: 5
+    max_delegations_per_minute: 20
+
+circuit_breaker:
+  failure_threshold: 3
+  recovery_timeout: "60s"
+  half_open_max_requests: 1
+  states:
+    closed: "Normal operation — all requests pass through"
+    open: "Agent failing — requests rejected, wait for recovery"
+    half_open: "Testing recovery — allow 1 request to verify"
+
+loop_detection:
+  max_bounces: 3
+  window: "60s"
+  action: "route_to_self_with_warning"
+  description: "If a task bounces between agents 3+ times in 60s, force to primary"
+
+escalation:
+  levels:
+    - name: agent
+      timeout: "120s"
+      action: "retry_with_different_agent"
+    - name: coordinator
+      timeout: "300s"
+      action: "escalate_to_orchestrator"
+    - name: human
+      timeout: "600s"
+      action: "notify_user_via_telegram"

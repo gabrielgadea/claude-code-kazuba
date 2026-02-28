@@ -1,0 +1,82 @@
+# Agent Registry
+# All available agents with capabilities, model, and SLA targets.
+
+agents:
+  - name: code-reviewer
+    type: specialist
+    description: "Reviews code for bugs, security, performance, and style"
+    capabilities:
+      - code_review
+      - bug_detection
+      - performance_analysis
+      - style_enforcement
+    model: sonnet
+    tools:
+      - Read
+      - Grep
+      - Glob
+      - Bash
+    sla:
+      response_time: "60s"
+      success_rate: 0.95
+
+  - name: security-auditor
+    type: specialist
+    description: "Security audit with OWASP Top 10, secrets, PII, dependency scan"
+    capabilities:
+      - security_audit
+      - vulnerability_detection
+      - secrets_scanning
+      - compliance_check
+    model: sonnet
+    tools:
+      - Read
+      - Grep
+      - Glob
+      - Bash
+    sla:
+      response_time: "120s"
+      success_rate: 0.90
+
+  - name: meta-orchestrator
+    type: coordinator
+    description: "Creates Claude Code infrastructure and coordinates complex tasks"
+    capabilities:
+      - infrastructure_creation
+      - task_decomposition
+      - agent_coordination
+      - architecture_design
+    model: opus
+    tools:
+      - Read
+      - Write
+      - Edit
+      - Bash
+      - Glob
+      - Grep
+    sla:
+      response_time: "180s"
+      success_rate: 0.90
+
+  - name: self
+    type: coordinator
+    description: "Primary Claude Code agent — handles most tasks directly"
+    capabilities:
+      - code_generation
+      - debugging
+      - planning
+      - documentation
+      - testing
+    model: opus
+    tools:
+      - Read
+      - Write
+      - Edit
+      - Bash
+      - Glob
+      - Grep
+      - WebSearch
+      - WebFetch
+    sla:
+      response_time: "30s"
+      success_rate: 0.95
