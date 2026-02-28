@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "Bash(source .venv/bin/activate *)",
+      "Bash(pytest *)",
+      "Bash(python *)",
+      "Bash(ruff *)",
+      "Bash(git *)",
+      "Bash(pip *)",
+      "Bash(ls *)",
+      "Bash(wc *)",
+      "Bash(mkdir *)",
+      "Bash(cat *)"
+    ],
+    "deny": []
+  },
+  "env": {
+    "PYTHONPATH": "."
+  },
+  "enableAllProjectMcpServers": true,
+  "showTurnDuration": true
+}
