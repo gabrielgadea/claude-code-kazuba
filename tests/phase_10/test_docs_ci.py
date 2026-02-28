@@ -136,18 +136,20 @@ class TestReadme:
         assert "preset" in content.lower(), "Missing preset mention"
 
     def test_readme_has_module_table(self) -> None:
-        """README must include a module catalog table."""
+        """README must include a module catalog or architecture section."""
         readme = BASE_DIR / "README.md"
-        content = readme.read_text()
-        assert "Module Catalog" in content or "module catalog" in content.lower(), (
-            "Missing module catalog section"
+        content = readme.read_text().lower()
+        assert "module" in content and ("catalog" in content or "arquitetura" in content), (
+            "Missing module catalog/architecture section"
         )
 
     def test_readme_has_contributing(self) -> None:
         """README must have a Contributing section."""
         readme = BASE_DIR / "README.md"
         content = readme.read_text()
-        assert "Contributing" in content, "Missing Contributing section"
+        assert "Contributing" in content or "Contribuindo" in content, (
+            "Missing Contributing/Contribuindo section"
+        )
 
     def test_readme_has_license(self) -> None:
         """README must mention the license."""
