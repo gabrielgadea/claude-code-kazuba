@@ -1,4 +1,5 @@
 """Detect project stack by checking for manifest files."""
+
 from __future__ import annotations
 
 import json

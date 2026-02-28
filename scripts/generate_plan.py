@@ -8,6 +8,7 @@ cross-references, and validation scripts programmatically.
 Usage:
     python scripts/generate_plan.py [--output-dir plans/] [--validate]
 """
+
 from __future__ import annotations
 
 import argparse
@@ -28,38 +29,48 @@ except ImportError:
 # Data Models
 # =============================================================================
 
+
 @dataclass(frozen=True)
 class CrossRef:
     """Cross-reference between plan files."""
+
     file: str
     relation: str  # depends_on | blocks | related
+
 
 @dataclass(frozen=True)
 class PhaseFile:
     """Expected file to be created during a phase."""
+
     path: str
     description: str
     min_lines: int = 10
 
+
 @dataclass(frozen=True)
 class PhaseTest:
     """Test specification for a phase."""
+
     test_dir: str
     min_coverage: int = 90
     test_files: list[str] = field(default_factory=list)
 
+
 @dataclass(frozen=True)
 class AgentSpec:
     """Agent specification for parallel execution."""
+
     name: str
     subagent_type: str
     model: str = "sonnet"
     isolation: str = "worktree"
     task: str = ""
 
+
 @dataclass(frozen=True)
 class Phase:
     """A single phase of the Pln2 plan."""
+
     id: int
     title: str
     effort: str  # S, M, L, XL
@@ -144,7 +155,6 @@ PHASES: list[Phase] = [
             4. git init && git add && git commit -m "feat: bootstrap project structure"
         """),
     ),
-
     Phase(
         id=1,
         title="Shared Library (lib/)",
@@ -172,7 +182,9 @@ PHASES: list[Phase] = [
             PhaseFile("lib/json_output.py", "Standardized JSON output builders per event", 80),
             PhaseFile("lib/config.py", "Pydantic v2 models for settings, hooks, modules", 200),
             PhaseFile("lib/checkpoint.py", "Checkpoint save/load in .toon (msgpack) format", 80),
-            PhaseFile("lib/template_engine.py", "Jinja2-based template renderer for CLAUDE.md etc", 60),
+            PhaseFile(
+                "lib/template_engine.py", "Jinja2-based template renderer for CLAUDE.md etc", 60
+            ),
         ],
         tests=PhaseTest(
             test_dir="tests/phase_01/",
@@ -247,7 +259,6 @@ PHASES: list[Phase] = [
             - Template engine wraps Jinja2 with custom filters for CLAUDE.md rendering
         """),
     ),
-
     Phase(
         id=2,
         title="Core Module",
@@ -300,7 +311,6 @@ PHASES: list[Phase] = [
         ],
         tools_required=["Write", "Edit", "Bash"],
     ),
-
     Phase(
         id=3,
         title="Hooks Essential Module",
@@ -322,13 +332,33 @@ PHASES: list[Phase] = [
         ],
         files_to_create=[
             PhaseFile("modules/hooks-essential/MODULE.md", "Module manifest", 30),
-            PhaseFile("modules/hooks-essential/hooks/prompt_enhancer.py", "Intent classifier + technique injector", 400),
-            PhaseFile("modules/hooks-essential/hooks/prompt_enhancer_config.yaml", "Templates and technique map", 80),
-            PhaseFile("modules/hooks-essential/hooks/status_monitor.sh", "StatusLine context bar", 60),
-            PhaseFile("modules/hooks-essential/hooks/check_context.sh", "PostToolUse context warning", 25),
-            PhaseFile("modules/hooks-essential/hooks/auto_compact.sh", "Stop auto-compaction trigger", 30),
-            PhaseFile("modules/hooks-essential/hooks/compact_reinjector.py", "PreCompact rules preservation", 50),
-            PhaseFile("modules/hooks-essential/settings.hooks.json", "Hook registration fragment", 30),
+            PhaseFile(
+                "modules/hooks-essential/hooks/prompt_enhancer.py",
+                "Intent classifier + technique injector",
+                400,
+            ),
+            PhaseFile(
+                "modules/hooks-essential/hooks/prompt_enhancer_config.yaml",
+                "Templates and technique map",
+                80,
+            ),
+            PhaseFile(
+                "modules/hooks-essential/hooks/status_monitor.sh", "StatusLine context bar", 60
+            ),
+            PhaseFile(
+                "modules/hooks-essential/hooks/check_context.sh", "PostToolUse context warning", 25
+            ),
+            PhaseFile(
+                "modules/hooks-essential/hooks/auto_compact.sh", "Stop auto-compaction trigger", 30
+            ),
+            PhaseFile(
+                "modules/hooks-essential/hooks/compact_reinjector.py",
+                "PreCompact rules preservation",
+                50,
+            ),
+            PhaseFile(
+                "modules/hooks-essential/settings.hooks.json", "Hook registration fragment", 30
+            ),
         ],
         tests=PhaseTest(
             test_dir="tests/phase_03/",
@@ -357,7 +387,6 @@ PHASES: list[Phase] = [
         ],
         tools_required=["Bash", "Write", "Edit", "Agent(general-purpose)"],
     ),
-
     Phase(
         id=4,
         title="Hooks Quality + Security",
@@ -379,14 +408,28 @@ PHASES: list[Phase] = [
         ],
         files_to_create=[
             PhaseFile("modules/hooks-quality/MODULE.md", "Module manifest", 30),
-            PhaseFile("modules/hooks-quality/hooks/post_quality_gate.py", "6-stage parallel QA", 200),
-            PhaseFile("modules/hooks-quality/hooks/code_standards_enforcer.py", "Auto-fix or block", 150),
+            PhaseFile(
+                "modules/hooks-quality/hooks/post_quality_gate.py", "6-stage parallel QA", 200
+            ),
+            PhaseFile(
+                "modules/hooks-quality/hooks/code_standards_enforcer.py", "Auto-fix or block", 150
+            ),
             PhaseFile("modules/hooks-quality/hooks/stop_validator.py", "Block if incomplete", 80),
             PhaseFile("modules/hooks-quality/settings.hooks.json", "Hook registration", 25),
             PhaseFile("modules/hooks-security/MODULE.md", "Module manifest", 30),
-            PhaseFile("modules/hooks-security/hooks/secrets_detector.py", "Secret/credential detection", 120),
-            PhaseFile("modules/hooks-security/hooks/pii_detector.py", "PII detection (configurable country)", 100),
-            PhaseFile("modules/hooks-security/hooks/bash_safety.py", "Block dangerous bash commands", 60),
+            PhaseFile(
+                "modules/hooks-security/hooks/secrets_detector.py",
+                "Secret/credential detection",
+                120,
+            ),
+            PhaseFile(
+                "modules/hooks-security/hooks/pii_detector.py",
+                "PII detection (configurable country)",
+                100,
+            ),
+            PhaseFile(
+                "modules/hooks-security/hooks/bash_safety.py", "Block dangerous bash commands", 60
+            ),
             PhaseFile("modules/hooks-security/settings.hooks.json", "Hook registration", 25),
         ],
         tests=PhaseTest(
@@ -420,7 +463,6 @@ PHASES: list[Phase] = [
         ],
         tools_required=["Bash", "Write", "Edit"],
     ),
-
     Phase(
         id=5,
         title="Hooks Routing + Knowledge + Metrics",
@@ -442,18 +484,46 @@ PHASES: list[Phase] = [
         ],
         files_to_create=[
             PhaseFile("modules/hooks-routing/MODULE.md", "Module manifest", 30),
-            PhaseFile("modules/hooks-routing/hooks/intent_router.py", "CILA L0-L6 classifier", 120),
-            PhaseFile("modules/hooks-routing/hooks/intent_patterns.py", "Configurable regex patterns", 80),
-            PhaseFile("modules/hooks-routing/hooks/strategy_enforcer.py", "DISCOVER warning injection", 60),
+            PhaseFile(
+                "modules/hooks-routing/hooks/intent_router.py", "CILA L0-L6 classifier", 120
+            ),
+            PhaseFile(
+                "modules/hooks-routing/hooks/intent_patterns.py", "Configurable regex patterns", 80
+            ),
+            PhaseFile(
+                "modules/hooks-routing/hooks/strategy_enforcer.py",
+                "DISCOVER warning injection",
+                60,
+            ),
             PhaseFile("modules/hooks-routing/settings.hooks.json", "Hook registration", 20),
             PhaseFile("modules/hooks-knowledge/MODULE.md", "Module manifest", 30),
-            PhaseFile("modules/hooks-knowledge/hooks/knowledge_retrieval.py", "3-tier knowledge lookup", 100),
-            PhaseFile("modules/hooks-knowledge/hooks/knowledge_capture.py", "Pattern capture PostToolUse", 80),
-            PhaseFile("modules/hooks-knowledge/hooks/session_context.py", "SessionStart context loader", 60),
+            PhaseFile(
+                "modules/hooks-knowledge/hooks/knowledge_retrieval.py",
+                "3-tier knowledge lookup",
+                100,
+            ),
+            PhaseFile(
+                "modules/hooks-knowledge/hooks/knowledge_capture.py",
+                "Pattern capture PostToolUse",
+                80,
+            ),
+            PhaseFile(
+                "modules/hooks-knowledge/hooks/session_context.py",
+                "SessionStart context loader",
+                60,
+            ),
             PhaseFile("modules/hooks-knowledge/settings.hooks.json", "Hook registration", 20),
             PhaseFile("modules/hooks-metrics/MODULE.md", "Module manifest", 30),
-            PhaseFile("modules/hooks-metrics/hooks/compliance_collector.py", "Enforcement score recorder", 80),
-            PhaseFile("modules/hooks-metrics/hooks/compliance_dashboard.py", "Rich/JSON/MD dashboard", 100),
+            PhaseFile(
+                "modules/hooks-metrics/hooks/compliance_collector.py",
+                "Enforcement score recorder",
+                80,
+            ),
+            PhaseFile(
+                "modules/hooks-metrics/hooks/compliance_dashboard.py",
+                "Rich/JSON/MD dashboard",
+                100,
+            ),
             PhaseFile("modules/hooks-metrics/settings.hooks.json", "Hook registration", 20),
         ],
         tests=PhaseTest(
@@ -484,7 +554,6 @@ PHASES: list[Phase] = [
         ],
         tools_required=["Bash", "Write", "Edit"],
     ),
-
     Phase(
         id=6,
         title="Skills + Agents + Commands",
@@ -507,33 +576,69 @@ PHASES: list[Phase] = [
         ],
         files_to_create=[
             PhaseFile("modules/skills-meta/MODULE.md", "Module manifest", 20),
-            PhaseFile("modules/skills-meta/skills/hook-master/SKILL.md", "Meta-skill for hooks", 200),
-            PhaseFile("modules/skills-meta/skills/skill-master/SKILL.md", "Meta-skill for skills", 200),
-            PhaseFile("modules/skills-meta/skills/skill-writer/SKILL.md", "Guide for skill creation", 100),
+            PhaseFile(
+                "modules/skills-meta/skills/hook-master/SKILL.md", "Meta-skill for hooks", 200
+            ),
+            PhaseFile(
+                "modules/skills-meta/skills/skill-master/SKILL.md", "Meta-skill for skills", 200
+            ),
+            PhaseFile(
+                "modules/skills-meta/skills/skill-writer/SKILL.md", "Guide for skill creation", 100
+            ),
             PhaseFile("modules/skills-dev/MODULE.md", "Module manifest", 20),
-            PhaseFile("modules/skills-dev/skills/verification-loop/SKILL.md", "6-phase pre-PR", 100),
-            PhaseFile("modules/skills-dev/skills/supreme-problem-solver/SKILL.md", "H0/H1/H2 escalation", 120),
+            PhaseFile(
+                "modules/skills-dev/skills/verification-loop/SKILL.md", "6-phase pre-PR", 100
+            ),
+            PhaseFile(
+                "modules/skills-dev/skills/supreme-problem-solver/SKILL.md",
+                "H0/H1/H2 escalation",
+                120,
+            ),
             PhaseFile("modules/skills-dev/skills/eval-harness/SKILL.md", "Eval-driven dev", 80),
             PhaseFile("modules/skills-planning/MODULE.md", "Module manifest", 20),
-            PhaseFile("modules/skills-planning/skills/plan-amplifier/SKILL.md", "8-dim amplification", 150),
-            PhaseFile("modules/skills-planning/skills/plan-execution/SKILL.md", "Checkpoint execution", 120),
+            PhaseFile(
+                "modules/skills-planning/skills/plan-amplifier/SKILL.md",
+                "8-dim amplification",
+                150,
+            ),
+            PhaseFile(
+                "modules/skills-planning/skills/plan-execution/SKILL.md",
+                "Checkpoint execution",
+                120,
+            ),
             PhaseFile("modules/skills-research/MODULE.md", "Module manifest", 20),
-            PhaseFile("modules/skills-research/skills/academic-research-writer/SKILL.md", "Academic writing", 100),
-            PhaseFile("modules/skills-research/skills/literature-review/SKILL.md", "Literature review", 80),
+            PhaseFile(
+                "modules/skills-research/skills/academic-research-writer/SKILL.md",
+                "Academic writing",
+                100,
+            ),
+            PhaseFile(
+                "modules/skills-research/skills/literature-review/SKILL.md",
+                "Literature review",
+                80,
+            ),
             PhaseFile("modules/agents-dev/MODULE.md", "Module manifest", 20),
             PhaseFile("modules/agents-dev/agents/code-reviewer.md", "Code review agent", 60),
             PhaseFile("modules/agents-dev/agents/security-auditor.md", "Security audit agent", 60),
-            PhaseFile("modules/agents-dev/agents/meta-orchestrator.md", "Meta-orchestrator agent", 80),
+            PhaseFile(
+                "modules/agents-dev/agents/meta-orchestrator.md", "Meta-orchestrator agent", 80
+            ),
             PhaseFile("modules/commands-dev/MODULE.md", "Module manifest", 20),
             PhaseFile("modules/commands-dev/commands/debug-RCA.md", "Structured RCA", 60),
             PhaseFile("modules/commands-dev/commands/smart-commit.md", "Intelligent commits", 40),
-            PhaseFile("modules/commands-dev/commands/orchestrate.md", "Multi-agent orchestration", 60),
+            PhaseFile(
+                "modules/commands-dev/commands/orchestrate.md", "Multi-agent orchestration", 60
+            ),
             PhaseFile("modules/commands-dev/commands/verify.md", "Pre-PR verification", 40),
             PhaseFile("modules/commands-prp/MODULE.md", "Module manifest", 20),
             PhaseFile("modules/commands-prp/commands/prp-base-create.md", "PRP creation", 60),
             PhaseFile("modules/commands-prp/commands/prp-base-execute.md", "PRP execution", 60),
-            PhaseFile("modules/commands-prp/commands/shared/quality-patterns.yml", "Quality YAML", 30),
-            PhaseFile("modules/commands-prp/commands/shared/security-patterns.yml", "Security YAML", 30),
+            PhaseFile(
+                "modules/commands-prp/commands/shared/quality-patterns.yml", "Quality YAML", 30
+            ),
+            PhaseFile(
+                "modules/commands-prp/commands/shared/security-patterns.yml", "Security YAML", 30
+            ),
         ],
         tests=PhaseTest(
             test_dir="tests/phase_06/",
@@ -567,7 +672,6 @@ PHASES: list[Phase] = [
         ],
         tools_required=["Write", "Edit", "Bash", "Agent(general-purpose)"],
     ),
-
     Phase(
         id=7,
         title="Config + Contexts + Team Orchestrator",
@@ -589,7 +693,9 @@ PHASES: list[Phase] = [
         files_to_create=[
             PhaseFile("modules/config-hypervisor/MODULE.md", "Module manifest", 20),
             PhaseFile("modules/config-hypervisor/config/hypervisor.yaml", "Automation config", 80),
-            PhaseFile("modules/config-hypervisor/config/agent_triggers.yaml", "Agent triggers", 60),
+            PhaseFile(
+                "modules/config-hypervisor/config/agent_triggers.yaml", "Agent triggers", 60
+            ),
             PhaseFile("modules/config-hypervisor/config/event_mesh.yaml", "Event bus config", 50),
             PhaseFile("modules/contexts/MODULE.md", "Module manifest", 20),
             PhaseFile("modules/contexts/contexts/dev.md", "Dev mode (relaxed)", 30),
@@ -601,8 +707,12 @@ PHASES: list[Phase] = [
             PhaseFile("modules/team-orchestrator/config/routing_rules.yaml", "Routing rules", 40),
             PhaseFile("modules/team-orchestrator/config/sla.yaml", "SLA targets", 30),
             PhaseFile("modules/team-orchestrator/src/models.py", "Pydantic v2 models", 150),
-            PhaseFile("modules/team-orchestrator/templates/task-delegation.md", "Delegation template", 20),
-            PhaseFile("modules/team-orchestrator/templates/status-report.md", "Status template", 20),
+            PhaseFile(
+                "modules/team-orchestrator/templates/task-delegation.md", "Delegation template", 20
+            ),
+            PhaseFile(
+                "modules/team-orchestrator/templates/status-report.md", "Status template", 20
+            ),
         ],
         tests=PhaseTest(
             test_dir="tests/phase_07/",
@@ -628,7 +738,6 @@ PHASES: list[Phase] = [
         ],
         tools_required=["Write", "Edit", "Bash"],
     ),
-
     Phase(
         id=8,
         title="Installer CLI",
@@ -684,7 +793,6 @@ PHASES: list[Phase] = [
         ],
         tools_required=["Bash", "Write", "Edit"],
     ),
-
     Phase(
         id=9,
         title="Presets + Integration Tests",
@@ -705,7 +813,9 @@ PHASES: list[Phase] = [
         files_to_create=[
             PhaseFile("tests/integration/test_preset_minimal.py", "Minimal preset E2E", 40),
             PhaseFile("tests/integration/test_preset_standard.py", "Standard preset E2E", 50),
-            PhaseFile("tests/integration/test_preset_professional.py", "Professional preset E2E", 50),
+            PhaseFile(
+                "tests/integration/test_preset_professional.py", "Professional preset E2E", 50
+            ),
             PhaseFile("tests/integration/test_preset_enterprise.py", "Enterprise preset E2E", 60),
             PhaseFile("tests/integration/test_preset_research.py", "Research preset E2E", 40),
             PhaseFile("tests/integration/conftest.py", "Shared integration fixtures", 40),
@@ -730,7 +840,6 @@ PHASES: list[Phase] = [
         ],
         tools_required=["Bash", "Write", "Edit"],
     ),
-
     Phase(
         id=10,
         title="GitHub + CI + Documentation",
@@ -776,17 +885,22 @@ PHASES: list[Phase] = [
 # Plan File Generators
 # =============================================================================
 
+
 def generate_frontmatter(phase: Phase) -> str:
     """Generate YAML frontmatter for a phase file."""
     cross_refs = []
     for dep_id in phase.depends_on:
         dep_phase = next(p for p in PHASES if p.id == dep_id)
-        cross_refs.append(f'  - {{file: "{dep_id:02d}-phase-{_slug(dep_phase.title)}.md", relation: "depends_on"}}')
+        cross_refs.append(
+            f'  - {{file: "{dep_id:02d}-phase-{_slug(dep_phase.title)}.md", relation: "depends_on"}}'
+        )
 
     # Find phases that depend on this one
     for p in PHASES:
         if phase.id in p.depends_on:
-            cross_refs.append(f'  - {{file: "{p.id:02d}-phase-{_slug(p.title)}.md", relation: "blocks"}}')
+            cross_refs.append(
+                f'  - {{file: "{p.id:02d}-phase-{_slug(p.title)}.md", relation: "blocks"}}'
+            )
 
     refs_str = "\n".join(cross_refs) if cross_refs else "  []"
 
@@ -815,15 +929,19 @@ def generate_phase_content(phase: Phase) -> str:
     sections = [generate_frontmatter(phase)]
 
     sections.append(f"# Phase {phase.id}: {phase.title}\n")
-    sections.append(f"**Effort**: {phase.effort} | **Tokens**: ~{phase.estimated_tokens:,} | "
-                    f"**Context**: {phase.context_budget}\n")
+    sections.append(
+        f"**Effort**: {phase.effort} | **Tokens**: ~{phase.estimated_tokens:,} | "
+        f"**Context**: {phase.context_budget}\n"
+    )
 
     if phase.depends_on:
         deps = ", ".join(f"Phase {d}" for d in phase.depends_on)
         sections.append(f"**Dependencies**: {deps}\n")
 
     if phase.parallel_group:
-        parallel_peers = [p for p in PHASES if p.parallel_group == phase.parallel_group and p.id != phase.id]
+        parallel_peers = [
+            p for p in PHASES if p.parallel_group == phase.parallel_group and p.id != phase.id
+        ]
         if parallel_peers:
             peers = ", ".join(f"Phase {p.id} ({p.title})" for p in parallel_peers)
             sections.append(f"**Parallel with**: {peers}\n")
@@ -896,7 +1014,8 @@ def generate_phase_content(phase: Phase) -> str:
 
 def generate_index() -> str:
     """Generate the master index file with DAG visualization."""
-    lines = [textwrap.dedent("""\
+    lines = [
+        textwrap.dedent("""\
         ---
         plan: claude-code-kazuba
         version: "2.0"
@@ -938,7 +1057,8 @@ def generate_index() -> str:
 
         | # | Title | Effort | Tokens | Group | Status |
         |---|-------|--------|--------|-------|--------|
-    """).format(now=datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"))]
+    """).format(now=datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"))
+    ]
 
     for phase in PHASES:
         group = phase.parallel_group or "sequential"
@@ -954,8 +1074,12 @@ def generate_index() -> str:
     lines.append("- Phase 8 → Phase 9 → Phase 10 (integration & delivery)")
     lines.append("")
     lines.append("### Parallel Groups")
-    lines.append("- **hooks** (after Phase 1): Phases 3, 4, 5 via Agent Team (3 agents, worktree isolation)")
-    lines.append("- **content** (after Phase 0): Phases 6, 7 via Agent Team (2 agents, worktree isolation)")
+    lines.append(
+        "- **hooks** (after Phase 1): Phases 3, 4, 5 via Agent Team (3 agents, worktree isolation)"
+    )
+    lines.append(
+        "- **content** (after Phase 0): Phases 6, 7 via Agent Team (2 agents, worktree isolation)"
+    )
     lines.append("")
     lines.append("### Swarm Configuration")
     lines.append("```yaml")
@@ -1120,9 +1244,9 @@ def generate_validation_script(phase: Phase) -> str:
 
 
         def main() -> int:
-            print(f"\\n{'='*60}")
+            print(f"\\n{"=" * 60}")
             print(f"  Phase {{PHASE_ID}} Validation: {{PHASE_TITLE}}")
-            print(f"{'='*60}\\n")
+            print(f"{"=" * 60}\\n")
 
             results: dict = {{"phase": PHASE_ID, "checks": {{}}}}
             all_pass = True
@@ -1176,7 +1300,7 @@ def generate_validation_script(phase: Phase) -> str:
             print(f"\\n  Checkpoint: {{cp_path}}")
 
             print(f"\\n  Overall: {{results['overall']}}")
-            print(f"{'='*60}\\n")
+            print(f"{"=" * 60}\\n")
 
             return 0 if all_pass else 1
 
@@ -1221,12 +1345,12 @@ def generate_validate_all() -> str:
                 if result != 0:
                     failed.append(phase_id)
 
-            print(f"\\n{'='*60}")
+            print(f"\\n{"=" * 60}")
             if failed:
                 print(f"  FAILED phases: {{failed}}")
                 return 1
             print(f"  ALL PHASES PASSED")
-            print(f"{'='*60}")
+            print(f"{"=" * 60}")
             return 0
 
 
@@ -1239,14 +1363,23 @@ def generate_validate_all() -> str:
 # Utilities
 # =============================================================================
 
+
 def _slug(title: str) -> str:
     """Convert title to filename slug."""
-    return title.lower().replace(" + ", "-").replace(" ", "-").replace("/", "-").replace("(", "").replace(")", "")
+    return (
+        title.lower()
+        .replace(" + ", "-")
+        .replace(" ", "-")
+        .replace("/", "-")
+        .replace("(", "")
+        .replace(")", "")
+    )
 
 
 # =============================================================================
 # Main
 # =============================================================================
+
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Generate Pln2 plan files")

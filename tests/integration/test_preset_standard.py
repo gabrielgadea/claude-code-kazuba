@@ -1,4 +1,5 @@
 """Integration tests for the standard preset."""
+
 from __future__ import annotations
 
 import json
@@ -46,10 +47,7 @@ class TestStandardPreset:
         assert "hooks" in settings
         # hooks-essential registers UserPromptSubmit, SessionStart, PreCompact
         hooks = settings["hooks"]
-        assert any(
-            event in hooks
-            for event in ("UserPromptSubmit", "SessionStart", "PreCompact")
-        )
+        assert any(event in hooks for event in ("UserPromptSubmit", "SessionStart", "PreCompact"))
 
     def test_no_quality_hooks(self, install_preset: Any) -> None:
         """Standard preset should NOT have quality hooks."""

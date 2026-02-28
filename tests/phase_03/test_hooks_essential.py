@@ -1,4 +1,5 @@
 """Tests for hooks-essential module: prompt_enhancer, status_monitor, auto_compact."""
+
 from __future__ import annotations
 
 import importlib.util
@@ -12,6 +13,7 @@ if TYPE_CHECKING:
 
 # --- Helper to import module from file path ---
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
+
 
 def _import_from_path(name: str, file_path: Path) -> ModuleType:
     """Import a Python module from an arbitrary file path."""
@@ -34,6 +36,7 @@ pe = _import_from_path("prompt_enhancer", _pe_path)
 
 
 # --- Module manifest tests ---
+
 
 class TestModuleManifest:
     """Test MODULE.md exists and has correct frontmatter."""
@@ -62,6 +65,7 @@ class TestModuleManifest:
 
 
 # --- Settings JSON tests ---
+
 
 class TestSettingsHooksJson:
     """Test settings.hooks.json is valid and complete."""
@@ -93,6 +97,7 @@ class TestSettingsHooksJson:
 
 
 # --- Shell script tests ---
+
 
 class TestShellScripts:
     """Test shell scripts exist and are properly structured."""
@@ -127,6 +132,7 @@ class TestShellScripts:
 
 
 # --- Prompt enhancer tests ---
+
 
 class TestPromptEnhancerClassifier:
     """Test intent classification logic."""
@@ -197,9 +203,7 @@ class TestPromptEnhancerTechniques:
         for intent in pe.INTENTS:
             techs = pe.select_techniques(intent)
             names = [t.name for t in techs]
-            assert "chain_of_thought" in names, (
-                f"chain_of_thought missing for {intent!r}"
-            )
+            assert "chain_of_thought" in names, f"chain_of_thought missing for {intent!r}"
 
     def test_compose_context_format(self) -> None:
         techs = pe.select_techniques("code")
@@ -213,6 +217,7 @@ class TestPromptEnhancerTechniques:
 
 
 # --- File structure tests ---
+
 
 class TestFileStructure:
     """Test that all required files exist with minimum line counts."""

@@ -1,4 +1,5 @@
 """Tests for scripts.detect_stack — project stack auto-detection."""
+
 from __future__ import annotations
 
 import json
@@ -81,23 +82,17 @@ class TestDetectFramework:
     """Framework detection within a language."""
 
     def test_python_django(self, tmp_path: Path) -> None:
-        (tmp_path / "pyproject.toml").write_text(
-            '[project]\ndependencies = ["django>=4.0"]\n'
-        )
+        (tmp_path / "pyproject.toml").write_text('[project]\ndependencies = ["django>=4.0"]\n')
         result = detect_stack(tmp_path)
         assert result.get("framework") == "django"
 
     def test_python_flask(self, tmp_path: Path) -> None:
-        (tmp_path / "pyproject.toml").write_text(
-            '[project]\ndependencies = ["flask>=2.0"]\n'
-        )
+        (tmp_path / "pyproject.toml").write_text('[project]\ndependencies = ["flask>=2.0"]\n')
         result = detect_stack(tmp_path)
         assert result.get("framework") == "flask"
 
     def test_python_fastapi(self, tmp_path: Path) -> None:
-        (tmp_path / "pyproject.toml").write_text(
-            '[project]\ndependencies = ["fastapi>=0.100"]\n'
-        )
+        (tmp_path / "pyproject.toml").write_text('[project]\ndependencies = ["fastapi>=0.100"]\n')
         result = detect_stack(tmp_path)
         assert result.get("framework") == "fastapi"
 

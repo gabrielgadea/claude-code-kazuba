@@ -1,4 +1,5 @@
 """Resolve module dependencies via topological sort."""
+
 from __future__ import annotations
 
 import re
@@ -43,9 +44,7 @@ def _parse_yaml_frontmatter(text: str) -> dict[str, Any]:
                     inner = value[1:-1].strip()
                     if inner:
                         result["dependencies"] = [
-                            v.strip().strip('"').strip("'")
-                            for v in inner.split(",")
-                            if v.strip()
+                            v.strip().strip('"').strip("'") for v in inner.split(",") if v.strip()
                         ]
                     else:
                         result["dependencies"] = []

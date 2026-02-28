@@ -1,4 +1,5 @@
 """Phase 6 Tests: Validate SKILL.md frontmatter, agent frontmatter, and MODULE.md files."""
+
 from __future__ import annotations
 
 from pathlib import Path
@@ -57,11 +58,11 @@ class TestSkillFrontmatter:
             "literature-review",
         ],
     )
-    def test_skill_has_valid_frontmatter(
-        self, modules_dir: Path, skill_name: str
-    ) -> None:
+    def test_skill_has_valid_frontmatter(self, modules_dir: Path, skill_name: str) -> None:
         matches = list(modules_dir.rglob(f"{skill_name}/SKILL.md"))
-        assert len(matches) == 1, f"Expected exactly 1 SKILL.md for {skill_name}, found {len(matches)}"
+        assert len(matches) == 1, (
+            f"Expected exactly 1 SKILL.md for {skill_name}, found {len(matches)}"
+        )
 
         fm = _extract_frontmatter(matches[0])
         assert fm is not None, f"{skill_name}/SKILL.md has no valid YAML frontmatter"
@@ -99,9 +100,7 @@ class TestAgentFrontmatter:
         "agent_name",
         ["code-reviewer", "security-auditor", "meta-orchestrator"],
     )
-    def test_agent_has_valid_frontmatter(
-        self, modules_dir: Path, agent_name: str
-    ) -> None:
+    def test_agent_has_valid_frontmatter(self, modules_dir: Path, agent_name: str) -> None:
         matches = list(modules_dir.rglob(f"agents/{agent_name}.md"))
         assert len(matches) == 1, f"Expected exactly 1 {agent_name}.md, found {len(matches)}"
 
@@ -140,9 +139,7 @@ class TestModuleManifests:
     ]
 
     @pytest.mark.parametrize("module_name", REQUIRED_MODULES)
-    def test_module_md_exists_and_not_empty(
-        self, modules_dir: Path, module_name: str
-    ) -> None:
+    def test_module_md_exists_and_not_empty(self, modules_dir: Path, module_name: str) -> None:
         module_md = modules_dir / module_name / "MODULE.md"
         assert module_md.is_file(), f"MODULE.md missing for module {module_name}"
         content = module_md.read_text(encoding="utf-8")
@@ -151,9 +148,7 @@ class TestModuleManifests:
         )
 
     @pytest.mark.parametrize("module_name", REQUIRED_MODULES)
-    def test_module_md_has_frontmatter(
-        self, modules_dir: Path, module_name: str
-    ) -> None:
+    def test_module_md_has_frontmatter(self, modules_dir: Path, module_name: str) -> None:
         module_md = modules_dir / module_name / "MODULE.md"
         fm = _extract_frontmatter(module_md)
         assert fm is not None, f"MODULE.md for {module_name} has no valid YAML frontmatter"
@@ -174,13 +169,9 @@ class TestCommandFiles:
     ]
 
     @pytest.mark.parametrize("command_name", EXPECTED_COMMANDS)
-    def test_command_has_valid_frontmatter(
-        self, modules_dir: Path, command_name: str
-    ) -> None:
+    def test_command_has_valid_frontmatter(self, modules_dir: Path, command_name: str) -> None:
         matches = list(modules_dir.rglob(f"commands/{command_name}.md"))
-        assert len(matches) == 1, (
-            f"Expected exactly 1 {command_name}.md, found {len(matches)}"
-        )
+        assert len(matches) == 1, f"Expected exactly 1 {command_name}.md, found {len(matches)}"
 
         fm = _extract_frontmatter(matches[0])
         assert fm is not None, f"{command_name}.md has no valid YAML frontmatter"

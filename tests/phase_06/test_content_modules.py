@@ -7,6 +7,7 @@ Tests cover:
 - Command definition file existence and structure
 - Minimum content length enforcement (no stubs)
 """
+
 from __future__ import annotations
 
 from pathlib import Path
@@ -71,9 +72,7 @@ class TestModuleMdFiles:
         assert module_md.is_file(), f"MODULE.md missing for module {module_name}"
 
     @pytest.mark.parametrize("module_name", ALL_MODULES)
-    def test_module_md_has_yaml_frontmatter(
-        self, modules_dir: Path, module_name: str
-    ) -> None:
+    def test_module_md_has_yaml_frontmatter(self, modules_dir: Path, module_name: str) -> None:
         module_md = modules_dir / module_name / "MODULE.md"
         fm = _extract_frontmatter(module_md)
         assert fm is not None, f"MODULE.md for {module_name} has no YAML frontmatter"
@@ -86,22 +85,16 @@ class TestModuleMdFiles:
         fm = _extract_frontmatter(module_md)
         assert fm is not None
         for field in ("name", "description", "version"):
-            assert field in fm, (
-                f"MODULE.md for {module_name} missing required field '{field}'"
-            )
+            assert field in fm, f"MODULE.md for {module_name} missing required field '{field}'"
         assert fm["name"] == module_name, (
             f"MODULE.md name mismatch: expected '{module_name}', got '{fm['name']}'"
         )
 
     @pytest.mark.parametrize("module_name", ALL_MODULES)
-    def test_module_md_minimum_lines(
-        self, modules_dir: Path, module_name: str
-    ) -> None:
+    def test_module_md_minimum_lines(self, modules_dir: Path, module_name: str) -> None:
         module_md = modules_dir / module_name / "MODULE.md"
         lines = _line_count(module_md)
-        assert lines >= 20, (
-            f"MODULE.md for {module_name} has {lines} lines, expected >= 20"
-        )
+        assert lines >= 20, f"MODULE.md for {module_name} has {lines} lines, expected >= 20"
 
 
 # ---------------------------------------------------------------------------
@@ -164,9 +157,7 @@ class TestSkillFiles:
     ) -> None:
         path = modules_dir / module / "skills" / skill / "SKILL.md"
         lines = _line_count(path)
-        assert lines >= min_lines, (
-            f"{skill}/SKILL.md has {lines} lines, expected >= {min_lines}"
-        )
+        assert lines >= min_lines, f"{skill}/SKILL.md has {lines} lines, expected >= {min_lines}"
 
     def test_total_skill_count(self, modules_dir: Path) -> None:
         """Ensure we have at least 10 distinct skills across all modules."""
@@ -226,9 +217,7 @@ class TestAgentFiles:
     ) -> None:
         path = modules_dir / module / "agents" / f"{agent}.md"
         lines = _line_count(path)
-        assert lines >= min_lines, (
-            f"{agent}.md has {lines} lines, expected >= {min_lines}"
-        )
+        assert lines >= min_lines, f"{agent}.md has {lines} lines, expected >= {min_lines}"
 
 
 # ---------------------------------------------------------------------------
@@ -283,19 +272,12 @@ class TestCommandFiles:
     ) -> None:
         path = modules_dir / module / "commands" / f"{command}.md"
         lines = _line_count(path)
-        assert lines >= min_lines, (
-            f"{command}.md has {lines} lines, expected >= {min_lines}"
-        )
+        assert lines >= min_lines, f"{command}.md has {lines} lines, expected >= {min_lines}"
 
     def test_total_command_count(self, modules_dir: Path) -> None:
         """Ensure at least 6 command files exist across all modules."""
         commands: list[Path] = []
         for commands_dir in modules_dir.rglob("commands/"):
             if commands_dir.is_dir():
-                commands.extend(
-                    p for p in commands_dir.glob("*.md")
-                    if p.name != "MODULE.md"
-                )
-        assert len(commands) >= 6, (
-            f"Expected >= 6 command files, found {len(commands)}"
-        )
+                commands.extend(p for p in commands_dir.glob("*.md") if p.name != "MODULE.md")
+        assert len(commands) >= 6, f"Expected >= 6 command files, found {len(commands)}"

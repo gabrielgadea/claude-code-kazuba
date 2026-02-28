@@ -6,6 +6,7 @@ Merge rules:
 - env: merge dicts (new keys added, existing preserved)
 - Never overwrite user's existing values
 """
+
 from __future__ import annotations
 
 import json
@@ -28,8 +29,8 @@ def _extend_unique(base: list[Any], overlay: list[Any]) -> list[Any]:
             seen.add(json.dumps(item, sort_keys=True))
 
     for item in overlay:
-        key = item if isinstance(item, (str, int, float, bool)) else json.dumps(
-            item, sort_keys=True
+        key = (
+            item if isinstance(item, (str, int, float, bool)) else json.dumps(item, sort_keys=True)
         )
         if key not in seen:
             seen.add(key)

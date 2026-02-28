@@ -1,4 +1,5 @@
 """Tests for hooks-quality module: quality_gate, secrets_scanner, pii_scanner, bash_safety."""
+
 from __future__ import annotations
 
 import importlib.util
@@ -39,6 +40,7 @@ bs = _import_from_path("bash_safety", _hooks_dir / "bash_safety.py")
 
 # --- Module manifest tests ---
 
+
 class TestModuleManifest:
     """Test MODULE.md exists and has correct structure."""
 
@@ -57,6 +59,7 @@ class TestModuleManifest:
 
 
 # --- Settings JSON tests ---
+
 
 class TestSettingsJson:
     """Test settings.hooks.json is valid."""
@@ -78,6 +81,7 @@ class TestSettingsJson:
 
 
 # --- Quality gate tests ---
+
 
 class TestQualityGate:
     """Test quality gate validation logic."""
@@ -111,7 +115,7 @@ class TestQualityGate:
         assert len(issues) >= 1
 
     def test_check_debug_code_detects_breakpoint(self) -> None:
-        content = 'def main():\n    breakpoint()\n    pass\n'
+        content = "def main():\n    breakpoint()\n    pass\n"
         issues = qg.check_debug_code(content, "src/main.py")
         assert len(issues) >= 1
 
@@ -142,6 +146,7 @@ class TestQualityGate:
 
 
 # --- Secrets scanner tests ---
+
 
 class TestSecretsScanner:
     """Test secret detection logic."""
@@ -193,6 +198,7 @@ class TestSecretsScanner:
 
 # --- PII scanner tests ---
 
+
 class TestPIIScanner:
     """Test PII detection logic."""
 
@@ -220,6 +226,7 @@ class TestPIIScanner:
 
 
 # --- Bash safety tests ---
+
 
 class TestBashSafety:
     """Test dangerous command detection logic."""
@@ -258,6 +265,7 @@ class TestBashSafety:
 
 
 # --- File structure tests ---
+
 
 class TestFileStructure:
     """Test all required files exist with minimum line counts."""

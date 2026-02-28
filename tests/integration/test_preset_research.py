@@ -1,4 +1,5 @@
 """Integration tests for the research preset."""
+
 from __future__ import annotations
 
 from typing import Any

@@ -1,4 +1,5 @@
 """Tests for scripts.merge_settings — deep merge algorithm."""
+
 from __future__ import annotations
 
 import json

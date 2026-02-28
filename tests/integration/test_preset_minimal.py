@@ -1,4 +1,5 @@
 """Integration tests for the minimal preset."""
+
 from __future__ import annotations
 
 import json

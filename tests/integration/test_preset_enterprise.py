@@ -1,4 +1,5 @@
 """Integration tests for the enterprise preset."""
+
 from __future__ import annotations
 
 import json

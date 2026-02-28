@@ -194,9 +194,7 @@ class TestCrossReferences:
         arch = (BASE_DIR / "docs" / "ARCHITECTURE.md").read_text()
         key_dirs = ["hooks-essential", "hooks-quality", "skills-dev", "agents-dev"]
         for dir_name in key_dirs:
-            assert dir_name in arch, (
-                f"ARCHITECTURE.md missing reference to: {dir_name}"
-            )
+            assert dir_name in arch, f"ARCHITECTURE.md missing reference to: {dir_name}"
 
     def test_hooks_reference_mentions_all_events(self) -> None:
         """HOOKS_REFERENCE.md must document all 18 hook events."""
@@ -222,9 +220,7 @@ class TestCrossReferences:
             "Heartbeat",
         ]
         for event in events:
-            assert event in hooks_ref, (
-                f"HOOKS_REFERENCE.md missing event: {event}"
-            )
+            assert event in hooks_ref, f"HOOKS_REFERENCE.md missing event: {event}"
 
     def test_docs_link_to_each_other(self) -> None:
         """README should link to documentation files."""
@@ -238,6 +234,4 @@ class TestCrossReferences:
         presets_dir = BASE_DIR / "presets"
         for preset_file in presets_dir.glob("*.txt"):
             preset_name = preset_file.stem
-            assert preset_name in readme, (
-                f"README missing reference to preset: {preset_name}"
-            )
+            assert preset_name in readme, f"README missing reference to preset: {preset_name}"

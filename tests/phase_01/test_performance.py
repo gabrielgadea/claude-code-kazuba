@@ -1,4 +1,5 @@
 """Tests for lib.performance — L0Cache, ParallelExecutor, rust_accelerator."""
+
 from __future__ import annotations
 
 import time

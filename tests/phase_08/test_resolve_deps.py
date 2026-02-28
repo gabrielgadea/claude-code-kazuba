@@ -1,4 +1,5 @@
 """Tests for scripts.resolve_deps — module dependency resolution."""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -18,7 +19,7 @@ class TestParseYamlFrontmatter:
     """YAML frontmatter parser for MODULE.md files."""
 
     def test_basic_frontmatter(self) -> None:
-        text = "---\nname: core\nversion: \"1.0.0\"\ndependencies: []\n---\n# Core\n"
+        text = '---\nname: core\nversion: "1.0.0"\ndependencies: []\n---\n# Core\n'
         result = _parse_yaml_frontmatter(text)
         assert result["name"] == "core"
         assert result["version"] == "1.0.0"
@@ -70,9 +71,7 @@ class TestResolveDependencies:
     def test_simple_chain(self, tmp_path: Path) -> None:
         self._make_module(tmp_path, "core", [])
         self._make_module(tmp_path, "hooks", ["core"])
-        result = resolve_dependencies(
-            ["hooks"], tmp_path / "modules", core_dir=tmp_path / "core"
-        )
+        result = resolve_dependencies(["hooks"], tmp_path / "modules", core_dir=tmp_path / "core")
         assert result.index("core") < result.index("hooks")
 
     def test_multiple_modules(self, tmp_path: Path) -> None:
@@ -105,17 +104,13 @@ class TestResolveDependencies:
 
     def test_missing_module_raises(self, tmp_path: Path) -> None:
         with pytest.raises(FileNotFoundError, match="not found"):
-            resolve_dependencies(
-                ["nonexistent"], tmp_path / "modules", core_dir=tmp_path / "core"
-            )
+            resolve_dependencies(["nonexistent"], tmp_path / "modules", core_dir=tmp_path / "core")
 
     def test_deduplication(self, tmp_path: Path) -> None:
         self._make_module(tmp_path, "core", [])
         self._make_module(tmp_path, "a", ["core"])
         self._make_module(tmp_path, "b", ["core"])
-        result = resolve_dependencies(
-            ["a", "b"], tmp_path / "modules", core_dir=tmp_path / "core"
-        )
+        result = resolve_dependencies(["a", "b"], tmp_path / "modules", core_dir=tmp_path / "core")
         # core should appear only once
         assert result.count("core") == 1
 
@@ -129,9 +124,7 @@ class TestResolveDependencies:
         """Test with actual project modules."""
         modules_dir = base_dir / "modules"
         core_dir = base_dir / "core"
-        result = resolve_dependencies(
-            ["hooks-essential"], modules_dir, core_dir=core_dir
-        )
+        result = resolve_dependencies(["hooks-essential"], modules_dir, core_dir=core_dir)
         assert "core" in result
         assert "hooks-essential" in result
         assert result.index("core") < result.index("hooks-essential")

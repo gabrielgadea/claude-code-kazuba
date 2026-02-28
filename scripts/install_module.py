@@ -1,4 +1,5 @@
 """Install a single module to target directory."""
+
 from __future__ import annotations
 
 import json

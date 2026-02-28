@@ -1,4 +1,5 @@
 """Tests for lib.template_engine — Jinja2 template rendering."""
+
 from __future__ import annotations
 
 from pathlib import Path

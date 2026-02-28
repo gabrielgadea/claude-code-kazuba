@@ -8,6 +8,7 @@ Tests cover:
 - All 4 rules files exist and contain expected sections
 - Templates render correctly via lib/template_engine.py
 """
+
 from __future__ import annotations
 
 import json
@@ -80,6 +81,7 @@ def sample_settings_vars() -> dict[str, object]:
 # File existence and minimum line counts
 # ---------------------------------------------------------------------------
 
+
 class TestFileExistence:
     """Verify all core module files exist and meet minimum line counts."""
 
@@ -101,19 +103,16 @@ class TestFileExistence:
         assert full_path.is_file(), f"File core/{file_path} missing"
 
     @pytest.mark.parametrize("file_path,min_lines", FILES_AND_MIN_LINES)
-    def test_file_meets_min_lines(
-        self, core_dir: Path, file_path: str, min_lines: int
-    ) -> None:
+    def test_file_meets_min_lines(self, core_dir: Path, file_path: str, min_lines: int) -> None:
         full_path = core_dir / file_path
         lines = len(full_path.read_text().splitlines())
-        assert lines >= min_lines, (
-            f"core/{file_path}: {lines} lines < {min_lines} required"
-        )
+        assert lines >= min_lines, f"core/{file_path}: {lines} lines < {min_lines} required"
 
 
 # ---------------------------------------------------------------------------
 # CLAUDE.md.template — Jinja2 variables and key sections
 # ---------------------------------------------------------------------------
+
 
 class TestClaudeMdTemplate:
     """Verify CLAUDE.md.template has required Jinja2 variables and sections."""
@@ -190,6 +189,7 @@ class TestClaudeMdTemplate:
 # settings.json.template — Valid JSON after rendering
 # ---------------------------------------------------------------------------
 
+
 class TestSettingsJsonTemplate:
     """Verify settings.json.template renders to valid JSON."""
 
@@ -258,6 +258,7 @@ class TestSettingsJsonTemplate:
 # settings.local.json.template
 # ---------------------------------------------------------------------------
 
+
 class TestSettingsLocalTemplate:
     """Verify settings.local.json.template renders correctly."""
 
@@ -280,6 +281,7 @@ class TestSettingsLocalTemplate:
 # .gitignore.template
 # ---------------------------------------------------------------------------
 
+
 class TestGitignoreTemplate:
     """Verify .gitignore.template has essential patterns."""
 
@@ -300,6 +302,7 @@ class TestGitignoreTemplate:
 # ---------------------------------------------------------------------------
 # MODULE.md — YAML frontmatter
 # ---------------------------------------------------------------------------
+
 
 class TestModuleMd:
     """Verify MODULE.md has required YAML frontmatter."""
@@ -350,6 +353,7 @@ class TestModuleMd:
 # ---------------------------------------------------------------------------
 # Rules files — existence and content validation
 # ---------------------------------------------------------------------------
+
 
 class TestRulesFiles:
     """Verify all 4 rules files exist and contain expected sections."""
@@ -411,7 +415,9 @@ class TestRulesFiles:
 
     def test_testing_has_pyramid(self, rules_dir: Path) -> None:
         content = (rules_dir / "testing.md").read_text()
-        assert "pyramid" in content.lower() or ("unit" in content.lower() and "integration" in content.lower())
+        assert "pyramid" in content.lower() or (
+            "unit" in content.lower() and "integration" in content.lower()
+        )
 
     def test_testing_has_naming_conventions(self, rules_dir: Path) -> None:
         content = (rules_dir / "testing.md").read_text()
@@ -446,6 +452,7 @@ class TestRulesFiles:
 # ---------------------------------------------------------------------------
 # Template rendering via TemplateEngine integration
 # ---------------------------------------------------------------------------
+
 
 class TestTemplateRendering:
     """Integration tests: render templates via lib/template_engine.py."""

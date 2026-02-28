@@ -1,4 +1,5 @@
 """Tests for lib.json_output — JSON output builders for hook contract."""
+
 from __future__ import annotations
 
 import json

@@ -1,4 +1,5 @@
 """Shared test fixtures for claude-code-kazuba."""
+
 from __future__ import annotations
 
 import json

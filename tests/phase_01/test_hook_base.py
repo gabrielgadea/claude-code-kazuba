@@ -1,4 +1,5 @@
 """Tests for lib.hook_base — core hook infrastructure."""
+
 from __future__ import annotations
 
 import json
@@ -147,9 +148,7 @@ class TestFailOpen:
             bad()
         assert exc_info.value.code == 0
 
-    def test_exception_prints_error_to_stderr(
-        self, capsys: pytest.CaptureFixture[str]
-    ) -> None:
+    def test_exception_prints_error_to_stderr(self, capsys: pytest.CaptureFixture[str]) -> None:
         @fail_open
         def bad() -> str:
             msg = "something broke"

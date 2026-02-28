@@ -1,4 +1,5 @@
 """Tests for lib.config — Pydantic v2 configuration models."""
+
 from __future__ import annotations
 
 from pathlib import Path

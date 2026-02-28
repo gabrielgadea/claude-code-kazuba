@@ -1,4 +1,5 @@
 """Post-install health check for a kazuba installation."""
+
 from __future__ import annotations
 
 import json

@@ -1,4 +1,5 @@
 """Tests for hooks-routing module: cila_router, knowledge_manager, compliance_tracker."""
+
 from __future__ import annotations
 
 import importlib.util
@@ -39,6 +40,7 @@ ct = _import_from_path("compliance_tracker", _hooks_dir / "compliance_tracker.py
 
 # --- Module manifest tests ---
 
+
 class TestModuleManifest:
     """Test MODULE.md exists and has correct structure."""
 
@@ -57,6 +59,7 @@ class TestModuleManifest:
 
 
 # --- Settings JSON tests ---
+
 
 class TestSettingsJson:
     """Test settings.hooks.json is valid."""
@@ -80,6 +83,7 @@ class TestSettingsJson:
 
 # --- CILA router tests ---
 
+
 class TestCILARouter:
     """Test CILA complexity classification."""
 
@@ -92,7 +96,9 @@ class TestCILARouter:
         assert result.level <= 1
 
     def test_standard_prompt_l2(self) -> None:
-        result = cr.classify_complexity("update the config and then add a new setting to the module")
+        result = cr.classify_complexity(
+            "update the config and then add a new setting to the module"
+        )
         assert result.level >= 2
 
     def test_complex_prompt_l3(self) -> None:
@@ -157,6 +163,7 @@ class TestCILARouter:
 
 # --- Knowledge manager tests ---
 
+
 class TestKnowledgeManager:
     """Test 3-tier knowledge injection."""
 
@@ -197,6 +204,7 @@ class TestKnowledgeManager:
 
 
 # --- Compliance tracker tests ---
+
 
 class TestComplianceTracker:
     """Test compliance tracking and audit logging."""
@@ -241,25 +249,37 @@ class TestComplianceTracker:
     def test_compliance_score_perfect(self) -> None:
         stats = ct.ComplianceStats()
         for _ in range(5):
-            stats.record(ct.ComplianceEvent(
-                timestamp=time.time(),
-                session_id="test",
-                tool_name="Read",
-                hook_event="PostToolUse",
-                decision="allow",
-            ))
+            stats.record(
+                ct.ComplianceEvent(
+                    timestamp=time.time(),
+                    session_id="test",
+                    tool_name="Read",
+                    hook_event="PostToolUse",
+                    decision="allow",
+                )
+            )
         assert stats.compliance_score == 1.0
 
     def test_compliance_score_mixed(self) -> None:
         stats = ct.ComplianceStats()
-        stats.record(ct.ComplianceEvent(
-            timestamp=time.time(), session_id="t", tool_name="A",
-            hook_event="PostToolUse", decision="allow",
-        ))
-        stats.record(ct.ComplianceEvent(
-            timestamp=time.time(), session_id="t", tool_name="B",
-            hook_event="PostToolUse", decision="block",
-        ))
+        stats.record(
+            ct.ComplianceEvent(
+                timestamp=time.time(),
+                session_id="t",
+                tool_name="A",
+                hook_event="PostToolUse",
+                decision="allow",
+            )
+        )
+        stats.record(
+            ct.ComplianceEvent(
+                timestamp=time.time(),
+                session_id="t",
+                tool_name="B",
+                hook_event="PostToolUse",
+                decision="block",
+            )
+        )
         assert stats.compliance_score == 0.5
 
     def test_compliance_score_empty(self) -> None:
@@ -297,6 +317,7 @@ class TestComplianceTracker:
 
 
 # --- File structure tests ---
+
 
 class TestFileStructure:
     """Test all required files exist with minimum line counts."""

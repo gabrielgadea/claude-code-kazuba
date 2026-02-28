@@ -1,4 +1,5 @@
 """Tests for lib.patterns — reusable regex patterns for secrets, PII, bash safety."""
+
 from __future__ import annotations
 
 import pytest

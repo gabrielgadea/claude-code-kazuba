@@ -7,6 +7,7 @@ Tests cover:
 - MODULE.md files are present for all Phase 7 modules
 - YAML files parse without errors via yaml.safe_load
 """
+
 from __future__ import annotations
 
 from pathlib import Path
@@ -63,9 +64,7 @@ class TestConfigHypervisor:
         assert path.is_file(), f"config-hypervisor/config/{filename} missing"
 
     @pytest.mark.parametrize("filename", HYPERVISOR_YAMLS)
-    def test_yaml_parses_without_error(
-        self, modules_dir: Path, filename: str
-    ) -> None:
+    def test_yaml_parses_without_error(self, modules_dir: Path, filename: str) -> None:
         path = modules_dir / "config-hypervisor" / "config" / filename
         content = path.read_text(encoding="utf-8")
         try:
@@ -217,9 +216,7 @@ class TestPhase7ModuleMdPresence:
         assert path.is_file(), f"{module_name}/MODULE.md missing"
 
     @pytest.mark.parametrize("module_name", PHASE7_MODULES)
-    def test_module_md_has_name_and_description(
-        self, modules_dir: Path, module_name: str
-    ) -> None:
+    def test_module_md_has_name_and_description(self, modules_dir: Path, module_name: str) -> None:
         path = modules_dir / module_name / "MODULE.md"
         fm = _extract_frontmatter(path)
         assert fm is not None, f"{module_name}/MODULE.md has no frontmatter"

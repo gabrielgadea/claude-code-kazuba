@@ -1,4 +1,5 @@
 """Phase 7 Tests: Validate YAML configs, context files, and team-orchestrator."""
+
 from __future__ import annotations
 
 from pathlib import Path
@@ -93,9 +94,7 @@ class TestAgentTriggers:
         required_fields = {"name", "condition", "agent_type", "priority"}
         for trigger in data["triggers"]:
             missing = required_fields - set(trigger.keys())
-            assert not missing, (
-                f"Trigger '{trigger.get('name', '?')}' missing fields: {missing}"
-            )
+            assert not missing, f"Trigger '{trigger.get('name', '?')}' missing fields: {missing}"
 
 
 class TestEventMesh:
@@ -120,9 +119,7 @@ class TestContextFiles:
     EXPECTED_CONTEXTS = ["dev", "review", "research", "audit"]
 
     @pytest.mark.parametrize("ctx_name", EXPECTED_CONTEXTS)
-    def test_context_exists_and_not_empty(
-        self, modules_dir: Path, ctx_name: str
-    ) -> None:
+    def test_context_exists_and_not_empty(self, modules_dir: Path, ctx_name: str) -> None:
         path = modules_dir / "contexts" / "contexts" / f"{ctx_name}.md"
         assert path.is_file(), f"Context file {ctx_name}.md missing"
         content = path.read_text(encoding="utf-8")
@@ -131,9 +128,7 @@ class TestContextFiles:
         )
 
     @pytest.mark.parametrize("ctx_name", EXPECTED_CONTEXTS)
-    def test_context_has_frontmatter(
-        self, modules_dir: Path, ctx_name: str
-    ) -> None:
+    def test_context_has_frontmatter(self, modules_dir: Path, ctx_name: str) -> None:
         path = modules_dir / "contexts" / "contexts" / f"{ctx_name}.md"
         text = path.read_text(encoding="utf-8")
         assert text.startswith("---"), f"Context {ctx_name}.md missing frontmatter"
@@ -190,9 +185,7 @@ class TestSharedPatterns:
     ]
 
     @pytest.mark.parametrize("filename", SHARED_FILES)
-    def test_shared_file_is_valid_yaml(
-        self, modules_dir: Path, filename: str
-    ) -> None:
+    def test_shared_file_is_valid_yaml(self, modules_dir: Path, filename: str) -> None:
         path = modules_dir / "commands-prp" / "commands" / "shared" / filename
         assert path.is_file(), f"Shared file {filename} missing"
         content = path.read_text(encoding="utf-8")

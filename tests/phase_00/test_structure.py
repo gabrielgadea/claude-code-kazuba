@@ -1,4 +1,5 @@
 """Phase 0 Tests: Verify project structure and bootstrap files."""
+
 from __future__ import annotations
 
 from pathlib import Path
@@ -68,7 +69,7 @@ class TestPyprojectToml:
 
     def test_requires_python_312(self, project_root: Path) -> None:
         content = (project_root / "pyproject.toml").read_text()
-        assert '>=3.12' in content
+        assert ">=3.12" in content
 
     def test_has_dependencies(self, project_root: Path) -> None:
         content = (project_root / "pyproject.toml").read_text()
@@ -131,11 +132,13 @@ class TestClaudeConfig:
 
     def test_settings_has_schema(self, project_root: Path) -> None:
         import json
+
         settings = json.loads((project_root / ".claude" / "settings.json").read_text())
         assert "$schema" in settings
 
     def test_settings_has_permissions(self, project_root: Path) -> None:
         import json
+
         settings = json.loads((project_root / ".claude" / "settings.json").read_text())
         assert "permissions" in settings
 

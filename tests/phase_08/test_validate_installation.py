@@ -1,4 +1,5 @@
 """Tests for scripts.validate_installation — post-install health checks."""
+
 from __future__ import annotations
 
 import json
@@ -75,9 +76,7 @@ class TestValidateHookScripts:
 
         settings = {
             "$schema": "https://json.schemastore.org/claude-code-settings.json",
-            "hooks": {
-                "PreToolUse": [{"type": "command", "command": "python hooks/test.py"}]
-            },
+            "hooks": {"PreToolUse": [{"type": "command", "command": "python hooks/test.py"}]},
         }
         (claude_dir / "settings.json").write_text(json.dumps(settings))
 
@@ -91,11 +90,7 @@ class TestValidateHookScripts:
 
         settings = {
             "$schema": "https://json.schemastore.org/claude-code-settings.json",
-            "hooks": {
-                "PreToolUse": [
-                    {"type": "command", "command": "python hooks/missing.py"}
-                ]
-            },
+            "hooks": {"PreToolUse": [{"type": "command", "command": "python hooks/missing.py"}]},
         }
         (claude_dir / "settings.json").write_text(json.dumps(settings))
 
@@ -136,7 +131,9 @@ class TestValidateClaudeMd:
     def test_claude_md_present(self, tmp_path: Path) -> None:
         claude_dir = tmp_path / ".claude"
         claude_dir.mkdir()
-        (claude_dir / "CLAUDE.md").write_text("# Project\n\nThis is a valid CLAUDE.md file with enough content.\n")
+        (claude_dir / "CLAUDE.md").write_text(
+            "# Project\n\nThis is a valid CLAUDE.md file with enough content.\n"
+        )
         result = validate_installation(tmp_path)
         assert result["claude_md"] is True
 
