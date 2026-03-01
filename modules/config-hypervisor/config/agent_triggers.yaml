@@ -1,123 +1,363 @@
-# Agent Triggers
-# Declarative rules for automatically activating specialized agents.
-
-triggers:
-  - name: quality_review
-    condition: "Task involves code changes > 100 lines"
-    agent_type: code-reviewer
-    model: sonnet
-    priority: high
-    background: false
-    skill_attachments:
-      - verification-loop
-    domain_keywords:
-      - "review"
-      - "PR"
-      - "merge"
-      - "code quality"
-
-  - name: security_audit
-    condition: "Task involves auth, crypto, user input, or network code"
-    agent_type: security-auditor
-    model: sonnet
-    priority: critical
-    background: false
-    skill_attachments:
-      - verification-loop
-    domain_keywords:
-      - "security"
-      - "auth"
-      - "password"
-      - "encryption"
-      - "vulnerability"
-      - "OWASP"
-
-  - name: performance_analysis
-    condition: "Task mentions latency, throughput, memory, or optimization"
-    agent_type: code-reviewer
-    model: sonnet
-    priority: medium
-    background: true
-    skill_attachments:
-      - eval-harness
-    domain_keywords:
-      - "performance"
-      - "latency"
-      - "throughput"
-      - "memory"
-      - "optimize"
-      - "benchmark"
-
-  - name: documentation
-    condition: "Code changes affect public API or user-facing behavior"
-    agent_type: code-reviewer
-    model: sonnet
-    priority: low
-    background: true
+agent_triggers:
+  codebase_exploration:
+    condition: task_type == 'exploration' or 'search' in task.lower() or 'find' in
+      task.lower()
+    agent_type: explore
+    model: haiku
     skill_attachments: []
-    domain_keywords:
-      - "docs"
-      - "documentation"
-      - "README"
-      - "API reference"
-
-  - name: testing
-    condition: "New feature or bugfix without corresponding tests"
-    agent_type: code-reviewer
-    model: sonnet
-    priority: high
     background: false
-    skill_attachments:
-      - eval-harness
-    domain_keywords:
-      - "test"
-      - "coverage"
-      - "TDD"
-      - "regression"
-
-  - name: debugging
-    condition: "Error reported or test failing"
-    agent_type: code-reviewer
-    model: sonnet
-    priority: high
-    background: false
-    skill_attachments:
-      - supreme-problem-solver
-    domain_keywords:
-      - "bug"
-      - "error"
-      - "failing"
-      - "broken"
-      - "crash"
-      - "exception"
-
-  - name: architecture_review
-    condition: "L4+ changes affecting system structure"
-    agent_type: meta-orchestrator
+    priority: 60
+    description: Fast codebase search and exploration
+    max_retries: 2
+  architecture_planning:
+    condition: complexity == 'high' or complexity == 'critical' or task_type == 'architecture'
+      or step_count >= 5
+    agent_type: plan
     model: opus
-    priority: critical
-    background: false
     skill_attachments:
-      - plan-amplifier
-    domain_keywords:
-      - "architecture"
-      - "design"
-      - "refactor"
-      - "migration"
-      - "restructure"
-
-  - name: code_generation
-    condition: "New module, service, or component creation"
-    agent_type: meta-orchestrator
+    - plan-amplifier
+    - senior-architect
+    background: false
+    priority: 90
+    description: Complex architecture and implementation planning
+    max_retries: 3
+  multi_step_task:
+    condition: step_count >= 3 and complexity in ['medium', 'high', 'critical']
+    agent_type: plan
     model: opus
-    priority: medium
-    background: false
     skill_attachments:
-      - plan-execution
-      - verification-loop
-    domain_keywords:
-      - "create"
-      - "new module"
-      - "scaffold"
-      - "generate"
-      - "bootstrap"
+    - plan-amplifier
+    background: false
+    priority: 85
+    description: Multi-step task requiring planning
+    max_retries: 3
+  python_development:
+    condition: domain == 'python' or 'fastapi' in task.lower() or 'django' in task.lower()
+    agent_type: backend
+    model: opus
+    skill_attachments:
+    - senior-backend
+    - fastapi-pro
+    background: false
+    priority: 70
+    description: Python/FastAPI backend development
+    max_retries: 3
+  database_operations:
+    condition: '''database'' in task.lower() or ''migration'' in task.lower() or ''sqlalchemy''
+      in task.lower()'
+    agent_type: backend
+    model: opus
+    skill_attachments:
+    - senior-backend
+    - sql-pro
+    - database-architect
+    background: false
+    priority: 75
+    description: Database and migration tasks
+    max_retries: 3
+  frontend_development:
+    condition: domain == 'frontend' or 'react' in task.lower() or 'nextjs' in task.lower()
+      or 'next.js' in task.lower()
+    agent_type: frontend
+    model: opus
+    skill_attachments:
+    - senior-frontend
+    - typescript-pro
+    background: false
+    priority: 70
+    description: React/Next.js frontend development
+    max_retries: 3
+  typescript_tasks:
+    condition: '''typescript'' in task.lower() or ''.tsx'' in task.lower() or ''.ts''
+      in task.lower()'
+    agent_type: frontend
+    model: opus
+    skill_attachments:
+    - typescript-pro
+    - javascript-pro
+    background: false
+    priority: 68
+    description: TypeScript development tasks
+    max_retries: 3
+  code_review:
+    condition: task_type == 'review' or 'review' in task.lower()
+    agent_type: quality
+    model: opus
+    skill_attachments:
+    - code-reviewer
+    background: true
+    priority: 50
+    description: Code review in background
+    max_retries: 2
+  test_generation:
+    condition: task_type == 'testing' or ('test' in task.lower() and 'write' in task.lower())
+    agent_type: quality
+    model: opus
+    skill_attachments:
+    - test-automator
+    - code-reviewer
+    background: true
+    priority: 55
+    description: Test generation in background
+    max_retries: 2
+  security_audit:
+    condition: security_scan == true or 'security' in task.lower() or 'vulnerability'
+      in task.lower()
+    agent_type: security
+    model: opus
+    skill_attachments:
+    - security-auditor
+    - backend-security-coder
+    background: true
+    priority: 80
+    description: Security scanning and vulnerability fixes
+    max_retries: 3
+  etl_operations:
+    condition: domain == 'data' or 'etl' in task.lower() or 'pipeline' in task.lower()
+    agent_type: data
+    model: opus
+    skill_attachments:
+    - data-engineer
+    - sql-pro
+    background: false
+    priority: 65
+    description: ETL and data pipeline operations
+    max_retries: 3
+  llm_integration:
+    condition: domain == 'llm' or 'ai agent' in task.lower() or 'llm' in task.lower()
+      or ('prompt' in task.lower() and 'engineer' in task.lower())
+    agent_type: ai
+    model: opus
+    skill_attachments:
+    - ai-engineer
+    - prompt-engineer
+    background: false
+    priority: 75
+    description: LLM integration and AI features
+    max_retries: 3
+  rag_implementation:
+    condition: '''rag'' in task.lower() or ''retrieval'' in task.lower() or ''embedding''
+      in task.lower()'
+    agent_type: ai
+    model: opus
+    skill_attachments:
+    - ai-engineer
+    background: false
+    priority: 73
+    description: RAG and retrieval systems
+    max_retries: 3
+  recovery_escalation:
+    condition: consecutive_failures >= 3
+    agent_type: plan
+    model: opus
+    skill_attachments:
+    - supreme-problem-solver
+    - plan-amplifier
+    background: false
+    priority: 100
+    description: Escalate repeated failures to problem solver
+    max_retries: 5
+  quality_degradation:
+    condition: quality_score < 50
+    agent_type: quality
+    model: opus
+    skill_attachments:
+    - code-reviewer
+    - supreme-problem-solver
+    background: false
+    priority: 95
+    description: Address quality degradation
+    max_retries: 4
+thinking_levels:
+  simple: think
+  moderate: think hard
+  complex: think harder
+  critical: ultrathink
+domain_keywords:
+  python:
+  - fastapi
+  - django
+  - flask
+  - sqlalchemy
+  - pydantic
+  - celery
+  - pytest
+  frontend:
+  - react
+  - nextjs
+  - next.js
+  - typescript
+  - tailwind
+  - component
+  - hook
+  data:
+  - etl
+  - pipeline
+  - dataframe
+  - pandas
+  - spark
+  - airflow
+  - dbt
+  llm:
+  - llm
+  - gpt
+  - claude
+  - anthropic
+  - openai
+  - embedding
+  - rag
+  - langchain
+task_type_keywords:
+  exploration:
+  - search
+  - find
+  - explore
+  - locate
+  - where
+  - list
+  architecture:
+  - design
+  - architect
+  - structure
+  - refactor
+  - migrate
+  - system
+  review:
+  - review
+  - audit
+  - check
+  - validate
+  - verify
+  testing:
+  - test
+  - coverage
+  - mock
+  - fixture
+  - assert
+complexity_indicators:
+  low:
+  - fix typo
+  - update comment
+  - rename
+  - simple fix
+  - minor change
+  medium:
+  - add feature
+  - implement
+  - create endpoint
+  - add component
+  high:
+  - refactor
+  - architect
+  - migrate
+  - design system
+  - security
+  critical:
+  - production issue
+  - critical bug
+  - emergency
+  - security vulnerability
+  - data loss
+defaults:
+  model: sonnet
+  background: false
+  priority: 50
+  max_retries: 3
+triggers:
+- name: codebase_exploration
+  condition: task_type == 'exploration' or 'search' in task.lower() or 'find' in task.lower()
+  agent_type: explore
+  model: haiku
+  priority: 60
+  description: Fast codebase search and exploration
+- name: architecture_planning
+  condition: complexity == 'high' or complexity == 'critical' or task_type == 'architecture'
+    or step_count >= 5
+  agent_type: plan
+  model: opus
+  priority: 90
+  description: Complex architecture and implementation planning
+- name: multi_step_task
+  condition: step_count >= 3 and complexity in ['medium', 'high', 'critical']
+  agent_type: plan
+  model: opus
+  priority: 85
+  description: Multi-step task requiring planning
+- name: python_development
+  condition: domain == 'python' or 'fastapi' in task.lower() or 'django' in task.lower()
+  agent_type: backend
+  model: opus
+  priority: 70
+  description: Python/FastAPI backend development
+- name: database_operations
+  condition: '''database'' in task.lower() or ''migration'' in task.lower() or ''sqlalchemy''
+    in task.lower()'
+  agent_type: backend
+  model: opus
+  priority: 75
+  description: Database and migration tasks
+- name: frontend_development
+  condition: domain == 'frontend' or 'react' in task.lower() or 'nextjs' in task.lower()
+    or 'next.js' in task.lower()
+  agent_type: frontend
+  model: opus
+  priority: 70
+  description: React/Next.js frontend development
+- name: typescript_tasks
+  condition: '''typescript'' in task.lower() or ''.tsx'' in task.lower() or ''.ts''
+    in task.lower()'
+  agent_type: frontend
+  model: opus
+  priority: 68
+  description: TypeScript development tasks
+- name: code_review
+  condition: task_type == 'review' or 'review' in task.lower()
+  agent_type: quality
+  model: opus
+  priority: 50
+  description: Code review in background
+- name: test_generation
+  condition: task_type == 'testing' or ('test' in task.lower() and 'write' in task.lower())
+  agent_type: quality
+  model: opus
+  priority: 55
+  description: Test generation in background
+- name: security_audit
+  condition: security_scan == true or 'security' in task.lower() or 'vulnerability'
+    in task.lower()
+  agent_type: security
+  model: opus
+  priority: 80
+  description: Security scanning and vulnerability fixes
+- name: etl_operations
+  condition: domain == 'data' or 'etl' in task.lower() or 'pipeline' in task.lower()
+  agent_type: data
+  model: opus
+  priority: 65
+  description: ETL and data pipeline operations
+- name: llm_integration
+  condition: domain == 'llm' or 'ai agent' in task.lower() or 'llm' in task.lower()
+    or ('prompt' in task.lower() and 'engineer' in task.lower())
+  agent_type: ai
+  model: opus
+  priority: 75
+  description: LLM integration and AI features
+- name: rag_implementation
+  condition: '''rag'' in task.lower() or ''retrieval'' in task.lower() or ''embedding''
+    in task.lower()'
+  agent_type: ai
+  model: opus
+  priority: 73
+  description: RAG and retrieval systems
+- name: recovery_escalation
+  condition: consecutive_failures >= 3
+  agent_type: plan
+  model: opus
+  priority: 100
+  description: Escalate repeated failures to problem solver
+- name: quality_degradation
+  condition: quality_score < 50
+  agent_type: quality
+  model: opus
+  priority: 95
+  description: Address quality degradation

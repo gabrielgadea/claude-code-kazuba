@@ -67,6 +67,8 @@ Every hook receives at minimum:
 - `pii_scanner.py` — CPF, CNPJ, SSN, email, phone detection
 - `bash_safety.py` — Dangerous command blocking (rm -rf /, chmod 777, etc.)
 - `knowledge_manager.py` — Context injection based on tool usage
+- `siac_orchestrator.py` — Quality gates with circuit breaker integration [v0.2.0]
+- `auto_permission_resolver.py` — CILA-aware automatic permission resolution [v0.2.0]
 
 **Example implementation**:
 ```python
@@ -139,6 +141,7 @@ if __name__ == "__main__":
 **Framework hooks**:
 - `prompt_enhancer.py` — Intent classification + cognitive technique injection
 - `cila_router.py` — CILA L0-L6 complexity classification and routing
+- `ptc_advisor.py` — PTC program advisor with CILA L0-L6 classification [v0.2.0]
 
 ---
 
@@ -194,7 +197,9 @@ if __name__ == "__main__":
 }
 ```
 
-**Framework hooks**: `auto_compact.sh` — Saves checkpoint before compaction.
+**Framework hooks**:
+- `auto_compact.sh` — Saves checkpoint before compaction.
+- `post_compact_reinjector.py` — Re-injects critical context after compaction [v0.2.0]
 
 ---
 
@@ -221,7 +226,9 @@ if __name__ == "__main__":
 }
 ```
 
-**Framework hooks**: `status_monitor.sh` — Reports session environment info.
+**Framework hooks**:
+- `status_monitor.sh` — Reports session environment info.
+- `session_state_manager.py` — Persists and restores session state across compactions [v0.2.0]
 
 ---
 
@@ -448,6 +455,8 @@ if __name__ == "__main__":
 
 **Output**: No hookSpecificOutput required. Use for health checks, watchdog timers,
 or periodic state saves.
+
+**Framework hooks**: `validate_hooks_health.py` — Periodic health check for all registered hooks [v0.2.0]
 
 ---
 

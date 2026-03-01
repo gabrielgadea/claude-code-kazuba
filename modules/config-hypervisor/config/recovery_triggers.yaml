@@ -1,0 +1,94 @@
+# Recovery Triggers Configuration
+# Pln3 Orchestration System - Phase 4: Recovery
+
+recovery:
+  version: "3.0.0"
+
+  automatic_triggers:
+    # Overflow de contexto - compacta e resume
+    context_overflow:
+      condition: "context_tokens > 180000"
+      action: "compact_and_resume"
+      max_retries: 2
+      description: "Executa /compact e resume da ultima fase"
+
+    # Timeout de API - retry com backoff
+    api_timeout:
+      condition: "error_type == 'TimeoutError'"
+      action: "exponential_backoff_retry"
+      max_retries: 3
+      base_delay_ms: 1000
+      max_delay_ms: 30000
+      description: "Retry com backoff exponencial"
+
+    # Crash de sessao - resume do checkpoint
+    session_crash:
+      condition: "exit_code != 0 and has_checkpoint"
+      action: "resume_from_checkpoint"
+      max_retries: 1
+      description: "Resume do ultimo checkpoint valido"
+
+    # Falha de qualidade - retry com contexto adicional
+    quality_failure:
+      condition: "quality_score < 50"
+      action: "retry_with_enhanced_context"
+      max_retries: 2
+      description: "Adiciona contexto extra e retenta"
+
+    # Multiplas falhas consecutivas
+    consecutive_failures:
+      condition: "consecutive_failures >= 3"
+      action: "rollback"
+      max_retries: 1
+      description: "Rollback para checkpoint anterior"
+
+  manual_triggers:
+    # Budget excedido - aguarda aprovacao
+    budget_exceeded:
+      condition: "estimated_cost > budget_limit"
+      action: "notify_and_await_approval"
+      notification_channel: "slack"
+      description: "Notifica e aguarda aprovacao manual"
+
+    # Falha persistente de quality gate
+    persistent_quality_failure:
+      condition: "consecutive_quality_failures >= 5"
+      action: "escalate_to_human_review"
+      description: "Escalona para revisao humana"
+
+    # Decisao arquitetural necessaria
+    architectural_decision:
+      condition: "requires_architectural_decision"
+      action: "pause_and_ask_user"
+      description: "Pausa e solicita decisao do usuario"
+
+  recovery_actions:
+    compact_and_resume:
+      steps:
+        - "execute_compact_command"
+        - "load_last_checkpoint"
+        - "resume_execution"
+
+    exponential_backoff_retry:
+      steps:
+        - "calculate_delay"
+        - "sleep_with_delay"
+        - "retry_phase"
+
+    resume_from_checkpoint:
+      steps:
+        - "load_recovery_checkpoint"
+        - "validate_checkpoint_integrity"
+        - "resume_from_phase"
+
+    retry_with_enhanced_context:
+      steps:
+        - "add_error_context"
+        - "add_suggested_fixes"
+        - "retry_phase"
+
+    rollback:
+      steps:
+        - "find_previous_checkpoint"
+        - "validate_checkpoint"
+        - "restore_state"

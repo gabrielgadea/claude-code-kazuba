@@ -1,0 +1,283 @@
+#!/usr/bin/env python3
+"""
+Validation Script — Phase 16: Advanced Hooks Batch 1
+
+Verifies all deliverables, runs tests, checks coverage, lint, typecheck,
+regression, and saves checkpoint.
+Exit 0 = PASS, Exit 1 = FAIL
+"""
+from __future__ import annotations
+
+import json
+import subprocess
+import sys
+import time
+from pathlib import Path
+
+try:
+    import msgpack
+except ImportError:
+    msgpack = None  # type: ignore[assignment]
+
+PHASE_ID = 16
+PHASE_TITLE = "Advanced Hooks Batch 1"
+BASE_DIR = Path(__file__).resolve().parent.parent.parent.parent
+CHECKPOINT_DIR = BASE_DIR / "checkpoints"
+CHECKPOINT_DIR.mkdir(exist_ok=True)
+
+EXPECTED_FILES = [
+    "modules/hooks-essential/hooks/session_state_manager.py",
+    "modules/hooks-essential/hooks/post_compact_reinjector.py",
+    "modules/hooks-quality/hooks/validate_hooks_health.py"
+]
+MIN_LINES = {"modules/hooks-essential/hooks/session_state_manager.py": 200, "modules/hooks-essential/hooks/post_compact_reinjector.py": 80, "modules/hooks-quality/hooks/validate_hooks_health.py": 120}
+# Python files to measure coverage for
+COVERAGE_FILES = [
+    "modules/hooks-essential/hooks/session_state_manager.py",
+    "modules/hooks-essential/hooks/post_compact_reinjector.py",
+    "modules/hooks-quality/hooks/validate_hooks_health.py"
+]
+TEST_DIR = "tests/phase_16/"
+MIN_COVERAGE = 90
+
+
+def check_files_exist() -> list[str]:
+    """Verify all expected files exist and meet minimum line counts."""
+    errors: list[str] = []
+    for fpath in EXPECTED_FILES:
+        full = BASE_DIR / fpath
+        if not full.exists():
+            errors.append(f"MISSING: {fpath}")
+            continue
+        lines = len(full.read_text().splitlines())
+        min_l = MIN_LINES.get(fpath, 1)
+        if lines < min_l:
+            errors.append(f"TOO_SHORT: {fpath} ({lines} < {min_l} lines)")
+    return errors
+
+
+def run_tests() -> dict:
+    """Run pytest with coverage for this phase."""
+    test_path = BASE_DIR / TEST_DIR
+    if not test_path.exists():
+        return {"status": "SKIP", "reason": f"Test dir {TEST_DIR} not found"}
+
+    result = subprocess.run(
+        [
+            sys.executable, "-m", "pytest", str(test_path),
+            "--tb=short", "-q",
+            f"--cov={BASE_DIR / 'lib'}",
+            f"--cov={BASE_DIR / 'modules/hooks-essential'}",
+
+            f"--cov={BASE_DIR / 'modules/hooks-quality'}",
+            "--cov-report=json:coverage.json",
+            "--cov-fail-under=0",
+        ],
+        capture_output=True, text=True, cwd=str(BASE_DIR),
+    )
+
+    cov_data = {}
+    per_file_pass = True
+    cov_file = BASE_DIR / "coverage.json"
+    if cov_file.exists():
+        cov_data = json.loads(cov_file.read_text())
+        cov_file.unlink()
+        for fpath in COVERAGE_FILES:
+            if not fpath.endswith(".py"):
+                continue
+            pct = cov_data.get("files", {}).get(fpath, {}).get("summary", {}).get("percent_covered", 0)
+            if pct < MIN_COVERAGE:
+                per_file_pass = False
+
+    return {
+        "status": "PASS" if (result.returncode == 0 and per_file_pass) else "FAIL",
+        "returncode": result.returncode,
+        "stdout": result.stdout[-500:] if result.stdout else "",
+        "stderr": result.stderr[-500:] if result.stderr else "",
+        "coverage": cov_data.get("totals", {}).get("percent_covered", 0),
+    }
+
+
+def run_lint() -> dict:
+    """Run ruff check on lib/ directory."""
+    result = subprocess.run(
+        [sys.executable, "-m", "ruff", "check", str(BASE_DIR / "lib"), "--quiet"],
+        capture_output=True, text=True, cwd=str(BASE_DIR),
+    )
+    return {
+        "status": "PASS" if result.returncode == 0 else "FAIL",
+        "errors": result.stdout.strip() if result.stdout else "",
+    }
+
+
+def run_typecheck() -> dict:
+    """Run pyright on lib/ directory."""
+    result = subprocess.run(
+        [sys.executable, "-m", "pyright", str(BASE_DIR / "lib"), "--outputjson"],
+        capture_output=True, text=True, cwd=str(BASE_DIR),
+    )
+    return {
+        "status": "PASS" if result.returncode == 0 else "FAIL",
+        "output": result.stdout[-300:] if result.stdout else "",
+    }
+
+
+def run_regression() -> dict:
+    """Run existing test suite to check for regressions."""
+    existing_tests = BASE_DIR / "tests"
+    if not existing_tests.exists():
+        return {"status": "SKIP", "reason": "No existing tests dir"}
+
+    result = subprocess.run(
+        [
+            sys.executable, "-m", "pytest", str(existing_tests),
+            "--tb=short", "-q", "--ignore=tests/phase_11",
+            "--ignore=tests/phase_12", "--ignore=tests/phase_13",
+            "--ignore=tests/phase_14", "--ignore=tests/phase_15",
+            "--ignore=tests/phase_16", "--ignore=tests/phase_17",
+            "--ignore=tests/phase_18", "--ignore=tests/phase_19",
+            "--ignore=tests/phase_20", "--ignore=tests/phase_21",
+            "--ignore=tests/phase_22", "--ignore=tests/integration_v2",
+        ],
+        capture_output=True, text=True, cwd=str(BASE_DIR),
+    )
+    return {
+        "status": "PASS" if result.returncode == 0 else "FAIL",
+        "returncode": result.returncode,
+        "stdout": result.stdout[-500:] if result.stdout else "",
+    }
+
+
+TEST_SPECS = [
+    ("tests/phase_16/test_session_state_manager.py", 15, 90),
+    ("tests/phase_16/test_post_compact_reinjector.py", 10, 90),
+    ("tests/phase_16/test_validate_hooks_health.py", 12, 90),
+]
+
+
+def check_test_specs() -> list[str]:
+    """Verify test files meet minimum test count."""
+    errors: list[str] = []
+    for tpath, min_tests, _cov_target in TEST_SPECS:
+        full = BASE_DIR / tpath
+        if not full.exists():
+            errors.append(f"MISSING_TEST: {tpath}")
+            continue
+        content = full.read_text()
+        test_count = content.count("def test_")
+        if test_count < min_tests:
+            errors.append(
+                f"TOO_FEW_TESTS: {tpath} ({test_count} < {min_tests})"
+            )
+    return errors
+
+
+def save_checkpoint(results: dict) -> Path:
+    """Save checkpoint in .toon format (msgpack)."""
+    checkpoint = {
+        "phase_id": PHASE_ID,
+        "phase_title": PHASE_TITLE,
+        "timestamp": time.time(),
+        "iso_time": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+        "results": results,
+        "version": "3.0",
+    }
+
+    path = CHECKPOINT_DIR / f"phase_{PHASE_ID}.toon"
+    if msgpack is not None:
+        path.write_bytes(msgpack.packb(checkpoint, use_bin_type=True))
+    else:
+        # Fallback: JSON with .toon extension
+        path.write_text(json.dumps(checkpoint, indent=2, default=str))
+
+    return path
+
+
+def main() -> int:
+    print(f"\n{"=" * 60}")
+    print(f"  Phase {PHASE_ID} Validation: {PHASE_TITLE}")
+    print(f"{"=" * 60}\n")
+
+    results: dict = {"phase": PHASE_ID, "checks": {}}
+    all_pass = True
+
+    # Check 1: Files exist
+    file_errors = check_files_exist()
+    results["checks"]["files"] = {
+        "status": "PASS" if not file_errors else "FAIL",
+        "total": len(EXPECTED_FILES),
+        "missing": len(file_errors),
+        "errors": file_errors,
+    }
+    if file_errors:
+        all_pass = False
+        for e in file_errors:
+            print(f"  [FAIL] {e}")
+    else:
+        print(f"  [PASS] All {len(EXPECTED_FILES)} files present")
+
+    # Check 2: Tests
+    test_results = run_tests()
+    results["checks"]["tests"] = test_results
+    if test_results["status"] == "FAIL":
+        all_pass = False
+        print(f"  [FAIL] Tests failed (coverage: {test_results.get('coverage', 'N/A')}%)")
+    elif test_results["status"] == "SKIP":
+        print(f"  [SKIP] {test_results['reason']}")
+    else:
+        print(f"  [PASS] Tests passed (coverage: {test_results.get('coverage', 'N/A')}%)")
+
+    # Check 3: Lint
+    lint_results = run_lint()
+    results["checks"]["lint"] = lint_results
+    if lint_results["status"] == "FAIL":
+        all_pass = False
+        print("  [FAIL] Lint errors found")
+    else:
+        print("  [PASS] Lint clean")
+
+    # Check 4: Type check
+    type_results = run_typecheck()
+    results["checks"]["typecheck"] = type_results
+    if type_results["status"] == "FAIL":
+        print("  [WARN] Type check issues (non-blocking)")
+    else:
+        print("  [PASS] Type check clean")
+
+    # Check 5: Test specifications
+    ts_errors = check_test_specs()
+    results["checks"]["test_specs"] = {
+        "status": "PASS" if not ts_errors else "FAIL",
+        "errors": ts_errors,
+    }
+    if ts_errors:
+        all_pass = False
+        for e in ts_errors:
+            print(f"  [FAIL] {e}")
+    else:
+        print("  [PASS] All test specs met")
+
+    # Check 6: Regression (existing tests)
+    reg_results = run_regression()
+    results["checks"]["regression"] = reg_results
+    if reg_results["status"] == "FAIL":
+        all_pass = False
+        print("  [FAIL] Regression: existing tests broken")
+    elif reg_results["status"] == "SKIP":
+        print(f"  [SKIP] {reg_results['reason']}")
+    else:
+        print("  [PASS] Regression: existing tests still green")
+
+    # Save checkpoint
+    results["overall"] = "PASS" if all_pass else "FAIL"
+    cp_path = save_checkpoint(results)
+    print(f"\n  Checkpoint: {cp_path}")
+
+    print(f"\n  Overall: {results['overall']}")
+    print(f"{"=" * 60}\n")
+
+    return 0 if all_pass else 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())

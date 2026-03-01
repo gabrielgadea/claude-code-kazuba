@@ -1,0 +1,50 @@
+# KAZUBA HOOKS - High-performance hook logic for Claude Code
+# Provides Rust-accelerated implementations for critical hooks
+# Location: rust/kazuba-hooks/
+#
+# OPTIONAL: requires Rust compilation.
+# If cargo check/build fails, the Python fallback in lib/rust_bridge.py
+# will be used automatically — all Python tests will still pass.
+#
+# To build Python bindings:
+#   maturin develop --features pyo3-bindings
+#
+# To check without workspace:
+#   cargo check (this standalone Cargo.toml handles all deps)
+
+[package]
+name = "kazuba-hooks"
+version = "0.3.0"
+edition = "2021"
+license = "MIT"
+authors = ["Gabriel Gadea"]
+description = "High-performance hook logic for Claude Code (secrets detection, skill matching, code validation)"
+
+[lib]
+name = "kazuba_hooks"
+crate-type = ["rlib", "cdylib"]
+
+[features]
+default = []
+pyo3-bindings = ["pyo3"]
+
+[dependencies]
+# Core dependencies (standalone, no workspace required)
+aho-corasick = "1.1"
+regex = "1.11"
+thiserror = "2.0"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+rayon = "1.10"
+uuid = { version = "1.11", features = ["v4"] }
+
+# Optional PyO3 for Python bindings
+pyo3 = { version = "0.23", features = ["extension-module"], optional = true }
+
+[dev-dependencies]
+criterion = { version = "0.5", features = ["html_reports"] }
+proptest = "1.5"
+
+[[bench]]
+name = "hooks_benchmark"
+harness = false

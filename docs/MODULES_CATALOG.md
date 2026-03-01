@@ -21,6 +21,7 @@ and preset inclusion.
 | contexts | Contexts | none | standard, research, professional, enterprise |
 | config-hypervisor | Config | none | enterprise |
 | team-orchestrator | Orchestration | config-hypervisor | enterprise |
+| rlm | Learning Memory | none | enterprise |
 
 ## Detailed Descriptions
 
@@ -53,6 +54,8 @@ session status monitoring, and context preservation during compaction.
 - `prompt_enhancer.py` — Classifies intent (8 categories) and injects cognitive techniques
 - `status_monitor.sh` — Reports session info, git branch, pending TODOs
 - `auto_compact.sh` — Saves context checkpoint before compaction
+- `session_state_manager.py` — Persists session state across compactions [v0.2.0]
+- `post_compact_reinjector.py` — Re-injects critical context after compaction [v0.2.0]
 
 ---
 
@@ -71,6 +74,8 @@ and dangerous shell commands from entering the codebase.
 - `secrets_scanner.py` — API keys, AWS keys, GitHub tokens, OpenAI keys detection
 - `pii_scanner.py` — CPF, CNPJ (BR), SSN (US), email, phone (EU) detection
 - `bash_safety.py` — Blocks rm -rf /, chmod 777, curl|bash, fork bombs
+- `siac_orchestrator.py` — Quality gates with circuit breaker integration [v0.2.0]
+- `validate_hooks_health.py` — Periodic health check for all registered hooks [v0.2.0]
 
 ---
 
@@ -88,6 +93,9 @@ routes prompts by complexity (L0-L6).
 - `cila_router.py` — CILA L0-L6 complexity classification and routing
 - `knowledge_manager.py` — 3-tier knowledge injection (cache, project, external)
 - `compliance_tracker.py` — Tool usage tracking and audit logging
+- `strategy_enforcer.py` — Enforces core governance strategy [v0.2.0]
+- `auto_permission_resolver.py` — CILA-aware automatic permission resolution [v0.2.0]
+- `ptc_advisor.py` — PTC program advisor with CILA L0-L6 classification [v0.2.0]
 
 ---
 
@@ -243,3 +251,24 @@ Multi-agent team orchestration with typed models and delegation templates.
 - `src/models.py` — Pydantic v2 typed models (TaskRequest, AgentConfig, etc.)
 - `templates/task-delegation.md` — Task delegation template
 - `templates/status-report.md` — Status report template
+
+---
+
+### rlm
+
+**Category**: Learning Memory
+**Dependencies**: none
+**Presets**: enterprise
+**Version**: v0.2.0
+
+Reinforcement Learning Memory module. Provides semantic recall across sessions using
+Q-Table learning, working memory with TTL, and reward-based experience replay.
+
+**Provides**:
+- `src/q_table.py` — Q-Table with epsilon-greedy exploration and state hashing
+- `src/working_memory.py` — Short-term memory with configurable TTL and priority
+- `src/session_manager.py` — Session lifecycle management with TOON checkpoint persistence
+- `src/reward_calculator.py` — Multi-factor reward computation (quality, speed, correctness)
+- `src/models.py` — Pydantic v2 models (State, Action, Experience, Episode)
+- `config/rlm.yaml` — Hyperparameters (learning_rate, discount_factor, epsilon_decay)
+- `lib/rlm.py` — Facade integrating all RLM components into a single callable API

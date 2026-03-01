@@ -49,17 +49,30 @@ claude-code-kazuba/
 │   ├── patterns.py       # Regex patterns (secrets, PII, bash safety)
 │   ├── template_engine.py# Jinja2 template rendering with custom filters
 │   ├── checkpoint.py     # TOON format checkpoint save/load
-│   └── performance.py    # L0Cache, ParallelExecutor, Rust accelerator
+│   ├── performance.py    # L0Cache, ParallelExecutor, Rust accelerator
+│   ├── circuit_breaker.py# CircuitBreaker (3 states: CLOSED/OPEN/HALF_OPEN) [v0.2.0]
+│   ├── trace_manager.py  # Distributed trace context + span management [v0.2.0]
+│   ├── hook_logger.py    # Structured hook event logging with JSONL output [v0.2.0]
+│   ├── event_bus.py      # Async event bus for hook coordination [v0.2.0]
+│   ├── rust_bridge.py    # PyO3/maturin bridge with pure-Python fallback [v0.2.0]
+│   ├── governance.py     # CODE-FIRST enforcement, zero-hallucination protocol [v0.2.0]
+│   └── rlm.py            # RLM facade (QTable, WorkingMemory, SessionManager) [v0.2.0]
+├── rust/                 # Rust acceleration layer [v0.2.0]
+│   └── kazuba-hooks/     # Cargo crate with PyO3 bindings
 ├── scripts/              # Build and generation scripts
-│   └── generate_plan.py  # Plan generation and validation
+│   ├── generate_plan.py  # Plan generation and validation
+│   ├── benchmark_hooks.py# Hook benchmark suite (p50/p95/p99) [v0.2.0]
+│   └── migrate_v01_v02.py# Migration from v0.1.0 to v0.2.0 [v0.2.0]
 ├── tests/                # Test suite (pytest)
 │   ├── conftest.py       # Shared fixtures
 │   ├── phase_00/         # Bootstrap tests
 │   ├── phase_01/         # Library module tests
-│   ├── ...               # One directory per phase
-│   └── phase_10/         # CI + documentation tests
+│   ├── ...               # One directory per phase (v0.1.0: 00-10, v0.2.0: 11-22)
+│   ├── phase_22/         # Release v0.2.0 checklist tests
+│   └── integration_v2/   # End-to-end v0.2.0 integration tests
 ├── plans/                # Phase execution plans
-│   └── validation/       # Phase validation scripts
+│   ├── validation/       # Phase validation scripts (v0.1.0)
+│   └── v2/               # v0.2.0 plans + validation scripts
 ├── checkpoints/          # TOON format checkpoint files
 ├── docs/                 # Documentation
 │   ├── ARCHITECTURE.md   # This file
@@ -228,6 +241,87 @@ The payload contains:
 - `title`: Human-readable title
 - `timestamp`: ISO 8601 UTC timestamp
 - `results`: Phase-specific results dictionary
+
+## v0.2.0 New Components
+
+### Shared Infrastructure (Phase 11)
+
+Four new library modules provide cross-cutting infrastructure:
+
+| Module | Purpose |
+|--------|---------|
+| `lib.circuit_breaker` | 3-state circuit breaker (CLOSED/OPEN/HALF_OPEN). Trips after N failures, recovers after timeout. Prevents cascading hook failures. |
+| `lib.trace_manager` | Distributed trace context with span creation, propagation, and export. Attaches trace IDs to every hook execution. |
+| `lib.hook_logger` | Structured JSONL event logging for hooks. Captures inputs, outputs, timings, exit codes. |
+| `lib.event_bus` | Async publish/subscribe event bus for hook-to-hook coordination without direct coupling. |
+
+### Rust Acceleration Layer (Phase 12)
+
+`rust/kazuba-hooks/` is a Cargo crate with PyO3 bindings for performance-critical paths.
+`lib.rust_bridge` provides the Python interface with automatic pure-Python fallback when
+the compiled extension is unavailable.
+
+### Core Governance + CILA Formal (Phase 13)
+
+- `core/rules/core-governance.md` — CODE-FIRST enforcement rules
+- `core/rules/agent-teams.md` — Agent team coordination rules
+- `modules/hooks-routing/config/cila-taxonomy.md` — Formal CILA L0-L6 taxonomy
+- `lib.governance` — Runtime governance enforcement (zero-hallucination protocol)
+- `modules/hooks-routing/hooks/strategy_enforcer.py` — Hook that enforces strategy
+
+### Agent Triggers + Recovery (Phase 14)
+
+Declarative YAML configs in `modules/config-hypervisor/config/`:
+- `agent_triggers.yaml` — Rules for automatic agent dispatch based on complexity/domain/failures
+- `recovery_triggers.yaml` — Escalation chains for cascading failure recovery
+
+### Hypervisor v2 (Phase 15)
+
+Three new modules in `modules/config-hypervisor/src/`:
+- `hypervisor.py` — Base hypervisor with context management and thinking level control
+- `hypervisor_v2.py` — Extended hypervisor with SLA tracking and circuit breaker integration
+- `hypervisor_bridge.py` — Bridge between old `hypervisor.yaml` config and v2 runtime
+
+### Advanced Hooks — Batches 1 & 2 (Phases 16-17)
+
+**Batch 1** (hooks-essential + hooks-quality):
+- `session_state_manager.py` — Persists session state (variables, context) across compactions
+- `post_compact_reinjector.py` — Re-injects critical context after compaction
+- `validate_hooks_health.py` — Periodic health check for all registered hooks (Heartbeat event)
+
+**Batch 2** (hooks-quality + hooks-routing):
+- `siac_orchestrator.py` — Quality gates with circuit breaker integration (PreToolUse)
+- `auto_permission_resolver.py` — CILA-aware automatic permission resolution (PreToolUse)
+- `ptc_advisor.py` — PTC program advisor with CILA L0-L6 classification (UserPromptSubmit)
+
+### RLM Learning Memory (Phase 18)
+
+The `modules/rlm/` module provides reinforcement learning-based memory across sessions:
+
+```
+modules/rlm/
+├── MODULE.md              # Module manifest
+├── config/
+│   └── rlm.yaml           # Hyperparameters (learning_rate, discount_factor, etc.)
+└── src/
+    ├── __init__.py
+    ├── config.py          # RLMConfig (Pydantic v2)
+    ├── models.py          # State, Action, Experience, Episode
+    ├── q_table.py         # Q-Table with epsilon-greedy exploration
+    ├── working_memory.py  # Short-term memory with TTL and priority
+    ├── session_manager.py # Session lifecycle + checkpoint persistence
+    └── reward_calculator.py # Multi-factor reward computation
+```
+
+`lib.rlm` provides the facade that integrates all components into a single callable API.
+
+### Benchmark Suite + Self-Hosting (Phase 20)
+
+- `scripts/benchmark_hooks.py` — CLI tool for benchmarking hook performance (p50/p95/p99).
+  Discovers hooks, runs warmup iterations, reports `BenchmarkResult` with `is_healthy` flag.
+- `.claude/hooks/self_host_config.py` — Self-hosting configuration for the framework's own hooks.
+  `SelfHostConfig` with `HookRegistration`, `load_config`, `validate_config`,
+  `generate_settings_fragment`.
 
 ## Design Decisions
 

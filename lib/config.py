@@ -57,6 +57,148 @@ class InstallerConfig(BaseModel):
     stack: str | None = None
 
 
+class AgentTrigger(BaseModel, frozen=True):
+    """Agent trigger with condition string for auto-activation.
+
+    Conditions are matched using keyword-based evaluation (no eval()).
+    Recovery plan: string-only conditions without code evaluation.
+    """
+
+    name: str = ""
+    type: str = "auto"
+    condition: str = ""
+    thinking_level: str = "normal"
+    agent: str = ""
+    model: str = "sonnet"
+    priority: int = 50
+    background: bool = False
+    max_retries: int = 3
+    description: str = ""
+    skill_attachments: list[str] = Field(default_factory=list)
+
+    def evaluate(self, context: dict[str, Any]) -> bool:
+        """Evaluate trigger condition against context using safe string matching.
+
+        Supports simple conditions like:
+          - "task_type == 'exploration'"
+          - "'search' in task"
+          - "complexity == 'high'"
+
+        Args:
+            context: Dict with task, complexity, domain, task_type, etc.
+
+        Returns:
+            True if trigger condition matches the context.
+        """
+        if not self.condition:
+            return False
+        condition = self.condition.lower()
+        # Check each context key for simple equality or membership conditions
+        for key, value in context.items():
+            val_str = str(value).lower() if value is not None else ""
+            # Match "key == 'value'" pattern
+            if f"{key} ==" in condition and f"'{val_str}'" in condition:
+                return True
+            # Match "'keyword' in key" or "keyword in key" pattern
+            if f"in {key}" in condition:
+                for token in condition.split():
+                    token = token.strip("'\"")
+                    if token and token in val_str:
+                        return True
+        return False
+
+
+class RecoveryTrigger(BaseModel, frozen=True):
+    """Recovery trigger definition for automatic failure handling."""
+
+    name: str = ""
+    type: str = "auto"
+    on_event: str = ""
+    action: str = ""
+    max_retries: int = 3
+    cooldown_seconds: float = 30.0
+    description: str = ""
+    conditions: dict[str, Any] = Field(default_factory=dict)
+
+
+class TriggerRegistry(BaseModel):
+    """Registry for loading and querying triggers from YAML config."""
+
+    agent_triggers: list[AgentTrigger] = Field(default_factory=list)
+    recovery_triggers: list[RecoveryTrigger] = Field(default_factory=list)
+
+    @classmethod
+    def from_yaml(cls, agent_path: Path, recovery_path: Path) -> TriggerRegistry:
+        """Load triggers from YAML files.
+
+        Args:
+            agent_path: Path to agent_triggers.yaml.
+            recovery_path: Path to recovery_triggers.yaml.
+
+        Returns:
+            Populated TriggerRegistry.
+        """
+        import yaml  # noqa: PLC0415
+
+        agent_triggers: list[AgentTrigger] = []
+        if agent_path.exists():
+            data = yaml.safe_load(agent_path.read_text()) or {}
+            for tname, cfg in (data.get("agent_triggers") or {}).items():
+                safe_cfg = {k: v for k, v in cfg.items() if k != "name"}
+                agent_triggers.append(AgentTrigger(name=tname, **safe_cfg))
+
+        recovery_triggers: list[RecoveryTrigger] = []
+        if recovery_path.exists():
+            data = yaml.safe_load(recovery_path.read_text()) or {}
+            # Support both flat "recovery_triggers" and nested "recovery.{auto,manual}_triggers"
+            flat = data.get("recovery_triggers") or {}
+            nested = data.get("recovery", {})
+            auto_triggers = nested.get("automatic_triggers") or {}
+            manual_triggers = nested.get("manual_triggers") or {}
+            all_triggers = {**flat, **auto_triggers, **manual_triggers}
+            for tname, cfg in all_triggers.items():
+                if not isinstance(cfg, dict):
+                    continue
+                safe_cfg = {k: v for k, v in cfg.items() if k != "name"}
+                # Map nested YAML fields to RecoveryTrigger fields
+                # Prefer explicit on_event, then condition, then trigger, then name
+                on_event = safe_cfg.pop("on_event", None) or safe_cfg.pop("condition", None) or safe_cfg.pop("trigger", tname)
+                recovery_triggers.append(RecoveryTrigger(
+                    name=tname,
+                    on_event=str(on_event) if on_event else tname,
+                    **{k: v for k, v in safe_cfg.items()
+                       if k in {"type", "action", "max_retries", "cooldown_seconds", "description", "conditions"}},
+                ))
+
+        return cls(agent_triggers=agent_triggers, recovery_triggers=recovery_triggers)
+
+    def match_agent_triggers(self, context: dict[str, Any]) -> list[AgentTrigger]:
+        """Return all agent triggers that match the given context.
+
+        Args:
+            context: Execution context dict.
+
+        Returns:
+            List of matching triggers sorted by priority descending.
+        """
+        matched = [t for t in self.agent_triggers if t.evaluate(context)]
+        return sorted(matched, key=lambda t: t.priority, reverse=True)
+
+    def get_recovery_trigger(self, event: str) -> RecoveryTrigger | None:
+        """Find the first recovery trigger matching an event.
+
+        Args:
+            event: Event name to match against on_event field.
+
+        Returns:
+            Matching trigger or None.
+        """
+        for trigger in self.recovery_triggers:
+            if trigger.on_event == event:
+                return trigger
+        return None
+
+
 def resolve_dependencies(
     requested: list[str],
     manifests: dict[str, ModuleManifest],

@@ -1,0 +1,58 @@
+# RLM Learning Memory — Default Configuration
+# ============================================
+# All values here are the defaults used when no explicit config is passed.
+# Override by creating a project-specific rlm.yaml or passing RLMConfig kwargs.
+
+# ── Q-learning hyperparameters ──────────────────────────────────────────────
+
+# learning_rate (alpha): Step size for Q-value updates.
+# Higher = learns faster but may oscillate. Range: [0.0, 1.0]
+learning_rate: 0.1
+
+# discount_factor (gamma): How much future rewards are discounted.
+# 1.0 = fully long-sighted; 0.0 = myopic. Range: [0.0, 1.0]
+discount_factor: 0.95
+
+# epsilon: Probability of choosing a random action (exploration).
+# Decrease over time for exploitation. Range: [0.0, 1.0]
+epsilon: 0.1
+
+# lambda_trace: Eligibility trace decay for TD(λ).
+# 0.0 = TD(0); 1.0 = Monte Carlo. Range: [0.0, 1.0]
+lambda_trace: 0.8
+
+# ── Memory settings ──────────────────────────────────────────────────────────
+
+# max_history: Maximum number of MemoryEntry objects in working memory.
+# When exceeded, the lowest-score entry is evicted (LRU + importance).
+max_history: 1000
+
+# max_q_table_size: Maximum (state, action) pairs in the Q-table.
+# When exceeded, lowest-magnitude entries are pruned.
+max_q_table_size: 10000
+
+# ── Persistence ──────────────────────────────────────────────────────────────
+
+# persist_path: Where to save the Q-table as JSON.
+# Set to null to disable disk persistence (in-memory only).
+# Example: "checkpoints/rlm/q_table.json"
+persist_path: null
+
+# auto_save_interval: Save Q-table to disk every N updates.
+# 0 disables auto-save (only explicit saves will persist).
+auto_save_interval: 100
+
+# ── Reward settings ──────────────────────────────────────────────────────────
+
+# reward_clip_min: Minimum clipped reward value.
+reward_clip_min: -1.0
+
+# reward_clip_max: Maximum clipped reward value.
+reward_clip_max: 1.0
+
+# ── Session settings ─────────────────────────────────────────────────────────
+
+# session_checkpoint_dir: Directory for per-session TOON checkpoints.
+# Set to null to skip session persistence.
+# Example: "checkpoints/rlm/sessions"
+session_checkpoint_dir: null

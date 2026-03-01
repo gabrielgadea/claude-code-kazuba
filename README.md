@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/gabrielgadea/claude-code-kazuba/actions/workflows/ci.yml/badge.svg)](https://github.com/gabrielgadea/claude-code-kazuba/actions/workflows/ci.yml)
 [![Python 3.12+](https://img.shields.io/badge/python-3.12%2B-blue.svg)](https://www.python.org/downloads/)
-[![Tests](https://img.shields.io/badge/tests-723%20passed-brightgreen.svg)](#test-suite)
+[![Tests](https://img.shields.io/badge/tests-1567%20passed-brightgreen.svg)](#test-suite)
 [![Coverage](https://img.shields.io/badge/coverage-97%25-brightgreen.svg)](#test-suite)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 
@@ -24,8 +24,8 @@ O Claude Code sem configuracao e poderoso, mas **fragil**:
 
 ## A Solucao
 
-Kazuba e um sistema modular de **14 modulos** que se instala em qualquer projeto com um unico comando.
-Cada modulo resolve um problema real, testado com 723 testes e 97% de coverage:
+Kazuba e um sistema modular de **15 modulos** que se instala em qualquer projeto com um unico comando.
+Cada modulo resolve um problema real, testado com 1567 testes e 97% de coverage:
 
 ```bash
 ./install.sh --preset professional --target /path/to/your/project
@@ -95,7 +95,7 @@ modules/skills-planning/skills/code-first-planner/SKILL.md
 claude-code-kazuba/
 ├── lib/                    # 7 modulos compartilhados (hook_base, patterns, performance, ...)
 ├── core/                   # Templates Jinja2 + rules universais (sempre instalado)
-├── modules/                # 13 modulos opcionais organizados por categoria
+├── modules/                # 14 modulos opcionais organizados por categoria
 │   ├── hooks-essential/    #   Prompt enhancer, status monitor, auto compact
 │   ├── hooks-quality/      #   Secrets, PII, bash safety, quality gate
 │   ├── hooks-routing/      #   CILA router, knowledge manager, compliance
@@ -104,11 +104,12 @@ claude-code-kazuba/
 │   ├── commands-*/         #   6 slash commands (debug-RCA, verify, smart-commit, ...)
 │   ├── config-hypervisor/  #   Central automation config (triggers, events, SLA)
 │   ├── contexts/           #   Mode switching (dev, review, research, audit)
-│   └── team-orchestrator/  #   Multi-agent coordination (routing, SLA, templates)
+│   ├── team-orchestrator/  #   Multi-agent coordination (routing, SLA, templates)
+│   └── rlm/                #   RLM Learning Memory (Q-Table, WorkingMemory, RewardCalc)
 ├── presets/                # 5 presets (minimal → enterprise)
 ├── scripts/                # Installer CLI (detect stack, resolve deps, merge settings)
 ├── install.sh              # One-command installer
-└── tests/                  # 723 testes (phase_00 → phase_10 + integration)
+└── tests/                  # 1567 testes (phase_00 → phase_22 + integration_v2)
 ```
 
 ### Principios de Design
@@ -137,6 +138,12 @@ claude-code-kazuba/
 | **CILA Router** | UserPromptSubmit | hooks-routing | Classificacao L0-L6 com cache (120s TTL) |
 | **Knowledge Manager** | PreToolUse | hooks-routing | 3-tier: cache local → docs do projeto → busca externa |
 | **Compliance Tracker** | PostToolUse | hooks-routing | Audit logging JSONL + compliance scoring |
+| **SIAC Orchestrator** | PreToolUse | hooks-quality | Quality gates com circuit breaker (v0.2.0) |
+| **Auto Permission Resolver** | PreToolUse | hooks-routing | Resolucao automatica de permissoes CILA-aware (v0.2.0) |
+| **PTC Advisor** | UserPromptSubmit | hooks-routing | Advisor de complexidade CILA L0-L6 (v0.2.0) |
+| **Session State Manager** | SessionStart/Stop | hooks-essential | Persistencia de estado entre sessoes (v0.2.0) |
+| **Post Compact Reinjector** | PreCompact | hooks-essential | Reinjecao de contexto critico pos-compactacao (v0.2.0) |
+| **Validate Hooks Health** | Heartbeat | hooks-quality | Health check periodico de todos os hooks (v0.2.0) |
 
 ## Skills, Agents e Commands
 
@@ -219,7 +226,7 @@ O installer:
 
 | Metrica | Valor |
 |---------|-------|
-| Testes | 723 |
+| Testes | 1567 |
 | Coverage (lib/) | 97% |
 | Coverage target | 90% per file |
 | Lint (ruff) | 0 errors |
@@ -227,8 +234,8 @@ O installer:
 | Types (pyright strict) | 0 errors |
 | CI | GitHub Actions (lint + typecheck + test) |
 
-Testes organizados por fase de desenvolvimento (phase_00 → phase_10) + integration tests
-para cada preset.
+Testes organizados por fase de desenvolvimento (phase_00 → phase_22) + integration tests
+para cada preset e integration_v2 para os novos componentes v0.2.0.
 
 ## Desenvolvimento
 
@@ -245,14 +252,24 @@ ruff format --check lib/ scripts/ tests/
 pyright lib/
 ```
 
+## O que ha de novo na v0.2.0
+
+- [x] **Shared Infrastructure** — CircuitBreaker, TraceManager, HookLogger, EventBus
+- [x] **Rust Acceleration Layer** — Stub + bridge PyO3 para hooks performance-criticos
+- [x] **Core Governance + CILA Formal** — Taxonomia CILA L0-L6, StrategyEnforcer, governance rules
+- [x] **Agent Triggers + Recovery** — Dispatch declarativo e escalacao automatica
+- [x] **Hypervisor Executable** — Hypervisor, HypervisorV2, HypervisorBridge
+- [x] **Advanced Hooks Batch 1** — SessionStateManager, PostCompactReinjector, ValidateHooksHealth
+- [x] **Advanced Hooks Batch 2** — SiacOrchestrator, AutoPermissionResolver, PtcAdvisor
+- [x] **RLM Learning Memory** — QTable, WorkingMemory, SessionManager, RewardCalculator, facade
+- [x] **Integration + Migration** — E2E tests, migrate_v01_v02.py, MIGRATION.md
+- [x] **Benchmark Suite** — benchmark_hooks.py CLI + self_host_config.py
+- [ ] **GPU Acceleration** — Embeddings e similarity via CUDA/Metal (roadmap v0.3.0)
+
 ## Roadmap
 
-- [ ] **Rust Acceleration Layer** — Hooks em Rust via PyO3/maturin para performance critica
-- [ ] **RLM (Reinforced Learning Memory)** — Sistema de aprendizado com semantic recall entre sessoes
-- [ ] **Agent Triggers Avancados** — Dispatch automatico baseado em complexidade/dominio/falhas
-- [ ] **Recovery Triggers** — Escalacao automatica em cadeia de falhas
 - [ ] **GPU Acceleration** — Embeddings e similarity via CUDA/Metal
-- [ ] **Core Governance** — CODE-FIRST enforcement com zero-hallucination protocol
+- [ ] **Multi-tenant Isolation** — Isolamento de contexto por workspace
 
 ## Contribuindo
 

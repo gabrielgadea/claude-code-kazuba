@@ -29,6 +29,9 @@ dev = [
     "ruff>=0.8",
     "pyright>=1.1.390",
 ]
+rust = [
+    "maturin>=1.0",
+]
 
 [project.urls]
 Homepage = "https://github.com/gabrielgadea/claude-code-kazuba"
