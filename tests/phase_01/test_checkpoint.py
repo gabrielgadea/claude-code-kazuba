@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 
-from lib.checkpoint import (
+from claude_code_kazuba.checkpoint import (
     TOON_MAGIC,
     TOON_VERSION,
     create_phase_checkpoint,

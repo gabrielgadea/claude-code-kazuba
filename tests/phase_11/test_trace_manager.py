@@ -8,7 +8,7 @@ import time
 
 import pytest
 
-from lib.trace_manager import TraceManager, TraceSpan
+from claude_code_kazuba.trace_manager import TraceManager, TraceSpan
 
 
 class TestTraceSpan:

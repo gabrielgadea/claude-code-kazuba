@@ -6,7 +6,7 @@ per hook invocation and reused across calls within the same session.
 
 Usage::
 
-    from lib.rlm import RLMFacade, RLMFacadeConfig
+    from claude_code_kazuba.rlm import RLMFacade, RLMFacadeConfig
 
     rlm = RLMFacade()
     rlm.start_session("sess-001")

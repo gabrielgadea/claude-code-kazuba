@@ -8,7 +8,7 @@ from unittest.mock import patch
 
 import pytest
 
-from lib.hook_base import (
+from claude_code_kazuba.hook_base import (
     ALLOW,
     BLOCK,
     DENY,

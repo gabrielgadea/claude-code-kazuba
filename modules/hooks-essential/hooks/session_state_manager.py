@@ -29,14 +29,14 @@ from pydantic import BaseModel, Field
 # Attempt to import lib utilities (fail-open if not available)
 # ---------------------------------------------------------------------------
 try:
-    from lib.checkpoint import save_toon  # type: ignore[import]
+    from claude_code_kazuba.checkpoint import save_toon  # type: ignore[import]
 
     _TOON_AVAILABLE = True
 except ImportError:
     _TOON_AVAILABLE = False
 
 try:
-    from lib.circuit_breaker import CircuitBreaker  # type: ignore[import]
+    from claude_code_kazuba.circuit_breaker import CircuitBreaker  # type: ignore[import]
 
     _CB_AVAILABLE = True
 except ImportError:

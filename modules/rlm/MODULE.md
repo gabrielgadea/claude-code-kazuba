@@ -78,7 +78,7 @@ modules/rlm/
 The facade `lib/rlm.py` provides a single entry point for hook integration:
 
 ```python
-from lib.rlm import RLMFacade
+from claude_code_kazuba.rlm import RLMFacade
 
 rlm = RLMFacade()
 rlm.start_session("session-001")

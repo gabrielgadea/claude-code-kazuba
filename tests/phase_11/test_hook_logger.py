@@ -7,7 +7,7 @@ from pathlib import Path
 
 import pytest
 
-from lib.hook_logger import HookLogger, LogEntry, LogLevel
+from claude_code_kazuba.hook_logger import HookLogger, LogEntry, LogLevel
 
 
 class TestLogLevel:

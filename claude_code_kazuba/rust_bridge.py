@@ -5,7 +5,7 @@ If unavailable, falls back transparently to pure-Python implementations
 from lib/patterns.py. All public interfaces remain identical.
 
 Usage:
-    from lib.rust_bridge import RustBridge, SecretsDetector, PatternMatcher
+    from claude_code_kazuba.rust_bridge import RustBridge, SecretsDetector, PatternMatcher
 
     bridge = RustBridge.instance()
     result = bridge.check_secrets("api_key = 'sk-abc123...'")
@@ -20,7 +20,7 @@ from typing import Any
 
 from pydantic import BaseModel, Field
 
-from lib.patterns import BashSafetyPatterns, PatternSet, SecretPatterns
+from claude_code_kazuba.patterns import BashSafetyPatterns, PatternSet, SecretPatterns
 
 # ---------------------------------------------------------------------------
 # Try importing the compiled Rust extension (optional, fails gracefully)

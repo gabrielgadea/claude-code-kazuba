@@ -17,7 +17,7 @@ from pathlib import Path
 
 import pytest
 
-from lib.rlm import RLMFacade, RLMFacadeConfig
+from claude_code_kazuba.rlm import RLMFacade, RLMFacadeConfig
 from modules.rlm.src.q_table import QTable
 from modules.rlm.src.working_memory import WorkingMemory
 

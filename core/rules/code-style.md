@@ -47,7 +47,7 @@ Imports are organized in three groups, separated by blank lines:
 
 1. **Standard library** — `os`, `sys`, `pathlib`, `json`, etc.
 2. **Third-party packages** — `pydantic`, `jinja2`, `pytest`, etc.
-3. **Local/project imports** — `from lib.config import ...`, `from .models import ...`
+3. **Local/project imports** — `from claude_code_kazuba.config import ...`, `from .models import ...`
 
 Within each group, sort alphabetically. Use an automated formatter
 (e.g., `isort`, `ruff`) to enforce this.

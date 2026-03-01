@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from lib.patterns import (
+from claude_code_kazuba.patterns import (
     BashSafetyPatterns,
     Match,
     PatternSet,

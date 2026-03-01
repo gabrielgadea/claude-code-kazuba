@@ -695,8 +695,8 @@ def test_hypervisor_circuit_breaker_import_error():
 
     # Temporarily hide 'lib' to force ImportError
     saved = sys.modules.get("lib")
-    saved_cb = sys.modules.get("lib.circuit_breaker")
-    sys.modules["lib.circuit_breaker"] = None  # type: ignore[assignment]
+    saved_cb = sys.modules.get("claude_code_kazuba.circuit_breaker")
+    sys.modules["claude_code_kazuba.circuit_breaker"] = None  # type: ignore[assignment]
     try:
         h = Hypervisor()
         # Should not raise; circuit_breaker may or may not be None
@@ -707,6 +707,6 @@ def test_hypervisor_circuit_breaker_import_error():
         else:
             sys.modules["lib"] = saved
         if saved_cb is None:
-            sys.modules.pop("lib.circuit_breaker", None)
+            sys.modules.pop("claude_code_kazuba.circuit_breaker", None)
         else:
-            sys.modules["lib.circuit_breaker"] = saved_cb
+            sys.modules["claude_code_kazuba.circuit_breaker"] = saved_cb

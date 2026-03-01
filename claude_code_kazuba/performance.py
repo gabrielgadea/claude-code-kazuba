@@ -86,7 +86,7 @@ def rust_accelerator() -> Any | None:
         return _rust_accel_cache[_RUST_KEY]
     instance: Any | None = None
     try:
-        from lib._rust_accel import (  # pyright: ignore[reportMissingImports]
+        from claude_code_kazuba._rust_accel import (  # pyright: ignore[reportMissingImports]
             RustAccelerator,  # type: ignore[import-not-found]
         )
 

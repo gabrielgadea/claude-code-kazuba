@@ -17,7 +17,7 @@ import pytest
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 CHECKPOINTS_DIR = PROJECT_ROOT / "checkpoints"
 DOCS_DIR = PROJECT_ROOT / "docs"
-LIB_DIR = PROJECT_ROOT / "lib"
+LIB_DIR = PROJECT_ROOT / "claude_code_kazuba"
 SCRIPTS_DIR = PROJECT_ROOT / "scripts"
 
 

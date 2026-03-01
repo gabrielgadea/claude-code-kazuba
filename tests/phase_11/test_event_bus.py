@@ -8,7 +8,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from lib.event_bus import Event, EventBus
+from claude_code_kazuba.event_bus import Event, EventBus
 
 
 class TestEvent:

@@ -44,7 +44,7 @@ if str(_MODULE_DIR) not in sys.path:
     sys.path.insert(0, str(_MODULE_DIR))
 
 try:
-    from lib.governance import CILARouter, GovernanceEnforcer
+    from claude_code_kazuba.governance import CILARouter, GovernanceEnforcer
     _GOVERNANCE_AVAILABLE = True
 except ImportError:
     _GOVERNANCE_AVAILABLE = False
@@ -132,7 +132,7 @@ def enforce_strategy(
 ) -> EnforcementResult:
     """Check strategy requirements for a classified CILA level.
 
-    Uses GovernanceEnforcer and CILARouter from lib.governance when available,
+    Uses GovernanceEnforcer and CILARouter from claude_code_kazuba.governance when available,
     falls back to built-in logic otherwise.
 
     Args:
@@ -235,7 +235,7 @@ def build_enforcement_context(result: EnforcementResult) -> str:
 def check_governance_compliance(prompt: str) -> list[str]:
     """Run governance compliance checks on a prompt.
 
-    Uses GovernanceEnforcer from lib.governance when available.
+    Uses GovernanceEnforcer from claude_code_kazuba.governance when available.
 
     Args:
         prompt: The task prompt to check.

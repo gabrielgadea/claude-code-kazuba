@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import time
 
-from lib.performance import L0Cache, ParallelExecutor, rust_accelerator
+from claude_code_kazuba.performance import L0Cache, ParallelExecutor, rust_accelerator
 
 
 class TestL0Cache:

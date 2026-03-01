@@ -488,7 +488,7 @@ source .venv/bin/activate
 pip install -e ".[dev]"
 
 # Quality gate completo
-pytest tests/ --cov=lib --cov-report=term-missing
+pytest tests/ --cov=claude_code_kazuba --cov-report=term-missing
 ruff check lib/ scripts/ tests/
 ruff format --check lib/ scripts/ tests/
 pyright lib/

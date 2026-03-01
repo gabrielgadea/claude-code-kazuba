@@ -18,7 +18,7 @@ from pathlib import Path
 import pytest
 import yaml
 
-from lib.template_engine import TemplateEngine
+from claude_code_kazuba.template_engine import TemplateEngine
 
 
 @pytest.fixture

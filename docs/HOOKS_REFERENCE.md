@@ -73,8 +73,8 @@ Every hook receives at minimum:
 **Example implementation**:
 ```python
 #!/usr/bin/env python3
-from lib.hook_base import HookInput, HookResult, fail_open, ALLOW, BLOCK
-from lib.json_output import pre_tool_use_output, emit_json
+from claude_code_kazuba.hook_base import HookInput, HookResult, fail_open, ALLOW, BLOCK
+from claude_code_kazuba.json_output import pre_tool_use_output, emit_json
 
 @fail_open
 def main() -> None:

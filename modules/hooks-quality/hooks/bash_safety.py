@@ -15,9 +15,9 @@ from typing import Any
 # Ensure lib is importable from project root
 sys.path.insert(0, str(__import__("pathlib").Path(__file__).resolve().parents[3]))
 
-from lib.hook_base import ALLOW, BLOCK, fail_open
-from lib.json_output import emit_json, pre_tool_use_output
-from lib.patterns import BashSafetyPatterns
+from claude_code_kazuba.hook_base import ALLOW, BLOCK, fail_open
+from claude_code_kazuba.json_output import emit_json, pre_tool_use_output
+from claude_code_kazuba.patterns import BashSafetyPatterns
 
 # Approved directories where destructive operations are allowed
 # Override via BASH_SAFETY_APPROVED_DIRS env var (colon-separated)

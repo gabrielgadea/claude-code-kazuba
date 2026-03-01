@@ -17,9 +17,9 @@ from typing import Any
 # Ensure lib is importable from project root
 sys.path.insert(0, str(Path(__file__).resolve().parents[3]))
 
-from lib.hook_base import fail_open
-from lib.json_output import emit_json, pre_tool_use_output
-from lib.performance import L0Cache
+from claude_code_kazuba.hook_base import fail_open
+from claude_code_kazuba.json_output import emit_json, pre_tool_use_output
+from claude_code_kazuba.performance import L0Cache
 
 # Knowledge cache (Tier 1)
 _knowledge_cache: L0Cache[str] = L0Cache(max_size=200, ttl_seconds=300.0)

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from lib.governance import (
+from claude_code_kazuba.governance import (
     CILA_LEVELS,
     CODE_FIRST_PHASES,
     GOVERNANCE_RULES,

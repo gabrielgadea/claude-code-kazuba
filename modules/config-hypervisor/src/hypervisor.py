@@ -166,7 +166,7 @@ class Hypervisor:
 
         # Lazily import circuit breaker from lib
         try:
-            from lib.circuit_breaker import CircuitBreaker  # type: ignore[import]
+            from claude_code_kazuba.circuit_breaker import CircuitBreaker  # type: ignore[import]
             self._circuit_breaker = CircuitBreaker("hypervisor")
         except ImportError:
             logger.debug("CircuitBreaker not available; proceeding without it")

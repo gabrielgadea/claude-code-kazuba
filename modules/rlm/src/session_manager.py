@@ -268,7 +268,7 @@ class SessionManager:
             return None
 
         try:
-            from lib.checkpoint import save_toon
+            from claude_code_kazuba.checkpoint import save_toon
 
             session_data = self._session.to_dict()
             episodes_data = [ep.to_dict() for ep in self._episodes.values()]
@@ -298,7 +298,7 @@ class SessionManager:
         Returns:
             The raw checkpoint payload dictionary.
         """
-        from lib.checkpoint import load_toon
+        from claude_code_kazuba.checkpoint import load_toon
 
         return load_toon(path)
 

@@ -31,7 +31,7 @@ def _copy_directory(src: Path, dest: Path, copied: list[str]) -> None:
 def _render_template(template_path: Path, output_path: Path, variables: dict[str, Any]) -> None:
     """Render a Jinja2 template file to output path."""
     # Import here to avoid hard dependency at module level
-    from lib.template_engine import render_string
+    from claude_code_kazuba.template_engine import render_string
 
     template_text = template_path.read_text(encoding="utf-8")
     rendered = render_string(template_text, variables)

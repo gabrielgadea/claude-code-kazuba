@@ -16,7 +16,7 @@ from typing import Any
 # Ensure lib is importable from project root
 sys.path.insert(0, str(Path(__file__).resolve().parents[3]))
 
-from lib.hook_base import fail_open
+from claude_code_kazuba.hook_base import fail_open
 
 # --- Configuration ---
 DEFAULT_LOG_DIR: str = os.path.expanduser("~/.claude/compliance")

@@ -7,7 +7,7 @@ from pathlib import Path
 import pytest
 import yaml
 
-from lib.config import AgentTrigger, TriggerRegistry
+from claude_code_kazuba.config import AgentTrigger, TriggerRegistry
 
 FIXTURES_DIR = Path(__file__).parent
 

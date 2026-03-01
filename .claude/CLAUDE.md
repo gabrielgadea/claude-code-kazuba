@@ -11,10 +11,10 @@ Framework de configuração de excelência para Claude Code. Módulos reutilizá
 ## Commands
 ```bash
 source .venv/bin/activate
-pytest tests/ --cov=lib --cov-report=term-missing  # Run tests
-ruff check lib/ tests/ scripts/                     # Lint
-ruff format lib/ tests/ scripts/                    # Format
-pyright lib/                                        # Type check
+pytest tests/ --cov=claude_code_kazuba --cov-report=term-missing  # Run tests
+ruff check claude_code_kazuba/ tests/ scripts/                     # Lint
+ruff format claude_code_kazuba/ tests/ scripts/                    # Format
+pyright claude_code_kazuba/                                        # Type check
 python scripts/generate_plan.py --validate          # Regenerate plan
 python plans/validation/validate_all.py             # Validate all phases
 ```
