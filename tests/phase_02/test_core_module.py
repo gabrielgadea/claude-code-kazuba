@@ -106,7 +106,9 @@ class TestFileExistence:
     def test_file_meets_min_lines(self, core_dir: Path, file_path: str, min_lines: int) -> None:
         full_path = core_dir / file_path
         lines = len(full_path.read_text().splitlines())
-        assert lines >= min_lines, f"claude_code_kazuba/data/core/{file_path}: {lines} lines < {min_lines} required"
+        assert lines >= min_lines, (
+            f"claude_code_kazuba/data/core/{file_path}: {lines} lines < {min_lines} required"
+        )
 
 
 # ---------------------------------------------------------------------------

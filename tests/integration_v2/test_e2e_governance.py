@@ -21,7 +21,13 @@ import pytest
 # Load auto_permission_resolver via importlib
 # ---------------------------------------------------------------------------
 _ROOT = Path(__file__).resolve().parents[2]
-_APR_PATH = _ROOT / "claude_code_kazuba/data/modules" / "hooks-routing" / "hooks" / "auto_permission_resolver.py"
+_APR_PATH = (
+    _ROOT
+    / "claude_code_kazuba/data/modules"
+    / "hooks-routing"
+    / "hooks"
+    / "auto_permission_resolver.py"
+)
 
 _apr_spec = importlib.util.spec_from_file_location("apr_e2e", _APR_PATH)
 _apr_mod = importlib.util.module_from_spec(_apr_spec)  # type: ignore[arg-type]

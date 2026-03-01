@@ -195,9 +195,7 @@ class WorkingMemory:
         """Return summary statistics."""
         with self._lock:
             entries = list(self._entries.values())
-            avg_importance = (
-                sum(e.importance for e in entries) / len(entries) if entries else 0.0
-            )
+            avg_importance = sum(e.importance for e in entries) / len(entries) if entries else 0.0
             return {
                 "size": len(entries),
                 "capacity": self._capacity,

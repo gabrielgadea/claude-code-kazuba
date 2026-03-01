@@ -119,9 +119,7 @@ class SIACResult:
 
     def to_dict(self) -> dict[str, Any]:
         """Serialize to JSON-compatible dict."""
-        action_name = {0: "ALLOW", 1: "BLOCK", 2: "WARN"}.get(
-            self.overall_action, "UNKNOWN"
-        )
+        action_name = {0: "ALLOW", 1: "BLOCK", 2: "WARN"}.get(self.overall_action, "UNKNOWN")
         return {
             "timestamp": self.timestamp,
             "file_path": self.file_path,

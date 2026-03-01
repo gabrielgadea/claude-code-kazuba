@@ -47,9 +47,7 @@ class LearningEvent(BaseModel, frozen=True):
     duration_ms: int = 0
     success: bool = False
     metadata: dict[str, Any] = Field(default_factory=dict)
-    timestamp: str = Field(
-        default_factory=lambda: datetime.now(UTC).isoformat()
-    )
+    timestamp: str = Field(default_factory=lambda: datetime.now(UTC).isoformat())
 
     def to_dict(self) -> dict[str, Any]:
         """Return a serializable dictionary representation."""

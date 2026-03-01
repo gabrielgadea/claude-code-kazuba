@@ -11,7 +11,13 @@ import pytest
 
 # Load hypervisor_bridge from hyphenated directory using importlib
 _PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
-_HB_PATH = _PROJECT_ROOT / "claude_code_kazuba/data/modules" / "config-hypervisor" / "src" / "hypervisor_bridge.py"
+_HB_PATH = (
+    _PROJECT_ROOT
+    / "claude_code_kazuba/data/modules"
+    / "config-hypervisor"
+    / "src"
+    / "hypervisor_bridge.py"
+)
 _spec = importlib.util.spec_from_file_location("hypervisor_bridge", _HB_PATH)
 _mod = importlib.util.module_from_spec(_spec)  # type: ignore[arg-type]
 sys.modules.setdefault("hypervisor_bridge", _mod)

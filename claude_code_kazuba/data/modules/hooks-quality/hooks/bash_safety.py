@@ -4,6 +4,7 @@ Uses lib.patterns.BashSafetyPatterns to detect and block dangerous shell
 commands like rm -rf /, chmod 777, curl|bash, and fork bombs.
 Allows safe patterns in approved directories.
 """
+
 from __future__ import annotations
 
 import json
@@ -72,8 +73,7 @@ def scan_bash_command(command: str) -> list[str]:
         if is_command_safe(command, approved_dirs):
             continue
         findings.append(
-            f"Dangerous command: {match.matched_text!r} "
-            f"(pattern: {match.pattern_name[:50]})"
+            f"Dangerous command: {match.matched_text!r} (pattern: {match.pattern_name[:50]})"
         )
     return findings
 

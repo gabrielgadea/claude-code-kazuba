@@ -30,10 +30,10 @@ logger = logging.getLogger(__name__)
 class ExecutionMode(StrEnum):
     """Execution modes for the Hypervisor."""
 
-    SEQUENTIAL = "sequential"    # Execute phases in dependency order
-    PARALLEL = "parallel"        # Execute independent phases in parallel
+    SEQUENTIAL = "sequential"  # Execute phases in dependency order
+    PARALLEL = "parallel"  # Execute independent phases in parallel
     INTERACTIVE = "interactive"  # Wait for confirmation between phases
-    DRY_RUN = "dry_run"          # Simulate execution without running phases
+    DRY_RUN = "dry_run"  # Simulate execution without running phases
 
 
 class PhaseStatus(StrEnum):
@@ -167,6 +167,7 @@ class Hypervisor:
         # Lazily import circuit breaker from lib
         try:
             from claude_code_kazuba.circuit_breaker import CircuitBreaker  # type: ignore[import]
+
             self._circuit_breaker = CircuitBreaker("hypervisor")
         except ImportError:
             logger.debug("CircuitBreaker not available; proceeding without it")
@@ -332,9 +333,7 @@ class Hypervisor:
     # Internal helpers
     # -------------------------------------------------------------------------
 
-    def _dry_run_phase(
-        self, phase: PhaseDefinition, start: datetime
-    ) -> ExecutionResult:
+    def _dry_run_phase(self, phase: PhaseDefinition, start: datetime) -> ExecutionResult:
         """Simulate phase execution without running any subprocess."""
         logger.info("[DRY_RUN] Phase %d: %s", phase.id, phase.name)
         duration_ms = self._elapsed_ms(start)
@@ -352,8 +351,10 @@ class Hypervisor:
             "claude",
             "-p",
             phase.prompt or f"Execute phase {phase.id}: {phase.name}",
-            "--output-format", "json",
-            "--max-turns", str(phase.max_turns),
+            "--output-format",
+            "json",
+            "--max-turns",
+            str(phase.max_turns),
         ]
         logger.debug("Running CLI for phase %d", phase.id)
         proc = subprocess.run(
@@ -392,9 +393,7 @@ class Hypervisor:
             logger.warning("Failed to write checkpoint: %s", exc)
             return None
 
-    def _topological_sort(
-        self, phases: list[PhaseDefinition]
-    ) -> list[PhaseDefinition]:
+    def _topological_sort(self, phases: list[PhaseDefinition]) -> list[PhaseDefinition]:
         """Return phases sorted by dependency order (topological sort).
 
         Args:
@@ -440,9 +439,7 @@ class Hypervisor:
         """Return elapsed milliseconds since start."""
         return int((datetime.now() - start).total_seconds() * 1000)
 
-    def _log_result(
-        self, phase_id: int, status: PhaseStatus, duration_ms: int
-    ) -> None:
+    def _log_result(self, phase_id: int, status: PhaseStatus, duration_ms: int) -> None:
         """Append an entry to the execution log."""
         self._execution_log.append(
             {

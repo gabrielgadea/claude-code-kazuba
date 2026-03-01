@@ -29,7 +29,13 @@ def _import_from_path(name: str, file_path: Path) -> types.ModuleType:
     return mod
 
 
-_PCR_PATH = PROJECT_ROOT / "claude_code_kazuba/data/modules" / "hooks-essential" / "hooks" / "post_compact_reinjector.py"
+_PCR_PATH = (
+    PROJECT_ROOT
+    / "claude_code_kazuba/data/modules"
+    / "hooks-essential"
+    / "hooks"
+    / "post_compact_reinjector.py"
+)
 _pcr = _import_from_path("post_compact_reinjector_ph16", _PCR_PATH)
 
 ReinjectorConfig = _pcr.ReinjectorConfig

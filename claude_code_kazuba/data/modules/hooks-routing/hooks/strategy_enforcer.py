@@ -38,6 +38,7 @@ from typing import Any
 
 try:
     from claude_code_kazuba.governance import CILARouter, GovernanceEnforcer
+
     _GOVERNANCE_AVAILABLE = True
 except ImportError:
     _GOVERNANCE_AVAILABLE = False
@@ -170,8 +171,7 @@ def enforce_strategy(
 
         if cila_level >= 3 and not has_code_first_context:
             warnings.append(
-                f"PLANNING REQUIRED (L{cila_level}): "
-                "Document approach before implementation."
+                f"PLANNING REQUIRED (L{cila_level}): Document approach before implementation."
             )
 
     # L3+: requires precondition state
@@ -244,8 +244,7 @@ def check_governance_compliance(prompt: str) -> list[str]:
 
     # Check CODE_FIRST compliance indicator
     has_code_first = any(
-        kw in prompt.lower()
-        for kw in ["discover", "execute", "evaluate", "persist", "code-first"]
+        kw in prompt.lower() for kw in ["discover", "execute", "evaluate", "persist", "code-first"]
     )
 
     result = enforcer.check_violation("CODE_FIRST", has_code_first or len(prompt) < 50)

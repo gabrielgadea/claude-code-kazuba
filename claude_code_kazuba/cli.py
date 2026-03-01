@@ -22,7 +22,12 @@ def _lazy_version() -> str:
 
 def cmd_install(args: argparse.Namespace) -> int:
     """Install modules to target project."""
-    from claude_code_kazuba.data.paths import get_core_dir, get_data_dir, get_modules_dir, get_presets_dir
+    from claude_code_kazuba.data.paths import (
+        get_core_dir,
+        get_data_dir,
+        get_modules_dir,
+        get_presets_dir,
+    )
     from claude_code_kazuba.installer.detect_stack import detect_stack
     from claude_code_kazuba.installer.install_module import install_module
     from claude_code_kazuba.installer.resolve_deps import resolve_dependencies
@@ -120,8 +125,12 @@ def main(argv: list[str] | None = None) -> int:
     p_validate.add_argument("target", nargs="?", default=".", help="Target project directory")
     p_validate.set_defaults(func=cmd_validate)
 
-    sub.add_parser("list-presets", help="List available presets").set_defaults(func=cmd_list_presets)
-    sub.add_parser("list-modules", help="List available modules").set_defaults(func=cmd_list_modules)
+    sub.add_parser("list-presets", help="List available presets").set_defaults(
+        func=cmd_list_presets
+    )
+    sub.add_parser("list-modules", help="List available modules").set_defaults(
+        func=cmd_list_modules
+    )
 
     args = parser.parse_args(argv)
     if not args.command:

@@ -12,7 +12,7 @@ from __future__ import annotations
 import json
 from copy import deepcopy
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 
 def _extend_unique(base: list[Any], overlay: list[Any]) -> list[Any]:
@@ -21,7 +21,7 @@ def _extend_unique(base: list[Any], overlay: list[Any]) -> list[Any]:
     Preserves order: base items first, then new overlay items.
     """
     result = list(base)
-    seen = set()
+    seen: set[str | int | float | bool] = set()
     for item in base:
         if isinstance(item, (str, int, float, bool)):
             seen.add(item)
@@ -51,11 +51,13 @@ def _merge_hooks(base: dict[str, Any], overlay: dict[str, Any]) -> dict[str, Any
         if event not in result:
             result[event] = deepcopy(hooks)
         elif isinstance(result[event], list) and isinstance(hooks, list):
-            result[event] = _extend_unique(result[event], hooks)
+            result[event] = _extend_unique(
+                cast("list[Any]", result[event]), cast("list[Any]", hooks)
+            )
         else:
             # Non-list hook config: overlay wins for new keys
             if isinstance(result[event], dict) and isinstance(hooks, dict):
-                result[event] = {**result[event], **deepcopy(hooks)}
+                result[event] = {**result[event], **deepcopy(cast("dict[str, Any]", hooks))}
             else:
                 result[event] = deepcopy(hooks)
 
@@ -70,7 +72,9 @@ def _merge_permissions(base: dict[str, Any], overlay: dict[str, Any]) -> dict[st
         if key in overlay:
             base_list = result.get(key, [])
             if isinstance(base_list, list) and isinstance(overlay[key], list):
-                result[key] = _extend_unique(base_list, overlay[key])
+                result[key] = _extend_unique(
+                    cast("list[Any]", base_list), cast("list[Any]", overlay[key])
+                )
             else:
                 result[key] = deepcopy(overlay[key])
 
@@ -152,9 +156,11 @@ def merge_settings_file(base_path: Path, overlay_path: Path) -> dict[str, Any]:
         FileNotFoundError: If overlay_path doesn't exist.
         json.JSONDecodeError: If either file is not valid JSON.
     """
-    base = json.loads(base_path.read_text(encoding="utf-8")) if base_path.exists() else {}
+    base: dict[str, Any] = (
+        json.loads(base_path.read_text(encoding="utf-8")) if base_path.exists() else {}
+    )
 
-    overlay = json.loads(overlay_path.read_text(encoding="utf-8"))
+    overlay: dict[str, Any] = json.loads(overlay_path.read_text(encoding="utf-8"))
     return merge_settings(base, overlay)
 
 

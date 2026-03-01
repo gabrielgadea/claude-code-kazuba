@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import re
 from pathlib import Path
+from typing import Any, cast
 
 
 def _check_settings_json(claude_dir: Path) -> tuple[bool, str]:
@@ -52,15 +53,13 @@ def _check_hook_scripts(claude_dir: Path) -> tuple[bool, str]:
     for _event, hook_list in hooks_config.items():
         if not isinstance(hook_list, list):
             continue
-        for hook_entry in hook_list:
-            if not isinstance(hook_entry, dict):
-                continue
-            command = hook_entry.get("command", "")
+        for hook_dict in cast("list[dict[str, Any]]", hook_list):
+            command: str = hook_dict.get("command", "")
             # Extract script path from command like "python hooks/foo.py" or "bash hooks/bar.sh"
-            parts = command.split()
+            parts: list[str] = command.split()
             if len(parts) >= 2:
-                script = parts[-1]
-                script_path = claude_dir / script
+                script: str = parts[-1]
+                script_path: Path = claude_dir / script
                 if not script_path.exists():
                     missing.append(script)
 
@@ -155,8 +154,8 @@ if __name__ == "__main__":
     directory = Path(sys.argv[1]) if len(sys.argv) > 1 else Path.cwd()
     validation = validate_installation(directory)
 
-    messages = validation.pop("_messages", [])
-    for msg in messages:  # type: ignore[union-attr]
+    messages: list[str] = cast("list[str]", validation.pop("_messages", []))
+    for msg in messages:
         print(msg)
 
     all_ok = validation.pop("all_passed", False)

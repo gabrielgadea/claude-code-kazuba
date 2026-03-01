@@ -3,6 +3,7 @@
 
 12 checks. Exit code = number of failures (0 = all pass).
 """
+
 from __future__ import annotations
 
 import subprocess
@@ -12,8 +13,18 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 NEW_PKG = "claude_code_kazuba"
 
-SKIP_DIRS = {".git", "__pycache__", ".venv", "node_modules", ".ruff_cache", ".pytest_cache",
-             "dist", "build", "pypi", "checkpoints"}
+SKIP_DIRS = {
+    ".git",
+    "__pycache__",
+    ".venv",
+    "node_modules",
+    ".ruff_cache",
+    ".pytest_cache",
+    "dist",
+    "build",
+    "pypi",
+    "checkpoints",
+}
 
 results: list[tuple[str, bool, str]] = []
 
@@ -38,7 +49,9 @@ def grep_in_codebase(pattern: str, extensions: set[str]) -> list[tuple[Path, int
             if any(part in SKIP_DIRS for part in parts):
                 continue
             try:
-                for i, line in enumerate(path.read_text(encoding="utf-8", errors="ignore").splitlines(), 1):
+                for i, line in enumerate(
+                    path.read_text(encoding="utf-8", errors="ignore").splitlines(), 1
+                ):
                     if pattern in line:
                         matches.append((path, i, line.strip()))
             except Exception:
@@ -54,8 +67,11 @@ def main() -> int:
 
     # 1. lib/ does NOT exist
     lib_dir = PROJECT_ROOT / "lib"
-    check("lib/ directory does NOT exist", not lib_dir.exists(),
-          str(lib_dir) if lib_dir.exists() else "")
+    check(
+        "lib/ directory does NOT exist",
+        not lib_dir.exists(),
+        str(lib_dir) if lib_dir.exists() else "",
+    )
 
     # 2. claude_code_kazuba/ exists
     pkg_dir = PROJECT_ROOT / NEW_PKG
@@ -71,24 +87,40 @@ def main() -> int:
         check("__init__.py exists", False, "file not found")
 
     # 4. 15 Python modules present
-    py_files = [f for f in pkg_dir.glob("*.py") if f.name != "__init__.py" and f.name != "__main__.py"]
-    check(f"{len(py_files)} Python modules in package", len(py_files) >= 13,
-          f"found: {', '.join(f.stem for f in sorted(py_files))}")
+    py_files = [
+        f for f in pkg_dir.glob("*.py") if f.name != "__init__.py" and f.name != "__main__.py"
+    ]
+    check(
+        f"{len(py_files)} Python modules in package",
+        len(py_files) >= 13,
+        f"found: {', '.join(f.stem for f in sorted(py_files))}",
+    )
 
     # 5. ZERO "from lib." in *.py files (old import pattern)
     py_matches = grep_in_codebase("from lib" + ".", {".py"})
-    check("ZERO 'from lib.' in *.py files", len(py_matches) == 0,
-          f"{len(py_matches)} found" + (f": {py_matches[0][0].name}:{py_matches[0][1]}" if py_matches else ""))
+    check(
+        "ZERO 'from lib.' in *.py files",
+        len(py_matches) == 0,
+        f"{len(py_matches)} found"
+        + (f": {py_matches[0][0].name}:{py_matches[0][1]}" if py_matches else ""),
+    )
 
     # 6. ZERO "from lib." in *.md files
     md_matches = grep_in_codebase("from lib" + ".", {".md"})
-    check("ZERO 'from lib.' in *.md files", len(md_matches) == 0,
-          f"{len(md_matches)} found" + (f": {md_matches[0][0].name}:{md_matches[0][1]}" if md_matches else ""))
+    check(
+        "ZERO 'from lib.' in *.md files",
+        len(md_matches) == 0,
+        f"{len(md_matches)} found"
+        + (f": {md_matches[0][0].name}:{md_matches[0][1]}" if md_matches else ""),
+    )
 
     # 7. ZERO "import lib." anywhere
     import_matches = grep_in_codebase("import lib" + ".", {".py"})
-    check("ZERO 'import lib.' anywhere", len(import_matches) == 0,
-          f"{len(import_matches)} found" if import_matches else "")
+    check(
+        "ZERO 'import lib.' anywhere",
+        len(import_matches) == 0,
+        f"{len(import_matches)} found" if import_matches else "",
+    )
 
     # 8. pyproject.toml references claude_code_kazuba
     pyproject = PROJECT_ROOT / "pyproject.toml"
@@ -112,15 +144,22 @@ def main() -> int:
     # 10. ruff check passes
     ruff_result = subprocess.run(
         ["ruff", "check", NEW_PKG, "--quiet"],
-        cwd=str(PROJECT_ROOT), capture_output=True, text=True,
+        cwd=str(PROJECT_ROOT),
+        capture_output=True,
+        text=True,
     )
-    check("ruff check claude_code_kazuba/ passes", ruff_result.returncode == 0,
-          ruff_result.stdout[:200] if ruff_result.returncode != 0 else "")
+    check(
+        "ruff check claude_code_kazuba/ passes",
+        ruff_result.returncode == 0,
+        ruff_result.stdout[:200] if ruff_result.returncode != 0 else "",
+    )
 
     # 11. pytest passes (quick sanity — collect only to save time in validation)
     pytest_result = subprocess.run(
         ["pytest", "tests/", "--collect-only", "-q"],
-        cwd=str(PROJECT_ROOT), capture_output=True, text=True,
+        cwd=str(PROJECT_ROOT),
+        capture_output=True,
+        text=True,
     )
     last_line = pytest_result.stdout.strip().split("\n")[-1] if pytest_result.stdout else ""
     collected = "tests collected" in last_line and pytest_result.returncode == 0

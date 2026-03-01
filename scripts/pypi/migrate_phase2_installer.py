@@ -4,14 +4,23 @@
 Replaces 'from scripts.X' imports with 'from claude_code_kazuba.installer.X'.
 Also updates install.sh inline Python blocks.
 """
+
 from __future__ import annotations
 
-import re
 import sys
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
-SKIP_DIRS = {".git", "__pycache__", ".venv", ".ruff_cache", ".pytest_cache", "dist", "build", "pypi"}
+SKIP_DIRS = {
+    ".git",
+    "__pycache__",
+    ".venv",
+    ".ruff_cache",
+    ".pytest_cache",
+    "dist",
+    "build",
+    "pypi",
+}
 
 # Map of old → new import prefixes
 REPLACEMENTS = [
@@ -19,7 +28,10 @@ REPLACEMENTS = [
     ("from scripts.resolve_deps", "from claude_code_kazuba.installer.resolve_deps"),
     ("from scripts.install_module", "from claude_code_kazuba.installer.install_module"),
     ("from scripts.merge_settings", "from claude_code_kazuba.installer.merge_settings"),
-    ("from scripts.validate_installation", "from claude_code_kazuba.installer.validate_installation"),
+    (
+        "from scripts.validate_installation",
+        "from claude_code_kazuba.installer.validate_installation",
+    ),
 ]
 
 

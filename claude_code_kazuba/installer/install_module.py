@@ -45,8 +45,9 @@ def _merge_hooks_settings(
     merged: list[str],
 ) -> None:
     """Merge a module's settings.hooks.json into target settings.json."""
-    overlay = json.loads(hooks_json_path.read_text(encoding="utf-8"))
+    overlay: dict[str, Any] = json.loads(hooks_json_path.read_text(encoding="utf-8"))
 
+    base: dict[str, Any]
     if settings_path.exists():
         base = json.loads(settings_path.read_text(encoding="utf-8"))
     else:

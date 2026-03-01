@@ -46,11 +46,15 @@ class TestModuleManifest:
         assert module_md.is_file()
 
     def test_module_md_has_name(self, base_dir: Path) -> None:
-        content = (base_dir / "claude_code_kazuba/data/modules" / "hooks-quality" / "MODULE.md").read_text()
+        content = (
+            base_dir / "claude_code_kazuba/data/modules" / "hooks-quality" / "MODULE.md"
+        ).read_text()
         assert "name: hooks-quality" in content
 
     def test_module_md_has_dependencies(self, base_dir: Path) -> None:
-        content = (base_dir / "claude_code_kazuba/data/modules" / "hooks-quality" / "MODULE.md").read_text()
+        content = (
+            base_dir / "claude_code_kazuba/data/modules" / "hooks-quality" / "MODULE.md"
+        ).read_text()
         assert "core" in content
         assert "hooks-essential" in content
 
@@ -62,16 +66,22 @@ class TestSettingsJson:
     """Test settings.hooks.json is valid."""
 
     def test_settings_exists(self, base_dir: Path) -> None:
-        path = base_dir / "claude_code_kazuba/data/modules" / "hooks-quality" / "settings.hooks.json"
+        path = (
+            base_dir / "claude_code_kazuba/data/modules" / "hooks-quality" / "settings.hooks.json"
+        )
         assert path.is_file()
 
     def test_settings_valid_json(self, base_dir: Path) -> None:
-        path = base_dir / "claude_code_kazuba/data/modules" / "hooks-quality" / "settings.hooks.json"
+        path = (
+            base_dir / "claude_code_kazuba/data/modules" / "hooks-quality" / "settings.hooks.json"
+        )
         data = json.loads(path.read_text())
         assert "hooks" in data
 
     def test_settings_has_pre_tool_use(self, base_dir: Path) -> None:
-        path = base_dir / "claude_code_kazuba/data/modules" / "hooks-quality" / "settings.hooks.json"
+        path = (
+            base_dir / "claude_code_kazuba/data/modules" / "hooks-quality" / "settings.hooks.json"
+        )
         data = json.loads(path.read_text())
         assert "PreToolUse" in data["hooks"]
         assert len(data["hooks"]["PreToolUse"]) == 4
@@ -276,22 +286,46 @@ class TestFileStructure:
         assert path.is_file(), f"{hook_file} must exist"
 
     def test_quality_gate_min_lines(self, base_dir: Path) -> None:
-        path = base_dir / "claude_code_kazuba/data/modules" / "hooks-quality" / "hooks" / "quality_gate.py"
+        path = (
+            base_dir
+            / "claude_code_kazuba/data/modules"
+            / "hooks-quality"
+            / "hooks"
+            / "quality_gate.py"
+        )
         lines = path.read_text().count("\n")
         assert lines >= 80, f"quality_gate.py must have 80+ lines, has {lines}"
 
     def test_secrets_scanner_min_lines(self, base_dir: Path) -> None:
-        path = base_dir / "claude_code_kazuba/data/modules" / "hooks-quality" / "hooks" / "secrets_scanner.py"
+        path = (
+            base_dir
+            / "claude_code_kazuba/data/modules"
+            / "hooks-quality"
+            / "hooks"
+            / "secrets_scanner.py"
+        )
         lines = path.read_text().count("\n")
         assert lines >= 60, f"secrets_scanner.py must have 60+ lines, has {lines}"
 
     def test_pii_scanner_min_lines(self, base_dir: Path) -> None:
-        path = base_dir / "claude_code_kazuba/data/modules" / "hooks-quality" / "hooks" / "pii_scanner.py"
+        path = (
+            base_dir
+            / "claude_code_kazuba/data/modules"
+            / "hooks-quality"
+            / "hooks"
+            / "pii_scanner.py"
+        )
         lines = path.read_text().count("\n")
         assert lines >= 50, f"pii_scanner.py must have 50+ lines, has {lines}"
 
     def test_bash_safety_min_lines(self, base_dir: Path) -> None:
-        path = base_dir / "claude_code_kazuba/data/modules" / "hooks-quality" / "hooks" / "bash_safety.py"
+        path = (
+            base_dir
+            / "claude_code_kazuba/data/modules"
+            / "hooks-quality"
+            / "hooks"
+            / "bash_safety.py"
+        )
         lines = path.read_text().count("\n")
         assert lines >= 50, f"bash_safety.py must have 50+ lines, has {lines}"
 

@@ -37,7 +37,10 @@ from pydantic import BaseModel, Field
 from claude_code_kazuba.data.modules.rlm.src.config import RLMConfig
 from claude_code_kazuba.data.modules.rlm.src.models import MemoryEntry
 from claude_code_kazuba.data.modules.rlm.src.q_table import QTable
-from claude_code_kazuba.data.modules.rlm.src.reward_calculator import RewardCalculator, RewardComponent
+from claude_code_kazuba.data.modules.rlm.src.reward_calculator import (
+    RewardCalculator,
+    RewardComponent,
+)
 from claude_code_kazuba.data.modules.rlm.src.session_manager import SessionManager
 from claude_code_kazuba.data.modules.rlm.src.working_memory import WorkingMemory
 

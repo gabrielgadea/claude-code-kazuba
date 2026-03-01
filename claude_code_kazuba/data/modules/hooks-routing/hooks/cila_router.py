@@ -5,6 +5,7 @@ hints as additionalContext. Uses L0Cache for classification caching.
 
 CILA = Complexity-Informed Layered Architecture
 """
+
 from __future__ import annotations
 
 import json
@@ -64,15 +65,29 @@ COMPLEXITY_SIGNALS: list[CILASignal] = [
     CILASignal(re.compile(r"\b(add|create)\s+\w+\s+(to|in|for)\b", re.IGNORECASE), 2, 1.0),
     # L3 signals — complex multi-tool
     CILASignal(re.compile(r"\b(refactor|restructure|reorganize)\b", re.IGNORECASE), 3, 2.0),
-    CILASignal(re.compile(r"\b(multiple|several|all)\s+(files?|modules?)\b", re.IGNORECASE), 3, 1.5),
-    CILASignal(re.compile(r"\b(test|lint|format)\s+(and|then)\s+(test|lint|format)\b", re.IGNORECASE), 3, 1.0),
+    CILASignal(
+        re.compile(r"\b(multiple|several|all)\s+(files?|modules?)\b", re.IGNORECASE), 3, 1.5
+    ),
+    CILASignal(
+        re.compile(r"\b(test|lint|format)\s+(and|then)\s+(test|lint|format)\b", re.IGNORECASE),
+        3,
+        1.0,
+    ),
     # L4 signals — advanced planning
     CILASignal(re.compile(r"\b(architect|design|plan)\s+(a|the|new)\b", re.IGNORECASE), 4, 2.0),
     CILASignal(re.compile(r"\b(migration|migrate|upgrade)\b", re.IGNORECASE), 4, 2.0),
     CILASignal(re.compile(r"\b(integrate|integration)\b", re.IGNORECASE), 4, 1.5),
     # L5 signals — agent delegation
-    CILASignal(re.compile(r"\b(research|investigate|explore)\s+\w+\s+and\b", re.IGNORECASE), 5, 2.0),
-    CILASignal(re.compile(r"\b(compare|evaluate)\s+\w+\s+(options|alternatives|approaches)\b", re.IGNORECASE), 5, 2.0),
+    CILASignal(
+        re.compile(r"\b(research|investigate|explore)\s+\w+\s+and\b", re.IGNORECASE), 5, 2.0
+    ),
+    CILASignal(
+        re.compile(
+            r"\b(compare|evaluate)\s+\w+\s+(options|alternatives|approaches)\b", re.IGNORECASE
+        ),
+        5,
+        2.0,
+    ),
     CILASignal(re.compile(r"\bsubagent\b", re.IGNORECASE), 5, 3.0),
     # L6 signals — team orchestration
     CILASignal(re.compile(r"\b(team|swarm|parallel\s+agents?)\b", re.IGNORECASE), 6, 3.0),

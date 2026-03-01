@@ -3,6 +3,7 @@
 Uses lib.patterns.PIIPatterns with country-configurable detection.
 Default country: BR (CPF, CNPJ). Warns but does NOT block (exit 0).
 """
+
 from __future__ import annotations
 
 import json
@@ -44,9 +45,7 @@ def scan_for_pii(content: str, country: str) -> list[str]:
         # Partially redact the matched text
         text = match.matched_text
         redacted = text[:3] + "***" + text[-2:] if len(text) > 6 else "***"
-        findings.append(
-            f"PII ({country}) at position {match.start}: {redacted}"
-        )
+        findings.append(f"PII ({country}) at position {match.start}: {redacted}")
     return findings
 
 

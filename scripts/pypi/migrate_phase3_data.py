@@ -7,13 +7,23 @@ Replaces:
   'presets/' → 'claude_code_kazuba/data/presets/'
 in test files, conftest, and config files.
 """
+
 from __future__ import annotations
 
 import sys
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
-SKIP_DIRS = {".git", "__pycache__", ".venv", ".ruff_cache", ".pytest_cache", "dist", "build", "pypi"}
+SKIP_DIRS = {
+    ".git",
+    "__pycache__",
+    ".venv",
+    ".ruff_cache",
+    ".pytest_cache",
+    "dist",
+    "build",
+    "pypi",
+}
 
 # Path replacements for test fixtures that reference project root paths
 # These are string literals in Python code that reference directories relative to PROJECT_ROOT

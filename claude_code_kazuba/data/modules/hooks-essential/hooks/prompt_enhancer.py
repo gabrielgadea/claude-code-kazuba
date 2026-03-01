@@ -3,6 +3,7 @@
 Reads prompt from stdin JSON, classifies the intent into one of 8 categories,
 selects appropriate reasoning techniques, and outputs additionalContext.
 """
+
 from __future__ import annotations
 
 import json
@@ -183,9 +184,7 @@ TECHNIQUES: list[Technique] = [
     ),
     Technique(
         name="precision_hints",
-        categories=frozenset(
-            ["code", "refactor", "analysis", "creative", "plan", "general"]
-        ),
+        categories=frozenset(["code", "refactor", "analysis", "creative", "plan", "general"]),
         template="Be precise and concise. Avoid unnecessary elaboration.",
     ),
 ]
@@ -235,9 +234,7 @@ def classify_intent(
         return ClassificationResult(intent="general", confidence=0.0, scores=scores)
 
     # Tiebreak by priority (lower index wins)
-    candidates = [
-        intent for intent, score in scores.items() if score == max_score
-    ]
+    candidates = [intent for intent, score in scores.items() if score == max_score]
     best = min(candidates, key=lambda i: INTENT_PRIORITY.get(i, 999))
 
     # Normalize confidence to 0-1 range (cap at 1.0)

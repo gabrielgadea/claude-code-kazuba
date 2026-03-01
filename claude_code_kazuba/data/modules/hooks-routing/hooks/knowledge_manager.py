@@ -5,6 +5,7 @@ Provides relevant context based on the tool being used:
 - Tier 2: Project docs (CLAUDE.md, README, etc.)
 - Tier 3: External search (deferred hint to use search tools)
 """
+
 from __future__ import annotations
 
 import json

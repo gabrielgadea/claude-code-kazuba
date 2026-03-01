@@ -46,11 +46,15 @@ class TestModuleManifest:
         assert module_md.is_file()
 
     def test_module_md_has_name(self, base_dir: Path) -> None:
-        content = (base_dir / "claude_code_kazuba/data/modules" / "hooks-routing" / "MODULE.md").read_text()
+        content = (
+            base_dir / "claude_code_kazuba/data/modules" / "hooks-routing" / "MODULE.md"
+        ).read_text()
         assert "name: hooks-routing" in content
 
     def test_module_md_has_dependencies(self, base_dir: Path) -> None:
-        content = (base_dir / "claude_code_kazuba/data/modules" / "hooks-routing" / "MODULE.md").read_text()
+        content = (
+            base_dir / "claude_code_kazuba/data/modules" / "hooks-routing" / "MODULE.md"
+        ).read_text()
         assert "core" in content
         assert "hooks-essential" in content
 
@@ -62,16 +66,22 @@ class TestSettingsJson:
     """Test settings.hooks.json is valid."""
 
     def test_settings_exists(self, base_dir: Path) -> None:
-        path = base_dir / "claude_code_kazuba/data/modules" / "hooks-routing" / "settings.hooks.json"
+        path = (
+            base_dir / "claude_code_kazuba/data/modules" / "hooks-routing" / "settings.hooks.json"
+        )
         assert path.is_file()
 
     def test_settings_valid_json(self, base_dir: Path) -> None:
-        path = base_dir / "claude_code_kazuba/data/modules" / "hooks-routing" / "settings.hooks.json"
+        path = (
+            base_dir / "claude_code_kazuba/data/modules" / "hooks-routing" / "settings.hooks.json"
+        )
         data = json.loads(path.read_text())
         assert "hooks" in data
 
     def test_settings_has_all_events(self, base_dir: Path) -> None:
-        path = base_dir / "claude_code_kazuba/data/modules" / "hooks-routing" / "settings.hooks.json"
+        path = (
+            base_dir / "claude_code_kazuba/data/modules" / "hooks-routing" / "settings.hooks.json"
+        )
         data = json.loads(path.read_text())
         assert "UserPromptSubmit" in data["hooks"]
         assert "PreToolUse" in data["hooks"]
@@ -328,17 +338,35 @@ class TestFileStructure:
         assert path.is_file()
 
     def test_cila_router_min_lines(self, base_dir: Path) -> None:
-        path = base_dir / "claude_code_kazuba/data/modules" / "hooks-routing" / "hooks" / "cila_router.py"
+        path = (
+            base_dir
+            / "claude_code_kazuba/data/modules"
+            / "hooks-routing"
+            / "hooks"
+            / "cila_router.py"
+        )
         lines = path.read_text().count("\n")
         assert lines >= 80, f"cila_router.py must have 80+ lines, has {lines}"
 
     def test_knowledge_manager_min_lines(self, base_dir: Path) -> None:
-        path = base_dir / "claude_code_kazuba/data/modules" / "hooks-routing" / "hooks" / "knowledge_manager.py"
+        path = (
+            base_dir
+            / "claude_code_kazuba/data/modules"
+            / "hooks-routing"
+            / "hooks"
+            / "knowledge_manager.py"
+        )
         lines = path.read_text().count("\n")
         assert lines >= 60, f"knowledge_manager.py must have 60+ lines, has {lines}"
 
     def test_compliance_tracker_min_lines(self, base_dir: Path) -> None:
-        path = base_dir / "claude_code_kazuba/data/modules" / "hooks-routing" / "hooks" / "compliance_tracker.py"
+        path = (
+            base_dir
+            / "claude_code_kazuba/data/modules"
+            / "hooks-routing"
+            / "hooks"
+            / "compliance_tracker.py"
+        )
         lines = path.read_text().count("\n")
         assert lines >= 50, f"compliance_tracker.py must have 50+ lines, has {lines}"
 

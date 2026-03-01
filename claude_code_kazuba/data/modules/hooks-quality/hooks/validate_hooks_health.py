@@ -11,6 +11,7 @@ Exit codes:
 
 Protocol: stdin JSON -> validate hooks -> stderr report -> exit 0
 """
+
 from __future__ import annotations
 
 import contextlib
@@ -259,9 +260,7 @@ def main() -> None:
                 hook_data = json.loads(raw)
 
         # Determine settings path
-        project_dir = Path(
-            os.environ.get("CLAUDE_PROJECT_DIR", str(Path.cwd()))
-        )
+        project_dir = Path(os.environ.get("CLAUDE_PROJECT_DIR", str(Path.cwd())))
 
         # Try both settings files
         candidates = [
@@ -289,7 +288,9 @@ def main() -> None:
             )
             for hook in report.hooks:
                 if not hook.healthy:
-                    print(f"  [ISSUE] {hook.event}/{hook.name}: {hook.last_error}", file=sys.stderr)
+                    print(
+                        f"  [ISSUE] {hook.event}/{hook.name}: {hook.last_error}", file=sys.stderr
+                    )
         else:
             print(
                 f"HooksHealthValidator: {report.healthy}/{report.total} hooks healthy.",

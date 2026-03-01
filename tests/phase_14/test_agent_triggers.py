@@ -159,8 +159,12 @@ def test_trigger_registry_from_yaml_missing_files(tmp_path: Path) -> None:
 
 def test_trigger_registry_from_real_yaml() -> None:
     base = Path(__file__).resolve().parent.parent.parent
-    agent_path = base / "claude_code_kazuba/data/modules/config-hypervisor/config/agent_triggers.yaml"
-    recovery_path = base / "claude_code_kazuba/data/modules/config-hypervisor/config/recovery_triggers.yaml"
+    agent_path = (
+        base / "claude_code_kazuba/data/modules/config-hypervisor/config/agent_triggers.yaml"
+    )
+    recovery_path = (
+        base / "claude_code_kazuba/data/modules/config-hypervisor/config/recovery_triggers.yaml"
+    )
 
     if agent_path.exists() and recovery_path.exists():
         reg = TriggerRegistry.from_yaml(agent_path, recovery_path)

@@ -29,7 +29,13 @@ def _import_from_path(name: str, file_path: Path) -> types.ModuleType:
     return mod
 
 
-_SSM_PATH = PROJECT_ROOT / "claude_code_kazuba/data/modules" / "hooks-essential" / "hooks" / "session_state_manager.py"
+_SSM_PATH = (
+    PROJECT_ROOT
+    / "claude_code_kazuba/data/modules"
+    / "hooks-essential"
+    / "hooks"
+    / "session_state_manager.py"
+)
 _ssm = _import_from_path("session_state_manager_ph16", _SSM_PATH)
 
 SessionStateConfig = _ssm.SessionStateConfig

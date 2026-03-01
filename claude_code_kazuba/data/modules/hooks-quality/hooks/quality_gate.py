@@ -5,6 +5,7 @@ Validates files before they are written or edited:
 - Detects debug code (print, console.log, etc.) in production files
 - Warns about missing docstrings in public functions
 """
+
 from __future__ import annotations
 
 import json

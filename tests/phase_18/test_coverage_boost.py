@@ -6,10 +6,15 @@ from pathlib import Path
 
 import pytest
 
-from claude_code_kazuba.rlm import RLMFacade, RLMFacadeConfig
 from claude_code_kazuba.data.modules.rlm.src.config import RLMConfig
-from claude_code_kazuba.data.modules.rlm.src.models import Episode, LearningRecord, MemoryEntry, SessionMeta
+from claude_code_kazuba.data.modules.rlm.src.models import (
+    Episode,
+    LearningRecord,
+    MemoryEntry,
+    SessionMeta,
+)
 from claude_code_kazuba.data.modules.rlm.src.session_manager import SessionManager
+from claude_code_kazuba.rlm import RLMFacade, RLMFacadeConfig
 
 # ===========================================================================
 # Config coverage
@@ -291,7 +296,6 @@ def test_facade_top_memories() -> None:
 
 
 def test_facade_compute_reward_breakdown() -> None:
-
     rlm = RLMFacade()
     rlm.add_reward_component("acc", weight=1.0, target=1.0, scale=0.2)
     bd = rlm.compute_reward_breakdown({"acc": 0.8})

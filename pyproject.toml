@@ -80,6 +80,9 @@ pythonVersion = "3.12"
 typeCheckingMode = "strict"
 reportMissingImports = true
 reportMissingTypeStubs = false
+exclude = [
+    "claude_code_kazuba/data/modules",
+]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

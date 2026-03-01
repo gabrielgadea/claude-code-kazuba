@@ -10,6 +10,7 @@ Exit codes:
 
 Protocol: stdin JSON -> stdout JSON with additionalContext -> exit 0
 """
+
 from __future__ import annotations
 
 import contextlib
@@ -103,11 +104,7 @@ def format_additional_context(rules: list[str]) -> str:
         return "[CRITICAL RULES — no rules loaded]\n[END CRITICAL RULES]"
 
     body = "\n".join(f"- {rule}" for rule in rules)
-    return (
-        "[CRITICAL RULES — preserved across compaction]\n"
-        f"{body}\n"
-        "[END CRITICAL RULES]"
-    )
+    return f"[CRITICAL RULES — preserved across compaction]\n{body}\n[END CRITICAL RULES]"
 
 
 # ---------------------------------------------------------------------------

@@ -3,6 +3,7 @@
 
 Code-first migration script. Idempotent — safe to run multiple times.
 """
+
 from __future__ import annotations
 
 import re
@@ -16,7 +17,17 @@ NEW_PKG = "claude_code_kazuba"
 NEW_VERSION = "0.2.0"
 
 # Directories to skip during replacement
-SKIP_DIRS = {".git", "__pycache__", ".venv", "node_modules", ".ruff_cache", ".pytest_cache", "dist", "build", "scripts/pypi"}
+SKIP_DIRS = {
+    ".git",
+    "__pycache__",
+    ".venv",
+    "node_modules",
+    ".ruff_cache",
+    ".pytest_cache",
+    "dist",
+    "build",
+    "scripts/pypi",
+}
 
 # File extensions to process
 CODE_EXTS = {".py", ".md"}
@@ -105,25 +116,37 @@ def step_mass_replace_imports() -> None:
 def step_update_configs() -> None:
     """Step 4: Update config files that reference 'lib' as path/package."""
     replacements: list[tuple[str, list[tuple[str, str]]]] = [
-        ("pyproject.toml", [
-            ('source = ["lib"]', f'source = ["{NEW_PKG}"]'),
-            ('include = ["lib*"]', f'include = ["{NEW_PKG}*"]'),
-            ("ruff check lib/", f"ruff check {NEW_PKG}/"),
-            ("ruff format lib/", f"ruff format {NEW_PKG}/"),
-            ("pyright lib/", f"pyright {NEW_PKG}/"),
-        ]),
-        (".github/workflows/ci.yml", [
-            ("lib/", f"{NEW_PKG}/"),
-        ]),
-        (".claude/CLAUDE.md", [
-            ("--cov=lib", f"--cov={NEW_PKG}"),
-            ("ruff check lib/", f"ruff check {NEW_PKG}/"),
-            ("ruff format lib/", f"ruff format {NEW_PKG}/"),
-            ("pyright lib/", f"pyright {NEW_PKG}/"),
-        ]),
-        ("README.md", [
-            ("--cov=lib", f"--cov={NEW_PKG}"),
-        ]),
+        (
+            "pyproject.toml",
+            [
+                ('source = ["lib"]', f'source = ["{NEW_PKG}"]'),
+                ('include = ["lib*"]', f'include = ["{NEW_PKG}*"]'),
+                ("ruff check lib/", f"ruff check {NEW_PKG}/"),
+                ("ruff format lib/", f"ruff format {NEW_PKG}/"),
+                ("pyright lib/", f"pyright {NEW_PKG}/"),
+            ],
+        ),
+        (
+            ".github/workflows/ci.yml",
+            [
+                ("lib/", f"{NEW_PKG}/"),
+            ],
+        ),
+        (
+            ".claude/CLAUDE.md",
+            [
+                ("--cov=lib", f"--cov={NEW_PKG}"),
+                ("ruff check lib/", f"ruff check {NEW_PKG}/"),
+                ("ruff format lib/", f"ruff format {NEW_PKG}/"),
+                ("pyright lib/", f"pyright {NEW_PKG}/"),
+            ],
+        ),
+        (
+            "README.md",
+            [
+                ("--cov=lib", f"--cov={NEW_PKG}"),
+            ],
+        ),
     ]
 
     for rel_path, subs in replacements:

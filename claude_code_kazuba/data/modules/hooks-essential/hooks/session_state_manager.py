@@ -10,6 +10,7 @@ Exit codes:
 
 Protocol: stdin JSON -> capture state -> stdout (empty) -> exit 0
 """
+
 from __future__ import annotations
 
 import contextlib
@@ -104,9 +105,7 @@ class SessionStateManager:
 
     def __init__(self, config: SessionStateConfig) -> None:
         self.config = config
-        self._circuit_breaker = (
-            CircuitBreaker("session_state_manager") if _CB_AVAILABLE else None
-        )
+        self._circuit_breaker = CircuitBreaker("session_state_manager") if _CB_AVAILABLE else None
 
     def capture(self, session_data: dict[str, Any]) -> CaptureResult:
         """Capture session data to a checkpoint file.
@@ -134,9 +133,7 @@ class SessionStateManager:
                 error=str(exc),
             )
 
-    def _do_capture_internal(
-        self, session_data: dict[str, Any], start: float
-    ) -> CaptureResult:
+    def _do_capture_internal(self, session_data: dict[str, Any], start: float) -> CaptureResult:
         """Internal capture logic (may raise)."""
         self.config.checkpoint_dir.mkdir(parents=True, exist_ok=True)
 

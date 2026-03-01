@@ -4,6 +4,7 @@ Uses lib.patterns.SecretPatterns to scan file content for API keys,
 tokens, passwords, and other credentials. Blocks writes that contain
 detected secrets unless the file is whitelisted (test files, .example).
 """
+
 from __future__ import annotations
 
 import json

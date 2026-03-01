@@ -3,6 +3,7 @@
 Defines typed data structures for task delegation, agent capabilities,
 routing decisions, and system status reporting.
 """
+
 from __future__ import annotations
 
 from datetime import datetime
@@ -13,6 +14,7 @@ from pydantic import BaseModel, Field
 # ---------------------------------------------------------------------------
 # Enums
 # ---------------------------------------------------------------------------
+
 
 class TaskPriority(StrEnum):
     """Priority levels for task routing and SLA enforcement."""
@@ -65,13 +67,12 @@ class EscalationLevel(StrEnum):
 # Agent Models
 # ---------------------------------------------------------------------------
 
+
 class AgentCapability(BaseModel):
     """Describes a single capability an agent possesses."""
 
     name: str = Field(..., description="Capability identifier (e.g. 'code_review')")
-    proficiency: float = Field(
-        ..., ge=0.0, le=1.0, description="Proficiency score 0.0-1.0"
-    )
+    proficiency: float = Field(..., ge=0.0, le=1.0, description="Proficiency score 0.0-1.0")
     tools: list[str] = Field(default_factory=list, description="Tools required")
     description: str = Field(default="", description="Human-readable description")
 
@@ -86,14 +87,13 @@ class AgentConfig(BaseModel):
     capabilities: list[AgentCapability] = Field(default_factory=list)
     max_concurrent_tasks: int = Field(default=1, ge=1)
     is_coordinator: bool = Field(default=False)
-    silence_window_seconds: int = Field(
-        default=0, ge=0, description="Cooldown between deliveries"
-    )
+    silence_window_seconds: int = Field(default=0, ge=0, description="Cooldown between deliveries")
 
 
 # ---------------------------------------------------------------------------
 # Task Models
 # ---------------------------------------------------------------------------
+
 
 class TaskRequest(BaseModel):
     """A task to be delegated to an agent."""
@@ -106,9 +106,7 @@ class TaskRequest(BaseModel):
     assigned_to: str | None = Field(default=None, description="Agent name")
     created_by: str = Field(default="orchestrator")
     created_at: datetime = Field(default_factory=datetime.now)
-    deadline_seconds: int | None = Field(
-        default=None, ge=0, description="SLA deadline in seconds"
-    )
+    deadline_seconds: int | None = Field(default=None, ge=0, description="SLA deadline in seconds")
     tags: list[str] = Field(default_factory=list)
     blocked_by: list[str] = Field(
         default_factory=list, description="Task IDs that block this task"
@@ -134,6 +132,7 @@ class TaskResult(BaseModel):
 # Routing Models
 # ---------------------------------------------------------------------------
 
+
 class RoutingRule(BaseModel):
     """Declarative routing rule for the SmartRouter."""
 
@@ -141,9 +140,7 @@ class RoutingRule(BaseModel):
     priority: int = Field(default=100, description="Lower = higher priority")
     condition: str = Field(..., description="Condition expression")
     action: str = Field(..., description="Action to take (route, drop, broadcast)")
-    target_agents: list[str] = Field(
-        default_factory=list, description="Target agent names"
-    )
+    target_agents: list[str] = Field(default_factory=list, description="Target agent names")
     exclude_sender: bool = Field(default=True)
     description: str = Field(default="")
 
@@ -153,21 +150,18 @@ class DelegationDecision(BaseModel):
 
     task_id: str = Field(..., description="Task being delegated")
     selected_agent: str = Field(..., description="Chosen agent name")
-    confidence: float = Field(
-        ..., ge=0.0, le=1.0, description="Selection confidence score"
-    )
+    confidence: float = Field(..., ge=0.0, le=1.0, description="Selection confidence score")
     reasoning: str = Field(default="", description="Why this agent was chosen")
     fallback_agents: list[str] = Field(
         default_factory=list, description="Alternatives if primary fails"
     )
-    matched_rule: str | None = Field(
-        default=None, description="Routing rule that matched"
-    )
+    matched_rule: str | None = Field(default=None, description="Routing rule that matched")
 
 
 # ---------------------------------------------------------------------------
 # System Status Models
 # ---------------------------------------------------------------------------
+
 
 class CircuitBreakerStatus(BaseModel):
     """Status of a single circuit breaker."""
@@ -201,7 +195,5 @@ class EscalationEvent(BaseModel):
     task_id: str | None = Field(default=None, description="Related task if any")
     message: str = Field(..., description="Description of the issue")
     timestamp: datetime = Field(default_factory=datetime.now)
-    suggested_action: str = Field(
-        default="", description="Recommended resolution"
-    )
+    suggested_action: str = Field(default="", description="Recommended resolution")
     auto_resolved: bool = Field(default=False)
