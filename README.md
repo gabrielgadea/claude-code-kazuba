@@ -6,9 +6,11 @@
 [![Coverage](https://img.shields.io/badge/coverage-97%25-brightgreen.svg)](#test-suite)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 
-**Claude Code sem governanca comete erros que voce so descobre no code review.**
-Kazuba instala 15 modulos em 5 segundos — hooks que bloqueiam secrets, validam qualidade e
-persistem contexto automaticamente. Sem configuracao manual. Sem latencia perceptivel.
+**Claude Code e poderoso. Mas poder sem governanca e risco.**
+Kazuba transforma Claude Code em um **Meta Code Orchestrator** — uma IA que nao
+apenas escreve codigo, mas *governa a si mesma* atraves de tres camadas:
+**CLAUDE.md** diz como pensar, **Hooks** impedem erros em tempo real,
+e **Rust** faz tudo isso sem latencia perceptivel.
 
 ```
 [PreToolUse] secrets_scanner: BLOCKED — AWS access key detected in config.py
@@ -39,112 +41,80 @@ curl -sL https://raw.githubusercontent.com/gabrielgadea/claude-code-kazuba/main/
 
 Em 5 segundos, seu projeto Claude Code tem:
 
-| O que voce ganha | Como |
-|-----------------|------|
-| Nenhum secret vai para o git | Hooks bloqueiam antes de escrever |
-| Qualidade checada em cada arquivo | Quality gate pre-escrita |
-| Contexto persistente entre sessoes | Checkpoints automaticos |
-| Prompts enriquecidos automaticamente | Classificacao + tecnicas cognitivas |
-| Stack-aware (Python, Rust, TS, Go...) | Deteccao automatica + templates Jinja2 |
+| O que voce ganha | Camada responsavel |
+|-----------------|-------------------|
+| Nenhum secret vai para o git | Hook `secrets_scanner` (enforcement) |
+| Qualidade checada em cada arquivo | Hook `quality_gate` (enforcement) |
+| Contexto persistente entre sessoes | Checkpoints TOON (diretiva) |
+| Prompts enriquecidos automaticamente | Hook `prompt_enhancer` + CILA (enforcement) |
+| Stack-aware (Python, Rust, TS, Go...) | Templates Jinja2 (diretiva) |
+| Deteccao de padroes em nanosegundos | Aho-Corasick (aceleracao Rust) |
+
+O que acabou de acontecer por baixo e o resultado de tres camadas arquiteturais
+trabalhando em conjunto. Entenda cada uma delas — e por que a ordem importa.
 
 ---
 
-## O Trade-Off que Motivou a Arquitetura
+## A Tese: Meta Code Orchestrator
 
-Claude Code executa hooks em cada interacao. Cada prompt classificado. Cada comando bash validado.
-Cada arquivo escaneado por segredos. Em Python puro, cada hook adiciona 50-200ms de latencia — e
-quando voce empilha 16 hooks, o desenvolvedor **sente** a friccao. A governanca vira peso morto.
+Claude Code sem Kazuba e uma ferramenta que escreve codigo. Com Kazuba, e um
+**orchestrator que governa a si mesmo** — sabe como pensar, e impedido de errar,
+e faz isso sem friccao.
 
-Mas remover hooks significa aceitar codigo inseguro em producao. O trade-off parecia inevitavel:
-**seguranca ou velocidade. Escolha um.**
-
-Kazuba escolheu os dois. E a forma como fez isso revela duas decisoes arquiteturais que
-separam este framework de qualquer configuracao manual de hooks.
-
----
-
-## Pilar 1 — Rust Acceleration Layer
-
-### 7.137 linhas. 12 modulos. 151 testes nativos. Nao e stub.
-
-A camada Rust em `rust/kazuba-hooks/` e uma implementacao completa com fallback graceful
-para Python. Se Rust nao esta compilado, Python assume — a API e identica, o chamador nunca
-sabe qual backend respondeu.
-
-**A decisao algoritmica que importa — Two-Phase Detection:**
+A arquitetura se organiza em tres camadas, cada uma resolvendo uma limitacao
+especifica da anterior:
 
 ```
-Fase 1: Aho-Corasick pre-filter → scan unico O(n)
-         Procura keywords rapidos: "api_key", "sk-", "ghp_", "-----BEGIN"
-         Se NENHUM keyword → return [] (zero-cost exit)
-
-Fase 2: RegexSet confirmation → so executa se Fase 1 detectou algo
-         9 padroes precisos confirmam o match
+┌─────────────────────────────────────────────────────────┐
+│  Layer 1 — CLAUDE.md (Diretiva)                         │
+│  "Como Claude deve pensar e planejar"                   │
+│  Plans as code, Meta-Code-First, CILA taxonomy          │
+├─────────────────────────────────────────────────────────┤
+│  Layer 2 — Hooks (Enforcement)                          │
+│  "O que Claude nao pode fazer"                          │
+│  16 hooks: secrets, PII, bash, quality, routing         │
+├─────────────────────────────────────────────────────────┤
+│  Layer 3 — Rust (Aceleracao)                            │
+│  "Fazer tudo isso sem que o dev perceba"                │
+│  7.137 linhas, Aho-Corasick, PyO3, fallback graceful   │
+└─────────────────────────────────────────────────────────┘
 ```
 
-A maioria dos arquivos nao contem segredos. A Fase 1 elimina 95%+ dos arquivos em tempo linear,
-sem jamais invocar o motor de regex. Em um projeto com 500 arquivos, ~475 sao descartados por
-Aho-Corasick (nanosegundos) em vez de testados por 9 regexes cada.
+A ordem nao e acidental. Diretivas definem o comportamento desejado. Enforcement
+garante que o comportamento real corresponde ao desejado. Aceleracao torna o
+enforcement invisivel. Remova qualquer camada e o sistema degrada:
+sem diretivas, os hooks nao sabem o que proteger; sem hooks, as diretivas
+sao sugestoes ignoraveis; sem Rust, o enforcement vira friccao que o
+desenvolvedor desliga.
 
-O mesmo padrao two-phase se repete em `bash_safety.rs`, `skill_match.rs` e `knowledge.rs`.
-
-| Modulo | Linhas | Funcao | Algoritmo |
-|---|---|---|---|
-| `rlm_reasoning.rs` | 930 | Chain/Tree/Graph-of-Thought | Validacao estrutural de raciocinio |
-| `lib.rs` (bindings) | 892 | 25 funcoes PyO3 exportadas | Ponte Python-Rust completa |
-| `learning.rs` | 843 | TD(lambda) + Working Memory | Rayon parallel similarity search |
-| `qa.rs` | 843 | Issue categorization + ROI | Aho-Corasick batch matching |
-| `knowledge.rs` | 686 | Knowledge engine + patterns | Multi-signal scoring |
-| `recovery.rs` | 672 | Error-recovery strategies | 10 strategies com auto-apply |
-| `bash_safety.rs` | 571 | Validacao de comandos shell | LazyLock + Aho-Corasick O(n) |
-| `subagent.rs` | 562 | Skill injection SubagentStart | Category-weighted injection |
-| `code_quality.rs` | 321 | Anti-pattern detection | RegexSet multi-pattern |
-| `patterns.rs` | 291 | Utilities compartilhados | Aho-Corasick builders |
-| `skill_match.rs` | 280 | Hybrid skill matching | 0.6 semantic + 0.4 Aho-Corasick |
-| `secrets.rs` | 192 | Deteccao de credenciais | Two-phase: Aho-Corasick + Regex |
-
-<details>
-<summary><strong>O que o Rust traz alem de velocidade</strong></summary>
-
-1. **Property Testing com Proptest** — `bash_safety.rs` e `recovery.rs` usam proptest para gerar
-   inputs aleatorios e verificar que o validator nunca crashe. Fuzzing em tempo de compilacao.
-
-2. **Rayon para Similarity Search** — `learning.rs` usa `par_iter()` para busca paralela em
-   embeddings. Cada core do CPU processando fatias diferentes do vetor de memoria.
-
-3. **Zero-allocation hot path** — Aho-Corasick em Rust opera sem alocacao de heap no caminho
-   principal. Cada match e uma referencia a memoria pre-alocada.
-
-4. **Fallback Graceful** — `lib/rust_bridge.py` implementa o contrato `@fail_open`:
-   ```python
-   # Tenta Rust. Se falhar, usa Python. API identica.
-   try:
-       result = _rust_check_secrets(content, file_path) if self._use_rust else _python_check_secrets(content)
-   except Exception:
-       result = _python_check_secrets(content)  # fallback silencioso
-   ```
-   O resultado carrega `backend: "rust" | "python"` para observabilidade.
-   Benchmark mode coleta timing em nanosegundos para comparacao real.
-
-5. **151 testes nativos + Criterion benchmarks** — secrets detection, code quality, bash safety,
-   e no-match fast path. Cada modulo com cobertura propria.
-
-</details>
+As secoes seguintes examinam cada camada em detalhe.
 
 ---
 
-## Pilar 2 — Meta-Code-First
+## Layer 1 — CLAUDE.md: A Camada Diretiva
 
-### O plano de desenvolvimento E codigo. Nao e documento.
+Antes de interceptar erros, Claude precisa saber **como pensar**. O `CLAUDE.md`
+instalado pelo Kazuba define regras, principios e templates que orientam cada
+decisao do Claude Code — desde a forma de nomear variaveis ate a profundidade de
+analise por nivel de complexidade.
 
-O `CLAUDE.md` do Kazuba define: *"Plans are data, not documents."* E aplica o principio a si
-mesmo — um script Python de 3.676 linhas gera programaticamente todas as 24 fases do plano,
-com frontmatter YAML, cross-references validadas, e scripts de validacao por fase.
+Mas o diferencial nao esta nas regras em si. Esta em como elas sao geradas.
+
+### Meta-Code-First: O Plano E Codigo
+
+O `CLAUDE.md` do Kazuba define um principio fundamental: *"Plans are data, not
+documents."* E aplica esse principio a si mesmo — o proprio plano de
+desenvolvimento do framework e codigo executavel, nao markdown manual.
 
 ```bash
 python scripts/generate_plan.py --output-dir plans/ --validate
 # → 24 arquivos markdown + 24 scripts de validacao + orquestrador
 ```
+
+Um script Python de 3.676 linhas gera programaticamente todas as 24 fases do
+plano, com frontmatter YAML padronizado, cross-references validadas e scripts de
+validacao por fase. A consequencia direta: mudar o plano significa mudar dados em
+Python e regenerar — nao cacar inconsistencias em 24 arquivos markdown.
 
 **5 camadas de geracao/validacao:**
 
@@ -156,7 +126,10 @@ generate_plan.py (Python)
                 → que usam Rust (que valida padroes em O(n))
 ```
 
-A diferenca entre um plano markdown e um plano code-first:
+O que torna esse pattern poderoso e a recursividade: codigo gera codigo que gera
+codigo que valida codigo. Claude Code opera nao como editor, mas como
+**orquestrador de um plano compilavel** — le o gerador, executa-o, implementa os
+arquivos definidos, roda a validacao, e itera se algo falhar.
 
 | Plano Manual | Plano Code-First (Kazuba) |
 |---|---|
@@ -166,10 +139,9 @@ A diferenca entre um plano markdown e um plano code-first:
 | `git diff` em markdown e ruido | `git diff` em Python mostra mudanca semantica |
 
 <details>
-<summary><strong>Claude Code como orchestrator de codigo</strong></summary>
+<summary><strong>Claude Code como orchestrator (detalhes)</strong></summary>
 
-No contexto do Kazuba, Claude Code nao e apenas um editor que recebe instrucoes. Ele opera
-como um **orquestrador** de um plano compilavel:
+No contexto do Kazuba, o fluxo de trabalho de Claude Code e:
 
 1. **Le** `generate_plan.py` para entender a fase atual
 2. **Executa** o gerador para criar/atualizar o plano
@@ -177,50 +149,30 @@ como um **orquestrador** de um plano compilavel:
 4. **Roda** `validate_phase_XX.py` para verificar completude
 5. **Itera** se validacao falhar
 
-Cada fase define `AgentSpec` para subagentes paralelos:
-
-```python
-agents=[
-    AgentSpec(name="rust-impl", subagent_type="implementor", model="sonnet", isolation="worktree"),
-    AgentSpec(name="test-writer", subagent_type="tester", model="sonnet", isolation="worktree"),
-]
-```
-
-Worktree isolation + parallel execution = cada agente trabalha em branch propria, merge
-coordenado pelo orquestrador. O plano e executavel, a implementacao e validavel, e a
-validacao e gerada automaticamente.
+Cada fase define `AgentSpec` para subagentes paralelos com worktree isolation.
+Cada agente trabalha em branch propria, merge coordenado pelo orquestrador.
+A distincao entre "planejar" e "implementar" colapsa — o plano e executavel, a
+implementacao e validavel, e a validacao e gerada automaticamente.
 
 </details>
 
----
-
-## Presets
-
-| Preset | Modulos | Ideal para |
-|--------|---------|-----------|
-| **minimal** | 1 | Templates e regras basicas |
-| **standard** | 5 | Desenvolvimento diario + prompt enhancement |
-| **research** | 6 | Projetos academicos com skills de pesquisa |
-| **professional** | 10 | Engenharia completa com quality gates e agents |
-| **enterprise** | 14 | Orquestracao multi-agente + hypervisor + compliance |
-
-Cada modulo declara dependencias; o installer resolve via topological sort.
+Diretivas, porem, sao intencoes declaradas. Nao importa quao preciso o
+`CLAUDE.md` seja — sem um mecanismo de enforcement, diretivas sao sugestoes que
+Claude pode ignorar. Por isso a proxima camada existe.
 
 ---
 
-## Exemplos Praticos
+## Layer 2 — Hooks: A Camada de Enforcement
 
-Projetos-demo com antes/depois em `examples/`:
+Saber o que fazer nao impede erros — **interceptar** impede. Os hooks do Kazuba
+operam em eventos do Claude Code (`PreToolUse`, `UserPromptSubmit`, `PostToolUse`)
+e tomam decisoes em tempo real: bloquear (exit 2), alertar (exit 0 com warning),
+ou enriquecer contexto.
 
-- [`python-api/`](examples/python-api/) — FastAPI: `secrets_scanner` bloqueia `postgresql://admin:Secret123@prod.db`
-- [`rust-cli/`](examples/rust-cli/) — CLI Rust: `bash_safety` bloqueia `chmod 777` e `rm -rf` com wildcard
-- [`typescript-web/`](examples/typescript-web/) — Next.js: `pii_scanner` detecta email/CPF em `console.log()` de API routes
+Sao 16 hooks organizados em tres modulos, cada um com uma funcao especifica na
+cadeia de governanca:
 
----
-
-## Seguranca, Prompts e Roteamento
-
-### Seguranca Como Default
+### Seguranca (hooks-quality)
 
 4 hooks rodam **antes** de cada escrita de arquivo e **antes** de cada comando bash:
 
@@ -231,49 +183,28 @@ Projetos-demo com antes/depois em `examples/`:
 [PreToolUse] quality_gate:    WARNING — debug print() in production code
 ```
 
-Secrets nunca chegam ao git. PII nunca entra no codigo. Comandos destrutivos sao bloqueados.
+Secrets nunca chegam ao git. PII nunca entra no codigo. Comandos destrutivos sao
+bloqueados. O principio subjacente e **fail-open**: se um hook falhar internamente
+(excecao Python, timeout), ele retorna exit 0 — nunca trava o Claude Code.
 
-### Prompt Enhancement + CILA Routing
+### Roteamento Cognitivo (hooks-routing)
 
-Cada prompt e automaticamente classificado em 8 categorias, enriquecido com tecnicas cognitivas
-(chain-of-thought, structured output, constitutional constraints), e roteado por complexidade
-CILA (L0-L6) para calibrar profundidade de resposta.
-
----
-
-## Arquitetura
+Enforcement nao e apenas bloqueio. Os hooks de routing classificam cada prompt
+por complexidade (CILA L0-L6) e intent (8 categorias), injetando tecnicas
+cognitivas automaticamente:
 
 ```
-claude-code-kazuba/
-├── rust/kazuba-hooks/     # Aceleracao Rust: 7.137 linhas, 12 modulos, 25 PyO3 bindings
-├── lib/                   # 8 modulos compartilhados (hook_base, patterns, config, rlm, ...)
-├── core/                  # Templates Jinja2 + rules universais (sempre instalado)
-├── modules/               # 15 modulos opcionais organizados por categoria
-│   ├── hooks-essential/   #   Prompt enhancer, status monitor, auto compact
-│   ├── hooks-quality/     #   Secrets, PII, bash safety, quality gate, SIAC
-│   ├── hooks-routing/     #   CILA router, knowledge manager, compliance
-│   ├── skills-*/          #   Dev, meta, planning, research (11 skills)
-│   ├── agents-dev/        #   Code reviewer, security auditor, meta-orchestrator
-│   ├── commands-*/        #   6 slash commands (debug-RCA, verify, smart-commit, ...)
-│   └── ...                #   hypervisor, contexts, team-orchestrator, rlm
-├── scripts/               # generate_plan.py (3.676 linhas) + installer CLI
-├── presets/               # 5 presets (minimal → enterprise)
-├── examples/              # Projetos-demo (Python, Rust, TypeScript)
-├── install.sh             # One-command installer
-└── tests/                 # 1567 testes (phase_00 → phase_22 + integration_v2)
+[UserPromptSubmit] prompt_enhancer: intent=debug → chain_of_thought + few_shot + self_validation
+[UserPromptSubmit] cila_router: complexity=L3 (multi-step) → routing=detailed_analysis
 ```
 
-| Principio | Implementacao |
-|-----------|--------------|
-| **Fail-Open** | Hooks nunca crasham o Claude Code — erro interno = exit 0 |
-| **Zero Config** | `./install.sh --preset standard` e tudo que voce precisa |
-| **Composable** | Cada modulo e independente com dependencias explicitas |
-| **TDD** | 90% coverage per file (nao media), todos os hooks testados |
-| **Type-Safe** | Pydantic v2 para configs, pyright strict para lib/ |
-| **Checkpoint** | TOON format (msgpack + header) para recovery de estado |
+A implicacao e que Claude Code nao recebe apenas o prompt do usuario — recebe o
+prompt enriquecido com a estrategia cognitiva apropriada para aquele tipo de
+problema. Um debug L2 dispara chain-of-thought; uma refatoracao L4 dispara
+structured output com constitutional constraints.
 
 <details>
-<summary><strong>Hooks completos (16 hooks em 3 modulos)</strong></summary>
+<summary><strong>Tabela completa: 16 hooks em 3 modulos</strong></summary>
 
 | Hook | Evento | Modulo | O que faz |
 |------|--------|--------|-----------|
@@ -310,13 +241,184 @@ Meta Orchestrator (Opus — decide HOOK vs SKILL vs AGENT vs MCP).
 **Commands:**
 `/debug-RCA`, `/smart-commit`, `/orchestrate`, `/verify`, `/prp-base-create`, `/prp-base-execute`.
 
-Detalhes completos em [MODULES_CATALOG.md](docs/MODULES_CATALOG.md).
+Detalhes em [MODULES_CATALOG.md](docs/MODULES_CATALOG.md).
 
 </details>
+
+Ate aqui, o sistema funciona — diretivas orientam, hooks interceptam. Mas ha
+uma tensao: cada hook adiciona 50-200ms de latencia em Python puro. Com 16 hooks,
+o desenvolvedor sente a friccao. E governanca que o desenvolvedor sente e
+**governanca que o desenvolvedor desliga**. A terceira camada resolve isso.
+
+---
+
+## Layer 3 — Rust: A Camada de Aceleracao
+
+### 7.137 linhas. 12 modulos. 151 testes nativos. Nao e stub.
+
+O objetivo da camada Rust nao e apenas "ser mais rapido". E tornar a governanca
+**invisivel** — enforcement que opera abaixo do limiar de percepcao do
+desenvolvedor, sem jamais comprometer a seguranca.
+
+A implementacao completa em `rust/kazuba-hooks/` oferece fallback graceful para
+Python: se Rust nao esta compilado, Python assume. A API e identica; o chamador
+nunca sabe qual backend respondeu.
+
+### A Decisao Algoritmica: Two-Phase Detection
+
+O padrao central e a deteccao em duas fases, que transforma O(n×m) em O(n):
+
+```
+Fase 1: Aho-Corasick pre-filter → scan unico O(n)
+         Procura keywords rapidos: "api_key", "sk-", "ghp_", "-----BEGIN"
+         Se NENHUM keyword → return [] (zero-cost exit)
+
+Fase 2: RegexSet confirmation → so executa se Fase 1 detectou algo
+         9 padroes precisos confirmam o match
+```
+
+A razao por que isso importa: a maioria dos arquivos nao contem segredos.
+A Fase 1 elimina 95%+ dos arquivos em tempo linear, sem jamais invocar o motor
+de regex. Em um projeto com 500 arquivos, ~475 sao descartados por Aho-Corasick
+(nanosegundos) em vez de testados por 9 regexes cada. O mesmo padrao two-phase
+se repete em `bash_safety.rs`, `skill_match.rs` e `knowledge.rs`.
+
+| Modulo | Linhas | Funcao | Algoritmo |
+|---|---|---|---|
+| `rlm_reasoning.rs` | 930 | Chain/Tree/Graph-of-Thought | Validacao estrutural de raciocinio |
+| `lib.rs` (bindings) | 892 | 25 funcoes PyO3 exportadas | Ponte Python-Rust completa |
+| `learning.rs` | 843 | TD(lambda) + Working Memory | Rayon parallel similarity search |
+| `qa.rs` | 843 | Issue categorization + ROI | Aho-Corasick batch matching |
+| `knowledge.rs` | 686 | Knowledge engine + patterns | Multi-signal scoring |
+| `recovery.rs` | 672 | Error-recovery strategies | 10 strategies com auto-apply |
+| `bash_safety.rs` | 571 | Validacao de comandos shell | LazyLock + Aho-Corasick O(n) |
+| `subagent.rs` | 562 | Skill injection SubagentStart | Category-weighted injection |
+| `code_quality.rs` | 321 | Anti-pattern detection | RegexSet multi-pattern |
+| `patterns.rs` | 291 | Utilities compartilhados | Aho-Corasick builders |
+| `skill_match.rs` | 280 | Hybrid skill matching | 0.6 semantic + 0.4 Aho-Corasick |
+| `secrets.rs` | 192 | Deteccao de credenciais | Two-phase: Aho-Corasick + Regex |
+
+<details>
+<summary><strong>Alem de velocidade: o que Rust torna possivel</strong></summary>
+
+1. **Property Testing com Proptest** — `bash_safety.rs` e `recovery.rs` usam proptest para gerar
+   inputs aleatorios e verificar que o validator nunca crashe. Fuzzing em tempo de compilacao.
+
+2. **Rayon para Similarity Search** — `learning.rs` usa `par_iter()` para busca paralela em
+   embeddings. Cada core do CPU processando fatias diferentes do vetor de memoria.
+
+3. **Zero-allocation hot path** — Aho-Corasick em Rust opera sem alocacao de heap no caminho
+   principal. Cada match e uma referencia a memoria pre-alocada.
+
+4. **Fallback Graceful** — `lib/rust_bridge.py` implementa o contrato `@fail_open`:
+   ```python
+   try:
+       result = _rust_check_secrets(content, file_path) if self._use_rust else _python_check_secrets(content)
+   except Exception:
+       result = _python_check_secrets(content)  # fallback silencioso
+   ```
+   O resultado carrega `backend: "rust" | "python"` para observabilidade.
+
+5. **151 testes nativos + Criterion benchmarks** — secrets detection, code quality, bash safety,
+   e no-match fast path.
+
+</details>
+
+Quando as tres camadas convergem, algo emerge que nenhuma delas produz sozinha.
+
+---
+
+## Convergencia: O Meta-Pattern
+
+As tres camadas nao sao independentes — se amplificam mutuamente. A camada diretiva
+define que cada hook deve ter implementacao Python **e** aceleracao Rust opcional.
+O gerador code-first produz o skeleton de ambos. Os hooks de enforcement validam
+que o fallback funciona. O benchmark mode comprova que Rust e mais rapido.
+
+```
+generate_plan.py define Phase(files_to_create=["rust/kazuba-hooks/src/new_module.rs"])
+    → Claude Code implementa o modulo Rust
+    → PyO3 bindings exportam para Python
+    → rust_bridge.py detecta automaticamente
+    → validate_phase_XX.py confirma fallback funcional
+    → Criterion benchmark registra speedup
+```
+
+O resultado e um sistema que **se auto-hospeda**: o framework e construido com as
+mesmas ferramentas que oferece. Os hooks que protegem o codigo do usuario protegem
+o codigo do framework. O plano que gera as fases de desenvolvimento e validado
+pelos mesmos scripts que ele gera. O principio meta-code-first nao e uma
+diretriz — e uma propriedade emergente da convergencia das tres camadas.
+
+Portanto, o que o desenvolvedor experimenta na pratica nao sao tres camadas
+separadas — e uma unica experiencia: instalar, usar, e ter governanca invisivel.
+As secoes seguintes mostram como isso se materializa.
+
+---
+
+## Presets
+
+Cada preset e uma selecao curada de modulos, resolvida por topological sort
+com base nas dependencias declaradas:
+
+| Preset | Modulos | Ideal para |
+|--------|---------|-----------|
+| **minimal** | 1 | Templates e regras basicas |
+| **standard** | 5 | Desenvolvimento diario + prompt enhancement |
+| **research** | 6 | Projetos academicos com skills de pesquisa |
+| **professional** | 10 | Engenharia completa com quality gates e agents |
+| **enterprise** | 14 | Orquestracao multi-agente + hypervisor + compliance |
+
+---
+
+## Exemplos Praticos
+
+Para ver as tres camadas em acao, `examples/` contem projetos-demo com cenarios
+de antes/depois:
+
+- [`python-api/`](examples/python-api/) — FastAPI: `secrets_scanner` bloqueia `postgresql://admin:Secret123@prod.db`
+- [`rust-cli/`](examples/rust-cli/) — CLI Rust: `bash_safety` bloqueia `chmod 777` e `rm -rf` com wildcard
+- [`typescript-web/`](examples/typescript-web/) — Next.js: `pii_scanner` detecta email/CPF em `console.log()` de API routes
+
+---
+
+## Arquitetura
+
+```
+claude-code-kazuba/
+├── rust/kazuba-hooks/     # Layer 3: 7.137 linhas, 12 modulos, 25 PyO3 bindings
+├── lib/                   # Shared: 8 modulos (hook_base, patterns, config, rlm, ...)
+├── core/                  # Layer 1: Templates Jinja2 + rules universais
+├── modules/               # Layer 2: 15 modulos opcionais
+│   ├── hooks-essential/   #   Prompt enhancer, status monitor, auto compact
+│   ├── hooks-quality/     #   Secrets, PII, bash safety, quality gate, SIAC
+│   ├── hooks-routing/     #   CILA router, knowledge manager, compliance
+│   ├── skills-*/          #   Dev, meta, planning, research (11 skills)
+│   ├── agents-dev/        #   Code reviewer, security auditor, meta-orchestrator
+│   ├── commands-*/        #   6 slash commands (debug-RCA, verify, smart-commit, ...)
+│   └── ...                #   hypervisor, contexts, team-orchestrator, rlm
+├── scripts/               # Meta-Code-First: generate_plan.py (3.676 linhas)
+├── presets/                # 5 presets (minimal → enterprise)
+├── examples/              # Projetos-demo (Python, Rust, TypeScript)
+├── install.sh             # One-command installer
+└── tests/                 # 1567 testes (phase_00 → phase_22 + integration_v2)
+```
+
+| Principio | Como se manifesta |
+|-----------|------------------|
+| **Fail-Open** | Hooks nunca crasham o Claude Code — erro interno = exit 0 |
+| **Zero Config** | `./install.sh --preset standard` e tudo que voce precisa |
+| **Composable** | Cada modulo e independente com dependencias explicitas |
+| **TDD** | 90% coverage per file (nao media), todos os hooks testados |
+| **Type-Safe** | Pydantic v2 para configs, pyright strict para lib/ |
+| **Checkpoint** | TOON format (msgpack + header) para recovery de estado |
 
 ---
 
 ## Test Suite
+
+A credibilidade de um framework de governanca se mede pela propria disciplina.
+O Kazuba aplica a si mesmo o que exige dos projetos que protege:
 
 ```
 ============================= 1567 passed in 3.01s =============================
@@ -324,12 +426,12 @@ Detalhes completos em [MODULES_CATALOG.md](docs/MODULES_CATALOG.md).
 
 | Metrica | Valor |
 |---------|-------|
-| Testes | 1567 (723 v0.1.0 + 844 v0.2.0) |
+| Testes Python | 1567 (723 v0.1.0 + 844 v0.2.0) |
+| Testes Rust nativos | 151 |
 | Coverage (lib/) | 97% |
 | Coverage target | 90% per file |
 | Lint (ruff) | 0 errors |
 | Types (pyright strict) | 0 errors |
-| Testes nativos Rust | 151 |
 | CI | GitHub Actions (lint + typecheck + test) |
 
 ---
@@ -350,7 +452,7 @@ Detalhes completos em [MODULES_CATALOG.md](docs/MODULES_CATALOG.md).
 ## v0.2.0
 
 - [x] **Shared Infrastructure** — CircuitBreaker, TraceManager, HookLogger, EventBus
-- [x] **Rust Acceleration Layer** — 7.137 linhas, 12 modulos, 25 PyO3 bindings, two-phase Aho-Corasick detection
+- [x] **Rust Acceleration Layer** — 7.137 linhas, 12 modulos, 25 PyO3 bindings, two-phase Aho-Corasick
 - [x] **Core Governance + CILA Formal** — Taxonomia CILA L0-L6, StrategyEnforcer, governance rules
 - [x] **Agent Triggers + Recovery** — Dispatch declarativo e escalacao automatica
 - [x] **Hypervisor Executable** — Hypervisor, HypervisorV2, HypervisorBridge
@@ -410,5 +512,5 @@ MIT License. Veja [pyproject.toml](pyproject.toml) para detalhes.
 
 ---
 
-*Construido com o proprio principio meta-code-first: o plano e codigo, a validacao e gerada,
-e a governanca nao custa latencia.*
+*Construido com o proprio principio meta-code-first: o plano e codigo,
+a validacao e gerada, e a governanca nao custa latencia.*
