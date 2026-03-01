@@ -94,6 +94,10 @@ As secoes seguintes examinam cada camada em detalhe.
 
 ---
 
+<p align="center">
+  <img src="docs/demo/kazuba-layers-diagram.png" alt="Meta Code Orchestrator — Three Layers Architecture" width="800">
+</p>
+
 ## Layer 1 — CLAUDE.md: A Camada Diretiva
 
 Antes de interceptar erros, Claude precisa saber **como pensar**. O `CLAUDE.md`
