@@ -264,9 +264,7 @@ def test_hypervisor_execute_all_respects_dependencies():
 
 def test_hypervisor_load_checkpoint_missing(tmp_path):
     """load_checkpoint must return an empty dict when no checkpoint exists."""
-    cfg = HypervisorConfig(
-        mode=ExecutionMode.DRY_RUN, checkpoint_dir=tmp_path / "cps"
-    )
+    cfg = HypervisorConfig(mode=ExecutionMode.DRY_RUN, checkpoint_dir=tmp_path / "cps")
     h = Hypervisor(cfg)
     result = h.load_checkpoint(99)
     assert result == {}
@@ -580,8 +578,10 @@ def test_hypervisor_save_checkpoint_oserror(tmp_path):
     mock_proc.returncode = 0
 
     # Patch mkdir to raise OSError so _save_checkpoint returns None
-    with patch("subprocess.run", return_value=mock_proc), \
-         patch("pathlib.Path.mkdir", side_effect=OSError("no space left")):
+    with (
+        patch("subprocess.run", return_value=mock_proc),
+        patch("pathlib.Path.mkdir", side_effect=OSError("no space left")),
+    ):
         result = h.execute_phase(phase)
 
     assert result.phase_id == 50
@@ -692,6 +692,7 @@ def test_hypervisor_circuit_breaker_import_error():
     """Hypervisor must handle missing circuit_breaker import gracefully."""
     # Simulate ImportError by patching the module
     import sys
+
     # Temporarily hide 'lib' to force ImportError
     saved = sys.modules.get("lib")
     saved_cb = sys.modules.get("lib.circuit_breaker")

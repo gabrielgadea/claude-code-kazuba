@@ -435,10 +435,7 @@ class CodeFirstCycle:
         Returns:
             Dict with phase names as keys and completion status as values.
         """
-        return {
-            p.phase: {"completed": p.completed, "evidence": p.evidence}
-            for p in self.phases
-        }
+        return {p.phase: {"completed": p.completed, "evidence": p.evidence} for p in self.phases}
 
 
 class CILARouter:

@@ -196,9 +196,7 @@ def run_hook_benchmark(
 
     # Warmup phase (results discarded)
     for _ in range(config.warmup_iterations):
-        run_single_hook(
-            hook_path, payload, config.timeout_seconds, config.python_executable
-        )
+        run_single_hook(hook_path, payload, config.timeout_seconds, config.python_executable)
 
     # Measured phase
     times: list[float] = []
@@ -278,8 +276,7 @@ def format_report(results: list[BenchmarkResult]) -> str:
 
     unhealthy = [r for r in results if not r.is_healthy]
     summary = (
-        f"\nSummary: {len(results)} hooks benchmarked, "
-        f"{len(unhealthy)} with health issues.\n"
+        f"\nSummary: {len(results)} hooks benchmarked, {len(unhealthy)} with health issues.\n"
     )
 
     return header + separator + "".join(rows) + separator + summary

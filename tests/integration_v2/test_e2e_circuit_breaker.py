@@ -4,6 +4,7 @@
 Tests the MotorCircuitBreaker integration with siac_orchestrator,
 including state transitions, cooldown, metrics, and motor execution.
 """
+
 from __future__ import annotations
 
 import importlib.util

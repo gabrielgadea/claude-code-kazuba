@@ -44,9 +44,7 @@ class SyntheticCoveragePlugin:
     """
 
     @pytest.hookimpl(hookwrapper=True)
-    def pytest_sessionfinish(
-        self, session: pytest.Session, exitstatus: int
-    ) -> None:  # type: ignore[override]
+    def pytest_sessionfinish(self, session: pytest.Session, exitstatus: int) -> None:  # type: ignore[override]
         """Inject synthetic entries into coverage.json after session ends."""
         yield  # Let pytest-cov write the coverage.json first
 

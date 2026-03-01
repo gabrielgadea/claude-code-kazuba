@@ -35,9 +35,7 @@ class TestCircuitBreakerConfig:
         assert config.half_open_max == 1
 
     def test_config_custom_values(self) -> None:
-        config = CircuitBreakerConfig(
-            max_failures=10, cooldown_seconds=30.0, half_open_max=3
-        )
+        config = CircuitBreakerConfig(max_failures=10, cooldown_seconds=30.0, half_open_max=3)
         assert config.max_failures == 10
         assert config.cooldown_seconds == 30.0
         assert config.half_open_max == 3

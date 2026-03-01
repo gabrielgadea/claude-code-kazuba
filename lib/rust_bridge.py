@@ -11,6 +11,7 @@ Usage:
     result = bridge.check_secrets("api_key = 'sk-abc123...'")
     is_safe = bridge.validate_bash("rm -rf /")
 """
+
 from __future__ import annotations
 
 import time
@@ -30,7 +31,7 @@ _kazuba_hooks: Any = None
 try:
     import kazuba_hooks as _kazuba_hooks  # type: ignore[import-untyped]
 
-    _RUST_AVAILABLE = True
+    _RUST_AVAILABLE = True  # pyright: ignore[reportConstantRedefinition]
 except ImportError:
     _kazuba_hooks = None
 
@@ -292,7 +293,9 @@ class RustBridge:
 
         if self._config.benchmark_mode:
             self._benchmarks.append(
-                BenchmarkResult("check_secrets", self.backend_name, time.perf_counter_ns() - t0, len(result))
+                BenchmarkResult(
+                    "check_secrets", self.backend_name, time.perf_counter_ns() - t0, len(result)
+                )
             )
         return result
 
@@ -311,7 +314,9 @@ class RustBridge:
         result = _python_match_patterns(text, ps)
         if self._config.benchmark_mode:
             self._benchmarks.append(
-                BenchmarkResult("match_patterns", "python", time.perf_counter_ns() - t0, len(result))
+                BenchmarkResult(
+                    "match_patterns", "python", time.perf_counter_ns() - t0, len(result)
+                )
             )
         return result
 

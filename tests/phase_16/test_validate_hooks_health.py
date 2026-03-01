@@ -1,4 +1,5 @@
 """Tests for validate_hooks_health.py — Phase 16."""
+
 from __future__ import annotations
 
 import importlib.util
@@ -31,13 +32,7 @@ def _import_from_path(name: str, file_path: Path) -> types.ModuleType:
     return mod
 
 
-_VHH_PATH = (
-    PROJECT_ROOT
-    / "modules"
-    / "hooks-quality"
-    / "hooks"
-    / "validate_hooks_health.py"
-)
+_VHH_PATH = PROJECT_ROOT / "modules" / "hooks-quality" / "hooks" / "validate_hooks_health.py"
 _vhh = _import_from_path("validate_hooks_health_ph16", _VHH_PATH)
 
 HookStatus = _vhh.HookStatus
@@ -181,17 +176,7 @@ def test_validate_all_with_existing_hook(tmp_path: Path) -> None:
     hook_file.write_text("#!/usr/bin/env python3\nprint('ok')\n")
     hook_file.chmod(0o755)
 
-    settings = {
-        "hooks": {
-            "SessionStart": [
-                {
-                    "hooks": [
-                        {"command": f"python3 {hook_file}"}
-                    ]
-                }
-            ]
-        }
-    }
+    settings = {"hooks": {"SessionStart": [{"hooks": [{"command": f"python3 {hook_file}"}]}]}}
     settings_path = tmp_path / "settings.json"
     settings_path.write_text(json.dumps(settings))
 
@@ -205,13 +190,7 @@ def test_validate_all_with_missing_hook(tmp_path: Path) -> None:
     """validate_all detects a missing hook file as failed."""
     settings = {
         "hooks": {
-            "SessionStart": [
-                {
-                    "hooks": [
-                        {"command": f"python3 {tmp_path}/missing_hook.py"}
-                    ]
-                }
-            ]
+            "SessionStart": [{"hooks": [{"command": f"python3 {tmp_path}/missing_hook.py"}]}]
         }
     }
     settings_path = tmp_path / "settings.json"
@@ -230,7 +209,11 @@ def test_validate_all_with_missing_hook(tmp_path: Path) -> None:
 
 def test_main_no_settings() -> None:
     """main() works when no settings file is found, exits 0."""
-    with patch.dict("os.environ", {"CLAUDE_PROJECT_DIR": "/nonexistent/path/xyz"}), patch("sys.stdin", StringIO("")), pytest.raises(SystemExit) as exc_info:
+    with (
+        patch.dict("os.environ", {"CLAUDE_PROJECT_DIR": "/nonexistent/path/xyz"}),
+        patch("sys.stdin", StringIO("")),
+        pytest.raises(SystemExit) as exc_info,
+    ):
         main()
     assert exc_info.value.code == 0
 
@@ -263,17 +246,7 @@ def test_check_hook_with_uv_run_shebang(tmp_path: Path) -> None:
     hook_file.write_text("#!/usr/bin/env uv run python\nprint('hello')\n")
     hook_file.chmod(0o755)
 
-    settings = {
-        "hooks": {
-            "SessionStart": [
-                {
-                    "hooks": [
-                        {"command": f"python3 {hook_file}"}
-                    ]
-                }
-            ]
-        }
-    }
+    settings = {"hooks": {"SessionStart": [{"hooks": [{"command": f"python3 {hook_file}"}]}]}}
     settings_path = tmp_path / "settings.json"
     settings_path.write_text(json.dumps(settings))
 
@@ -325,13 +298,7 @@ def test_parse_settings_non_list_event_configs(tmp_path: Path) -> None:
 
 def test_parse_settings_no_command(tmp_path: Path) -> None:
     """_parse_settings skips hooks with empty command."""
-    settings = {
-        "hooks": {
-            "SessionStart": [
-                {"hooks": [{"type": "python", "command": ""}]}
-            ]
-        }
-    }
+    settings = {"hooks": {"SessionStart": [{"hooks": [{"type": "python", "command": ""}]}]}}
     settings_path = tmp_path / "settings.json"
     settings_path.write_text(json.dumps(settings))
 
@@ -346,7 +313,11 @@ def test_main_with_settings(tmp_path: Path) -> None:
     settings = {"hooks": {}}
     (tmp_path / ".claude" / "settings.json").write_text(json.dumps(settings))
 
-    with patch.dict("os.environ", {"CLAUDE_PROJECT_DIR": str(tmp_path)}), patch("sys.stdin", StringIO("")), pytest.raises(SystemExit) as exc_info:
+    with (
+        patch.dict("os.environ", {"CLAUDE_PROJECT_DIR": str(tmp_path)}),
+        patch("sys.stdin", StringIO("")),
+        pytest.raises(SystemExit) as exc_info,
+    ):
         main()
     assert exc_info.value.code == 0
 
@@ -356,14 +327,16 @@ def test_main_with_failed_hooks_branch(tmp_path: Path) -> None:
     (tmp_path / ".claude").mkdir()
     settings = {
         "hooks": {
-            "SessionStart": [
-                {"hooks": [{"command": f"python3 {tmp_path}/missing_hook.py"}]}
-            ]
+            "SessionStart": [{"hooks": [{"command": f"python3 {tmp_path}/missing_hook.py"}]}]
         }
     }
     (tmp_path / ".claude" / "settings.json").write_text(json.dumps(settings))
 
-    with patch.dict("os.environ", {"CLAUDE_PROJECT_DIR": str(tmp_path)}), patch("sys.stdin", StringIO("")), pytest.raises(SystemExit) as exc_info:
+    with (
+        patch.dict("os.environ", {"CLAUDE_PROJECT_DIR": str(tmp_path)}),
+        patch("sys.stdin", StringIO("")),
+        pytest.raises(SystemExit) as exc_info,
+    ):
         main()
     assert exc_info.value.code == 0
 
@@ -375,16 +348,14 @@ def test_main_with_healthy_hooks_branch(tmp_path: Path) -> None:
     hook_file.chmod(0o755)
 
     (tmp_path / ".claude").mkdir()
-    settings = {
-        "hooks": {
-            "SessionStart": [
-                {"hooks": [{"command": f"python3 {hook_file}"}]}
-            ]
-        }
-    }
+    settings = {"hooks": {"SessionStart": [{"hooks": [{"command": f"python3 {hook_file}"}]}]}}
     (tmp_path / ".claude" / "settings.json").write_text(json.dumps(settings))
 
-    with patch.dict("os.environ", {"CLAUDE_PROJECT_DIR": str(tmp_path)}), patch("sys.stdin", StringIO("")), pytest.raises(SystemExit) as exc_info:
+    with (
+        patch.dict("os.environ", {"CLAUDE_PROJECT_DIR": str(tmp_path)}),
+        patch("sys.stdin", StringIO("")),
+        pytest.raises(SystemExit) as exc_info,
+    ):
         main()
     assert exc_info.value.code == 0
 
@@ -469,13 +440,7 @@ def test_check_hook_oserror_on_read(tmp_path: Path) -> None:
     hook_file.write_text("#!/usr/bin/env python3\nprint('ok')\n")
     hook_file.chmod(0o311)  # executable but not readable
 
-    settings = {
-        "hooks": {
-            "PreCompact": [
-                {"hooks": [{"command": f"python3 {hook_file}"}]}
-            ]
-        }
-    }
+    settings = {"hooks": {"PreCompact": [{"hooks": [{"command": f"python3 {hook_file}"}]}]}}
     settings_path = tmp_path / "settings.json"
     settings_path.write_text(json.dumps(settings))
 

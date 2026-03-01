@@ -124,8 +124,8 @@ class RecoveryTrigger(BaseModel, frozen=True):
 class TriggerRegistry(BaseModel):
     """Registry for loading and querying triggers from YAML config."""
 
-    agent_triggers: list[AgentTrigger] = Field(default_factory=list)
-    recovery_triggers: list[RecoveryTrigger] = Field(default_factory=list)
+    agent_triggers: list[AgentTrigger] = Field(default_factory=list)  # type: ignore[assignment]
+    recovery_triggers: list[RecoveryTrigger] = Field(default_factory=list)  # type: ignore[assignment]
 
     @classmethod
     def from_yaml(cls, agent_path: Path, recovery_path: Path) -> TriggerRegistry:
@@ -142,33 +142,50 @@ class TriggerRegistry(BaseModel):
 
         agent_triggers: list[AgentTrigger] = []
         if agent_path.exists():
-            data = yaml.safe_load(agent_path.read_text()) or {}
-            for tname, cfg in (data.get("agent_triggers") or {}).items():
-                safe_cfg = {k: v for k, v in cfg.items() if k != "name"}
-                agent_triggers.append(AgentTrigger(name=tname, **safe_cfg))
+            data = yaml.safe_load(agent_path.read_text()) or {}  # type: ignore[assignment]
+            for tname, cfg in (data.get("agent_triggers") or {}).items():  # type: ignore[union-attr]
+                safe_cfg = {k: v for k, v in cfg.items() if k != "name"}  # type: ignore[union-attr]
+                agent_triggers.append(AgentTrigger(name=tname, **safe_cfg))  # type: ignore[arg-type]
 
         recovery_triggers: list[RecoveryTrigger] = []
         if recovery_path.exists():
-            data = yaml.safe_load(recovery_path.read_text()) or {}
+            data: dict[str, Any] = yaml.safe_load(recovery_path.read_text()) or {}  # type: ignore[assignment]
             # Support both flat "recovery_triggers" and nested "recovery.{auto,manual}_triggers"
-            flat = data.get("recovery_triggers") or {}
-            nested = data.get("recovery", {})
-            auto_triggers = nested.get("automatic_triggers") or {}
-            manual_triggers = nested.get("manual_triggers") or {}
-            all_triggers = {**flat, **auto_triggers, **manual_triggers}
+            flat: dict[str, Any] = data.get("recovery_triggers") or {}  # type: ignore[assignment]
+            nested: dict[str, Any] = data.get("recovery") or {}  # type: ignore[assignment]
+            auto_triggers: dict[str, Any] = nested.get("automatic_triggers") or {}  # type: ignore[assignment]
+            manual_triggers: dict[str, Any] = nested.get("manual_triggers") or {}  # type: ignore[assignment]
+            all_triggers: dict[str, Any] = {**flat, **auto_triggers, **manual_triggers}
             for tname, cfg in all_triggers.items():
                 if not isinstance(cfg, dict):
                     continue
-                safe_cfg = {k: v for k, v in cfg.items() if k != "name"}
+                safe_cfg: dict[str, Any] = {k: v for k, v in cfg.items() if k != "name"}  # type: ignore[misc]
                 # Map nested YAML fields to RecoveryTrigger fields
                 # Prefer explicit on_event, then condition, then trigger, then name
-                on_event = safe_cfg.pop("on_event", None) or safe_cfg.pop("condition", None) or safe_cfg.pop("trigger", tname)
-                recovery_triggers.append(RecoveryTrigger(
-                    name=tname,
-                    on_event=str(on_event) if on_event else tname,
-                    **{k: v for k, v in safe_cfg.items()
-                       if k in {"type", "action", "max_retries", "cooldown_seconds", "description", "conditions"}},
-                ))
+                on_event: str | None = (
+                    safe_cfg.pop("on_event", None)  # type: ignore[misc]
+                    or safe_cfg.pop("condition", None)  # type: ignore[misc]
+                    or safe_cfg.pop("trigger", tname)  # type: ignore[misc]
+                )
+                recovery_triggers.append(
+                    RecoveryTrigger(
+                        name=str(tname),
+                        on_event=str(on_event) if on_event else str(tname),
+                        **{  # type: ignore[arg-type]
+                            k: v
+                            for k, v in safe_cfg.items()
+                            if k
+                            in {
+                                "type",
+                                "action",
+                                "max_retries",
+                                "cooldown_seconds",
+                                "description",
+                                "conditions",
+                            }
+                        },
+                    )
+                )
 
         return cls(agent_triggers=agent_triggers, recovery_triggers=recovery_triggers)
 

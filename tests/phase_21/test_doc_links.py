@@ -89,9 +89,7 @@ def test_migration_md_mentions_steps_or_procedure() -> None:
 def test_migration_md_references_creating_modules_doc() -> None:
     """MIGRATION.md must reference CREATING_MODULES.md for custom hooks."""
     content = MIGRATION_MD.read_text()
-    assert "CREATING_MODULES" in content, (
-        "MIGRATION.md should reference docs/CREATING_MODULES.md"
-    )
+    assert "CREATING_MODULES" in content, "MIGRATION.md should reference docs/CREATING_MODULES.md"
 
 
 def test_docs_creating_modules_exists() -> None:

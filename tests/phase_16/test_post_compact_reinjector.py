@@ -1,4 +1,5 @@
 """Tests for post_compact_reinjector.py — Phase 16."""
+
 from __future__ import annotations
 
 import importlib.util
@@ -31,13 +32,7 @@ def _import_from_path(name: str, file_path: Path) -> types.ModuleType:
     return mod
 
 
-_PCR_PATH = (
-    PROJECT_ROOT
-    / "modules"
-    / "hooks-essential"
-    / "hooks"
-    / "post_compact_reinjector.py"
-)
+_PCR_PATH = PROJECT_ROOT / "modules" / "hooks-essential" / "hooks" / "post_compact_reinjector.py"
 _pcr = _import_from_path("post_compact_reinjector_ph16", _PCR_PATH)
 
 ReinjectorConfig = _pcr.ReinjectorConfig
@@ -185,7 +180,11 @@ def test_main_with_rules() -> None:
     """main() produces JSON output with additionalContext on stdout."""
     event = json.dumps({"hook_event_name": "PreCompact"})
     captured_stdout = StringIO()
-    with patch("sys.stdin", StringIO(event)), patch("sys.stdout", captured_stdout), pytest.raises(SystemExit) as exc_info:
+    with (
+        patch("sys.stdin", StringIO(event)),
+        patch("sys.stdout", captured_stdout),
+        pytest.raises(SystemExit) as exc_info,
+    ):
         main()
     assert exc_info.value.code == 0
     output = captured_stdout.getvalue()

@@ -3,6 +3,7 @@
 These tests exercise the unified bridge API regardless of whether the Rust
 extension is compiled. They use whatever backend is available (rust or python).
 """
+
 from __future__ import annotations
 
 import pytest

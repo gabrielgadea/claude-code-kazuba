@@ -1,4 +1,5 @@
 """Tests for AgentTrigger and TriggerRegistry — Phase 14."""
+
 from __future__ import annotations
 
 from pathlib import Path
@@ -12,6 +13,7 @@ FIXTURES_DIR = Path(__file__).parent
 
 
 # --- AgentTrigger creation and defaults ---
+
 
 def test_agent_trigger_default_creation() -> None:
     t = AgentTrigger()
@@ -54,6 +56,7 @@ def test_agent_trigger_skill_attachments() -> None:
 
 
 # --- AgentTrigger.evaluate ---
+
 
 def test_evaluate_empty_condition_returns_false() -> None:
     t = AgentTrigger(name="t", condition="")
@@ -107,6 +110,7 @@ def test_evaluate_priority_sorting() -> None:
 
 # --- TriggerRegistry ---
 
+
 def test_trigger_registry_empty() -> None:
     reg = TriggerRegistry()
     assert reg.agent_triggers == []
@@ -121,20 +125,24 @@ def test_trigger_registry_match_no_triggers() -> None:
 
 def test_trigger_registry_from_yaml(tmp_path: Path) -> None:
     agent_yaml = tmp_path / "agent_triggers.yaml"
-    agent_yaml.write_text(yaml.dump({
-        "agent_triggers": {
-            "explore": {
-                "condition": "task_type == 'exploration'",
-                "agent_type": "explore",
-                "model": "haiku",
-                "priority": 60,
-                "background": False,
-                "max_retries": 2,
-                "description": "Fast search",
-                "skill_attachments": [],
+    agent_yaml.write_text(
+        yaml.dump(
+            {
+                "agent_triggers": {
+                    "explore": {
+                        "condition": "task_type == 'exploration'",
+                        "agent_type": "explore",
+                        "model": "haiku",
+                        "priority": 60,
+                        "background": False,
+                        "max_retries": 2,
+                        "description": "Fast search",
+                        "skill_attachments": [],
+                    }
+                }
             }
-        }
-    }))
+        )
+    )
     recovery_yaml = tmp_path / "recovery_triggers.yaml"
     recovery_yaml.write_text(yaml.dump({"recovery_triggers": {}}))
 

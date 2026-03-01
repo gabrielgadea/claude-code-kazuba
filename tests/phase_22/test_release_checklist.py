@@ -30,9 +30,7 @@ SCRIPTS_DIR = PROJECT_ROOT / "scripts"
 def test_phase_checkpoint_exists(phase_id: int) -> None:
     """Checkpoint file for phase {phase_id} must exist."""
     checkpoint = CHECKPOINTS_DIR / f"phase_{phase_id}.toon"
-    assert checkpoint.exists(), (
-        f"Missing checkpoint for phase {phase_id}: {checkpoint}"
-    )
+    assert checkpoint.exists(), f"Missing checkpoint for phase {phase_id}: {checkpoint}"
 
 
 # ---------------------------------------------------------------------------
@@ -81,16 +79,12 @@ def test_readme_exists() -> None:
 
 def test_benchmark_script_exists() -> None:
     """scripts/benchmark_hooks.py must exist for the release."""
-    assert (SCRIPTS_DIR / "benchmark_hooks.py").exists(), (
-        "scripts/benchmark_hooks.py not found"
-    )
+    assert (SCRIPTS_DIR / "benchmark_hooks.py").exists(), "scripts/benchmark_hooks.py not found"
 
 
 def test_migration_script_exists() -> None:
     """scripts/migrate_v01_v02.py must exist."""
-    assert (SCRIPTS_DIR / "migrate_v01_v02.py").exists(), (
-        "scripts/migrate_v01_v02.py not found"
-    )
+    assert (SCRIPTS_DIR / "migrate_v01_v02.py").exists(), "scripts/migrate_v01_v02.py not found"
 
 
 def test_self_host_config_exists() -> None:

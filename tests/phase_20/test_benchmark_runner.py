@@ -123,8 +123,13 @@ def test_benchmark_result_to_dict_has_required_keys() -> None:
     result = _make_result()
     d = result.to_dict()
     for key in (
-        "hook_name", "p50_ms", "p95_ms", "p99_ms",
-        "success_rate", "is_healthy", "errors",
+        "hook_name",
+        "p50_ms",
+        "p95_ms",
+        "p99_ms",
+        "success_rate",
+        "is_healthy",
+        "errors",
     ):
         assert key in d
 
@@ -279,9 +284,7 @@ def test_run_single_hook_non_zero_exit_valid() -> None:
     """Exit code 2 (deny) is still considered a valid hook response."""
     with patch("scripts.benchmark_hooks.subprocess.run") as mock_run:
         mock_run.return_value = MagicMock(returncode=2)
-        _, success = run_single_hook(
-            Path("/fake/hook.py"), "{}", 5.0, sys.executable
-        )
+        _, success = run_single_hook(Path("/fake/hook.py"), "{}", 5.0, sys.executable)
         assert success is True
 
 
@@ -289,9 +292,7 @@ def test_run_single_hook_invalid_exit_code() -> None:
     """Exit code 99 is not a valid hook response."""
     with patch("scripts.benchmark_hooks.subprocess.run") as mock_run:
         mock_run.return_value = MagicMock(returncode=99)
-        _, success = run_single_hook(
-            Path("/fake/hook.py"), "{}", 5.0, sys.executable
-        )
+        _, success = run_single_hook(Path("/fake/hook.py"), "{}", 5.0, sys.executable)
         assert success is False
 
 
@@ -335,9 +336,7 @@ def test_run_hook_benchmark_counts_errors(tmp_path: Path) -> None:
 
     with patch("scripts.benchmark_hooks.run_single_hook") as mock_run:
         # 2 success, 2 failures
-        mock_run.side_effect = [
-            (5.0, True), (6.0, True), (0.0, False), (0.0, False)
-        ]
+        mock_run.side_effect = [(5.0, True), (6.0, True), (0.0, False), (0.0, False)]
         result = run_hook_benchmark(hook_path, cfg)
 
     assert result.iterations == 2
@@ -357,27 +356,26 @@ def test_main_exits_1_when_no_hooks(monkeypatch: pytest.MonkeyPatch) -> None:
     )
     with pytest.raises(SystemExit) as exc:
         from scripts.benchmark_hooks import main
+
         main()
     assert exc.value.code == 1
 
 
-def test_main_with_hooks_runs_report(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
+def test_main_with_hooks_runs_report(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     """main() runs and prints report when hooks are found."""
     # Create a minimal valid hook that exits 0
     hook = tmp_path / "echo_hook.py"
-    hook.write_text('import sys,json; sys.exit(0)\n')
+    hook.write_text("import sys,json; sys.exit(0)\n")
 
     monkeypatch.setattr(
         "sys.argv",
-        ["benchmark_hooks.py", "--hooks-dir", str(tmp_path),
-         "--iterations", "2", "--warmup", "0"],
+        ["benchmark_hooks.py", "--hooks-dir", str(tmp_path), "--iterations", "2", "--warmup", "0"],
     )
     with patch("scripts.benchmark_hooks.run_single_hook") as mock_run:
         mock_run.return_value = (10.0, True)
         # Should not raise SystemExit (all hooks healthy)
         from scripts.benchmark_hooks import main
+
         try:
             main()
         except SystemExit as e:
@@ -389,17 +387,26 @@ def test_main_json_output(
 ) -> None:
     """main() with --json outputs content containing JSON array markers."""
     hook = tmp_path / "test_hook.py"
-    hook.write_text('import sys; sys.exit(0)\n')
+    hook.write_text("import sys; sys.exit(0)\n")
 
     monkeypatch.setattr(
         "sys.argv",
-        ["benchmark_hooks.py", "--hooks-dir", str(tmp_path),
-         "--iterations", "2", "--warmup", "0", "--json"],
+        [
+            "benchmark_hooks.py",
+            "--hooks-dir",
+            str(tmp_path),
+            "--iterations",
+            "2",
+            "--warmup",
+            "0",
+            "--json",
+        ],
     )
     with patch("scripts.benchmark_hooks.run_single_hook") as mock_run:
         mock_run.return_value = (10.0, True)
         try:
             from scripts.benchmark_hooks import main
+
             main()
         except SystemExit:
             pass
@@ -408,22 +415,20 @@ def test_main_json_output(
     assert "[" in captured.out and "hook_name" in captured.out
 
 
-def test_main_exits_1_when_unhealthy_hook(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
+def test_main_exits_1_when_unhealthy_hook(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     """main() exits 1 when a hook has p99 >= 3000 ms (unhealthy)."""
     hook = tmp_path / "slow_hook.py"
-    hook.write_text('import sys; sys.exit(0)\n')
+    hook.write_text("import sys; sys.exit(0)\n")
 
     monkeypatch.setattr(
         "sys.argv",
-        ["benchmark_hooks.py", "--hooks-dir", str(tmp_path),
-         "--iterations", "2", "--warmup", "0"],
+        ["benchmark_hooks.py", "--hooks-dir", str(tmp_path), "--iterations", "2", "--warmup", "0"],
     )
     # Return very slow times to trigger unhealthy status (p99 >= 3000 ms)
     with patch("scripts.benchmark_hooks.run_single_hook") as mock_run:
         mock_run.return_value = (5000.0, True)
         with pytest.raises(SystemExit) as exc:
             from scripts.benchmark_hooks import main
+
             main()
     assert exc.value.code == 1

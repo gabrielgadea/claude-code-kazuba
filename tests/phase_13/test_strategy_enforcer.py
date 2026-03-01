@@ -208,19 +208,23 @@ class TestMainHookEntryPoint:
 
     def test_strategy_enforcer_valid_input_task_l0(self) -> None:
         """Task tool with L0 prompt → exit 0, no additionalContext."""
-        data = json.dumps({
-            "tool_name": "Task",
-            "tool_input": {"prompt": "What is the current time?"},
-        })
+        data = json.dumps(
+            {
+                "tool_name": "Task",
+                "tool_input": {"prompt": "What is the current time?"},
+            }
+        )
         code, stdout, stderr = self._run_hook(data)
         assert code == 0
 
     def test_strategy_enforcer_output_format(self) -> None:
         """Task with L2+ prompt → additionalContext JSON in stdout."""
-        data = json.dumps({
-            "tool_name": "Task",
-            "tool_input": {"prompt": "Read the file and Write output using Bash tool_use."},
-        })
+        data = json.dumps(
+            {
+                "tool_name": "Task",
+                "tool_input": {"prompt": "Read the file and Write output using Bash tool_use."},
+            }
+        )
         code, stdout, stderr = self._run_hook(data)
         assert code == 0
         if stdout.strip():
@@ -229,10 +233,12 @@ class TestMainHookEntryPoint:
 
     def test_strategy_enforcer_integration(self) -> None:
         """Integration: L3 pipeline prompt generates CILA enforcement context."""
-        data = json.dumps({
-            "tool_name": "Task",
-            "tool_input": {"prompt": "Verify pipeline_state before running pipeline_runner."},
-        })
+        data = json.dumps(
+            {
+                "tool_name": "Task",
+                "tool_input": {"prompt": "Verify pipeline_state before running pipeline_runner."},
+            }
+        )
         code, stdout, stderr = self._run_hook(data)
         assert code == 0
         if stdout.strip():
@@ -246,10 +252,12 @@ class TestMainWithMocking:
 
     def test_strategy_enforcer_empty_prompt(self) -> None:
         """Empty prompt in Task input → exits 0 immediately."""
-        data = json.dumps({
-            "tool_name": "Task",
-            "tool_input": {"prompt": ""},
-        })
+        data = json.dumps(
+            {
+                "tool_name": "Task",
+                "tool_input": {"prompt": ""},
+            }
+        )
         with patch("sys.stdin", StringIO(data)):
             with pytest.raises(SystemExit) as exc_info:
                 main()

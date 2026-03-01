@@ -5,6 +5,7 @@ Verifies that core modules remain importable and functional after Phase 19
 changes. Guards against regressions introduced by the migration script or
 integration tests.
 """
+
 from __future__ import annotations
 
 import importlib

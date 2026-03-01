@@ -12,6 +12,7 @@ Exit codes:
     1 - Migration failed
     2 - Nothing to migrate (v0.1 not detected)
 """
+
 from __future__ import annotations
 
 import argparse
@@ -543,9 +544,7 @@ def run_migration(config: MigrationConfig) -> MigrationResult:
     steps: list[StepResult] = []
     backed_up_to: Path | None = None
 
-    logger.info(
-        "Starting migration: target=%s dry_run=%s", config.target_dir, config.dry_run
-    )
+    logger.info("Starting migration: target=%s dry_run=%s", config.target_dir, config.dry_run)
 
     # Step 1: Detect v0.1
     detection = detect_v1_installation(config.target_dir)
@@ -613,9 +612,7 @@ def run_migration(config: MigrationConfig) -> MigrationResult:
         overall_success = all(s.success for s in steps)
 
     duration = time.monotonic() * 1000 - start_ms
-    logger.info(
-        "Migration complete: success=%s duration_ms=%.1f", overall_success, duration
-    )
+    logger.info("Migration complete: success=%s duration_ms=%.1f", overall_success, duration)
 
     return MigrationResult(
         success=overall_success,

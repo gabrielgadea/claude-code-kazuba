@@ -1,4 +1,5 @@
 """Tests for RecoveryTrigger and TriggerRegistry recovery logic — Phase 14."""
+
 from __future__ import annotations
 
 from pathlib import Path
@@ -9,6 +10,7 @@ import yaml
 from lib.config import RecoveryTrigger, TriggerRegistry
 
 # --- RecoveryTrigger creation and defaults ---
+
 
 def test_recovery_trigger_defaults() -> None:
     t = RecoveryTrigger()
@@ -56,6 +58,7 @@ def test_recovery_trigger_type_manual() -> None:
 
 # --- TriggerRegistry recovery methods ---
 
+
 def test_registry_get_recovery_trigger_found() -> None:
     t = RecoveryTrigger(name="test", on_event="hook_failure", action="retry")
     reg = TriggerRegistry(recovery_triggers=[t])
@@ -82,19 +85,23 @@ def test_registry_get_recovery_trigger_multiple() -> None:
 
 def test_registry_from_yaml_recovery_triggers(tmp_path: Path) -> None:
     recovery_yaml = tmp_path / "recovery_triggers.yaml"
-    recovery_yaml.write_text(yaml.dump({
-        "recovery_triggers": {
-            "auto_retry": {
-                "type": "auto",
-                "on_event": "hook_timeout",
-                "action": "retry_with_backoff",
-                "max_retries": 3,
-                "cooldown_seconds": 30.0,
-                "description": "Auto retry on hook timeout",
-                "conditions": {},
+    recovery_yaml.write_text(
+        yaml.dump(
+            {
+                "recovery_triggers": {
+                    "auto_retry": {
+                        "type": "auto",
+                        "on_event": "hook_timeout",
+                        "action": "retry_with_backoff",
+                        "max_retries": 3,
+                        "cooldown_seconds": 30.0,
+                        "description": "Auto retry on hook timeout",
+                        "conditions": {},
+                    }
+                }
             }
-        }
-    }))
+        )
+    )
     agent_yaml = tmp_path / "agent_triggers.yaml"
     agent_yaml.write_text(yaml.dump({"agent_triggers": {}}))
 
@@ -146,8 +153,12 @@ def test_resolve_dependencies_basic() -> None:
     from lib.config import ModuleManifest, resolve_dependencies
 
     manifests = {
-        "a": ModuleManifest(name="a", version="1.0", description="", dependencies=[], hooks_file=None, files=[]),
-        "b": ModuleManifest(name="b", version="1.0", description="", dependencies=["a"], hooks_file=None, files=[]),
+        "a": ModuleManifest(
+            name="a", version="1.0", description="", dependencies=[], hooks_file=None, files=[]
+        ),
+        "b": ModuleManifest(
+            name="b", version="1.0", description="", dependencies=["a"], hooks_file=None, files=[]
+        ),
     }
     result = resolve_dependencies(["b"], manifests)
     assert result == ["a", "b"]
@@ -159,7 +170,14 @@ def test_resolve_dependencies_missing_raises() -> None:
     from lib.config import ModuleManifest, resolve_dependencies
 
     manifests = {
-        "a": ModuleManifest(name="a", version="1.0", description="", dependencies=["missing"], hooks_file=None, files=[]),
+        "a": ModuleManifest(
+            name="a",
+            version="1.0",
+            description="",
+            dependencies=["missing"],
+            hooks_file=None,
+            files=[],
+        ),
     }
     with pytest.raises(ValueError, match="Dependency not found"):
         resolve_dependencies(["a"], manifests)
@@ -178,9 +196,15 @@ def test_resolve_dependencies_no_duplicates() -> None:
     from lib.config import ModuleManifest, resolve_dependencies
 
     manifests = {
-        "a": ModuleManifest(name="a", version="1.0", description="", dependencies=[], hooks_file=None, files=[]),
-        "b": ModuleManifest(name="b", version="1.0", description="", dependencies=["a"], hooks_file=None, files=[]),
-        "c": ModuleManifest(name="c", version="1.0", description="", dependencies=["a"], hooks_file=None, files=[]),
+        "a": ModuleManifest(
+            name="a", version="1.0", description="", dependencies=[], hooks_file=None, files=[]
+        ),
+        "b": ModuleManifest(
+            name="b", version="1.0", description="", dependencies=["a"], hooks_file=None, files=[]
+        ),
+        "c": ModuleManifest(
+            name="c", version="1.0", description="", dependencies=["a"], hooks_file=None, files=[]
+        ),
     }
     result = resolve_dependencies(["b", "c"], manifests)
     assert result.count("a") == 1

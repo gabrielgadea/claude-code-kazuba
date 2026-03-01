@@ -51,15 +51,11 @@ def test_record_step_updates_q_table() -> None:
 def test_record_step_with_metrics() -> None:
     cfg = RLMFacadeConfig(
         rlm=RLMConfig(epsilon=0.0),
-        reward_components=[
-            {"metric_key": "accuracy", "weight": 1.0, "target": 1.0, "scale": 0.2}
-        ],
+        reward_components=[{"metric_key": "accuracy", "weight": 1.0, "target": 1.0, "scale": 0.2}],
     )
     rlm = RLMFacade(config=cfg)
     rlm.start_session()
-    result = rlm.record_step(
-        state="s1", action="a1", reward=0.0, metrics={"accuracy": 1.0}
-    )
+    result = rlm.record_step(state="s1", action="a1", reward=0.0, metrics={"accuracy": 1.0})
     assert result["effective_reward"] > 0.0
     rlm.end_session()
 

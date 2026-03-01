@@ -3,6 +3,7 @@
 
 Directly exercises all major functions to achieve 90%+ coverage.
 """
+
 from __future__ import annotations
 
 import importlib.util
@@ -41,6 +42,7 @@ _HOOK_MIGRATION_MAP = _mig_mod._HOOK_MIGRATION_MAP
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
+
 
 def make_v1_settings(tmp_path: Path, hooks: dict | None = None) -> Path:
     """Create a v0.1-style .claude/settings.json."""
@@ -109,9 +111,7 @@ def test_migration_result_failed_steps() -> None:
         StepResult(step="a", success=True, message="ok"),
         StepResult(step="b", success=False, message="fail"),
     )
-    result = MigrationResult(
-        success=False, steps=steps, duration_ms=10.0, dry_run=False
-    )
+    result = MigrationResult(success=False, steps=steps, duration_ms=10.0, dry_run=False)
     assert len(result.failed_steps) == 1
     assert result.failed_steps[0].step == "b"
 
@@ -122,9 +122,7 @@ def test_migration_result_passed_steps() -> None:
         StepResult(step="a", success=True, message="ok"),
         StepResult(step="b", success=False, message="fail"),
     )
-    result = MigrationResult(
-        success=False, steps=steps, duration_ms=10.0, dry_run=False
-    )
+    result = MigrationResult(success=False, steps=steps, duration_ms=10.0, dry_run=False)
     assert len(result.passed_steps) == 1
 
 
@@ -295,11 +293,15 @@ def test_migrate_presets_v1_preset(tmp_path: Path) -> None:
     presets_dir = tmp_path / "presets"
     presets_dir.mkdir()
     preset_file = presets_dir / "default.json"
-    preset_file.write_text(json.dumps({
-        "version": "0.1",
-        "quality_level": "high",
-        "name": "default",
-    }))
+    preset_file.write_text(
+        json.dumps(
+            {
+                "version": "0.1",
+                "quality_level": "high",
+                "name": "default",
+            }
+        )
+    )
 
     result = migrate_presets(tmp_path, dry_run=False)
     assert result.success is True
@@ -360,10 +362,14 @@ def test_validate_migration_fails_with_v1_hooks(tmp_path: Path) -> None:
     claude_dir = tmp_path / ".claude"
     claude_dir.mkdir()
     sp = claude_dir / "settings.json"
-    sp.write_text(json.dumps({
-        "_migrated_from": "v0.1",
-        "hooks": {"quality_gate": {}},  # v0.1 flat name
-    }))
+    sp.write_text(
+        json.dumps(
+            {
+                "_migrated_from": "v0.1",
+                "hooks": {"quality_gate": {}},  # v0.1 flat name
+            }
+        )
+    )
     result = validate_migration(tmp_path)
     assert result.success is False
 
@@ -373,9 +379,13 @@ def test_validate_migration_fails_without_marker(tmp_path: Path) -> None:
     claude_dir = tmp_path / ".claude"
     claude_dir.mkdir()
     sp = claude_dir / "settings.json"
-    sp.write_text(json.dumps({
-        "hooks": {"PreToolUse": [], "PostToolUse": []},
-    }))
+    sp.write_text(
+        json.dumps(
+            {
+                "hooks": {"PreToolUse": [], "PostToolUse": []},
+            }
+        )
+    )
     result = validate_migration(tmp_path)
     assert result.success is False
 
@@ -453,21 +463,29 @@ def test_main_dry_run(tmp_path: Path) -> None:
 def test_main_with_v1_settings(tmp_path: Path) -> None:
     """main() migrates a v0.1 installation."""
     make_v1_settings(tmp_path)
-    code = main([
-        "--target-dir", str(tmp_path),
-        "--backup-dir", str(tmp_path / "bak"),
-    ])
+    code = main(
+        [
+            "--target-dir",
+            str(tmp_path),
+            "--backup-dir",
+            str(tmp_path / "bak"),
+        ]
+    )
     assert code == 0
 
 
 def test_main_dry_run_v1(tmp_path: Path) -> None:
     """main() dry-run with v0.1 settings exits 0."""
     make_v1_settings(tmp_path)
-    code = main([
-        "--dry-run",
-        "--target-dir", str(tmp_path),
-        "--backup-dir", str(tmp_path / "bak"),
-    ])
+    code = main(
+        [
+            "--dry-run",
+            "--target-dir",
+            str(tmp_path),
+            "--backup-dir",
+            str(tmp_path / "bak"),
+        ]
+    )
     assert code == 0
 
 
@@ -525,12 +543,16 @@ def test_migrate_presets_with_name_and_description(tmp_path: Path) -> None:
     presets_dir = tmp_path / "presets"
     presets_dir.mkdir()
     preset_file = presets_dir / "named.json"
-    preset_file.write_text(json.dumps({
-        "version": "0.1",
-        "name": "My Preset",
-        "description": "A test preset",
-        "quality_level": "high",
-    }))
+    preset_file.write_text(
+        json.dumps(
+            {
+                "version": "0.1",
+                "name": "My Preset",
+                "description": "A test preset",
+                "quality_level": "high",
+            }
+        )
+    )
     result = migrate_presets(tmp_path, dry_run=False)
     assert result.success is True
     data = json.loads(preset_file.read_text())

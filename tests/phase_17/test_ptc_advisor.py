@@ -26,9 +26,7 @@ def _import_from_path(name: str, file_path: Path) -> types.ModuleType:
     return mod
 
 
-_PTC_PATH = (
-    PROJECT_ROOT / "modules" / "hooks-routing" / "hooks" / "ptc_advisor.py"
-)
+_PTC_PATH = PROJECT_ROOT / "modules" / "hooks-routing" / "hooks" / "ptc_advisor.py"
 _ptc = _import_from_path("ptc_advisor_ph17", _PTC_PATH)
 
 # Aliases
@@ -265,6 +263,7 @@ class TestMainFunction:
     def test_non_task_tool_exits_0(self, monkeypatch: pytest.MonkeyPatch) -> None:
         """Non-Task tool name causes immediate exit 0."""
         import io
+
         monkeypatch.setattr("sys.stdin", io.StringIO('{"tool_name": "Write"}'))
         with pytest.raises(SystemExit) as exc_info:
             _ptc.main()
@@ -273,6 +272,7 @@ class TestMainFunction:
     def test_invalid_json_exits_0(self, monkeypatch: pytest.MonkeyPatch) -> None:
         """Invalid JSON causes exit 0 (fail-open)."""
         import io
+
         monkeypatch.setattr("sys.stdin", io.StringIO("not json"))
         with pytest.raises(SystemExit) as exc_info:
             _ptc.main()
@@ -281,6 +281,7 @@ class TestMainFunction:
     def test_empty_prompt_exits_0(self, monkeypatch: pytest.MonkeyPatch) -> None:
         """Empty prompt in Task input causes exit 0."""
         import io
+
         data = '{"tool_name": "Task", "tool_input": {"prompt": ""}}'
         monkeypatch.setattr("sys.stdin", io.StringIO(data))
         with pytest.raises(SystemExit) as exc_info:
@@ -290,6 +291,7 @@ class TestMainFunction:
     def test_l1_prompt_exits_0_no_advisory(self, monkeypatch: pytest.MonkeyPatch) -> None:
         """L1-classified prompt does not produce advisory, exits 0."""
         import io
+
         data = '{"tool_name": "Task", "tool_input": {"prompt": "generate code"}}'
         monkeypatch.setattr("sys.stdin", io.StringIO(data))
         with pytest.raises(SystemExit) as exc_info:
@@ -299,6 +301,7 @@ class TestMainFunction:
     def test_l2_prompt_produces_advisory(self, monkeypatch: pytest.MonkeyPatch) -> None:
         """L2+ prompt produces advisory and exits 0."""
         import io
+
         data = '{"tool_name": "Task", "tool_input": {"prompt": "discover and run existing script for pipeline"}}'
         monkeypatch.setattr("sys.stdin", io.StringIO(data))
         captured = []

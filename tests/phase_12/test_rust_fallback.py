@@ -4,6 +4,7 @@ All tests in this module explicitly force prefer_rust=False to exercise
 the pure-Python fallback path, regardless of whether the Rust extension
 is compiled or not.
 """
+
 from __future__ import annotations
 
 import time
@@ -182,9 +183,10 @@ def test_graceful_degradation() -> None:
     # Even if Rust is available, errors fall back to Python
     cfg = RustBridgeConfig(prefer_rust=True, fallback_on_error=True)
 
-    with patch("lib.rust_bridge._RUST_AVAILABLE", True), patch(
-        "lib.rust_bridge._kazuba_hooks"
-    ) as mock_hooks:
+    with (
+        patch("lib.rust_bridge._RUST_AVAILABLE", True),
+        patch("lib.rust_bridge._kazuba_hooks") as mock_hooks,
+    ):
         mock_hooks.detect_secrets.side_effect = RuntimeError("Rust exploded")
         bridge = RustBridge(config=cfg)
         bridge._use_rust = True  # Force rust path
@@ -204,9 +206,10 @@ def test_error_handling_fallback() -> None:
     """When Rust validate_bash raises, Python fallback is used."""
     cfg = RustBridgeConfig(prefer_rust=True, fallback_on_error=True)
 
-    with patch("lib.rust_bridge._RUST_AVAILABLE", True), patch(
-        "lib.rust_bridge._kazuba_hooks"
-    ) as mock_hooks:
+    with (
+        patch("lib.rust_bridge._RUST_AVAILABLE", True),
+        patch("lib.rust_bridge._kazuba_hooks") as mock_hooks,
+    ):
         mock_hooks.validate_bash_command.side_effect = RuntimeError("crash")
         bridge = RustBridge(config=cfg)
         bridge._use_rust = True

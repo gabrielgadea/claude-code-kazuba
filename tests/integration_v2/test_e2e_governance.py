@@ -7,6 +7,7 @@ Tests the auto_permission_resolver (Phase 13/14 governance) integration:
 - Auto-approve flow
 - Dangerous pattern blocking
 """
+
 from __future__ import annotations
 
 import importlib.util
@@ -155,9 +156,7 @@ def test_task_delegation_always_allowed(default_config: Any) -> None:
 # ---------------------------------------------------------------------------
 
 
-def test_dangerous_bash_blocked(
-    dangerous_bash_hook_input: Any, default_config: Any
-) -> None:
+def test_dangerous_bash_blocked(dangerous_bash_hook_input: Any, default_config: Any) -> None:
     """Dangerous bash patterns are blocked."""
     result = resolve_permission(dangerous_bash_hook_input, default_config)
     assert result.exit_code == BLOCK

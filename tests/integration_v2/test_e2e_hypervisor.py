@@ -9,6 +9,7 @@ Tests the Hypervisor orchestrator integration:
 - execute_all with dependency ordering
 - circuit_breaker integration
 """
+
 from __future__ import annotations
 
 import importlib.util

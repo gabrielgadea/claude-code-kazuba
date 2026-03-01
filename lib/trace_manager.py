@@ -55,8 +55,8 @@ class _MutableSpan:
 
     name: str
     start_time: float
-    children: list[_MutableSpan] = field(default_factory=list)
-    events: list[dict[str, Any]] = field(default_factory=list)
+    children: list[_MutableSpan] = field(default_factory=list)  # type: ignore[assignment]
+    events: list[dict[str, Any]] = field(default_factory=list)  # type: ignore[assignment]
 
     def to_span(self, end_time: float) -> TraceSpan:
         """Convert to immutable TraceSpan with computed duration."""

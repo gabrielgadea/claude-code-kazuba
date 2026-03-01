@@ -144,9 +144,7 @@ def test_load_config_has_hooks() -> None:
 def test_load_config_with_json_override(tmp_path: Path) -> None:
     """JSON override file replaces default hooks."""
     override_data = {
-        "hooks": [
-            {"event": "PostToolUse", "script": "python custom.py", "timeout": 3000}
-        ]
+        "hooks": [{"event": "PostToolUse", "script": "python custom.py", "timeout": 3000}]
     }
     config_file = tmp_path / "hooks.json"
     config_file.write_text(json.dumps(override_data))
@@ -297,6 +295,7 @@ def test_main_prints_json(capsys: pytest.CaptureFixture) -> None:
     """main() prints valid JSON fragment to stdout."""
     import contextlib
     import json as _json
+
     with contextlib.suppress(SystemExit):
         _shc.main()
     captured = capsys.readouterr()

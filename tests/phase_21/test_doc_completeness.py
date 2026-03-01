@@ -43,9 +43,7 @@ def test_migration_md_has_minimum_sections() -> None:
     """MIGRATION.md must have at least 3 level-2 sections (##)."""
     content = MIGRATION_MD.read_text()
     sections = [ln for ln in content.splitlines() if ln.startswith("## ")]
-    assert len(sections) >= 3, (
-        f"Expected >= 3 level-2 sections, found {len(sections)}: {sections}"
-    )
+    assert len(sections) >= 3, f"Expected >= 3 level-2 sections, found {len(sections)}: {sections}"
 
 
 def test_migration_md_mentions_install() -> None:

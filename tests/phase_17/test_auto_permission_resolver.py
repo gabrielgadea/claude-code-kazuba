@@ -26,13 +26,7 @@ def _import_from_path(name: str, file_path: Path) -> types.ModuleType:
     return mod
 
 
-_APR_PATH = (
-    PROJECT_ROOT
-    / "modules"
-    / "hooks-routing"
-    / "hooks"
-    / "auto_permission_resolver.py"
-)
+_APR_PATH = PROJECT_ROOT / "modules" / "hooks-routing" / "hooks" / "auto_permission_resolver.py"
 _apr = _import_from_path("auto_permission_resolver_ph17", _APR_PATH)
 
 # Aliases
@@ -203,9 +197,7 @@ class TestIsSafeBash:
 class TestResolvePermission:
     """Tests for the main resolve_permission decision logic."""
 
-    def _make_input(
-        self, tool_name: str, tool_input: dict
-    ) -> HookInput:
+    def _make_input(self, tool_name: str, tool_input: dict) -> HookInput:
         return HookInput.from_dict(
             {"tool_name": tool_name, "tool_input": tool_input, "session_id": "test"}
         )
@@ -387,11 +379,13 @@ class TestResolvePermissionReadNotAutoApproved:
     def test_read_disabled_auto_approve(self) -> None:
         """When auto_approve_safe_reads=False, read returns ALLOW with review reason."""
         cfg = PermissionConfig(auto_approve_safe_reads=False)
-        hi = HookInput.from_dict({
-            "tool_name": "Read",
-            "tool_input": {"file_path": "/project/app.py"},
-            "session_id": "x",
-        })
+        hi = HookInput.from_dict(
+            {
+                "tool_name": "Read",
+                "tool_input": {"file_path": "/project/app.py"},
+                "session_id": "x",
+            }
+        )
         r = resolve_permission(hi, cfg)
         assert r.exit_code == ALLOW
         assert r.auto_approved is False
@@ -399,22 +393,26 @@ class TestResolvePermissionReadNotAutoApproved:
     def test_write_disabled_auto_approve(self) -> None:
         """When auto_approve_safe_writes=False, safe write path still returns ALLOW."""
         cfg = PermissionConfig(auto_approve_safe_writes=False)
-        hi = HookInput.from_dict({
-            "tool_name": "Write",
-            "tool_input": {"file_path": "/project/tests/test.py"},
-            "session_id": "x",
-        })
+        hi = HookInput.from_dict(
+            {
+                "tool_name": "Write",
+                "tool_input": {"file_path": "/project/tests/test.py"},
+                "session_id": "x",
+            }
+        )
         r = resolve_permission(hi, cfg)
         assert r.exit_code == ALLOW
 
     def test_bash_disabled_auto_approve(self) -> None:
         """When auto_approve_safe_bash=False, safe command returns ALLOW with review."""
         cfg = PermissionConfig(auto_approve_safe_bash=False)
-        hi = HookInput.from_dict({
-            "tool_name": "Bash",
-            "tool_input": {"command": "pytest tests/"},
-            "session_id": "x",
-        })
+        hi = HookInput.from_dict(
+            {
+                "tool_name": "Bash",
+                "tool_input": {"command": "pytest tests/"},
+                "session_id": "x",
+            }
+        )
         r = resolve_permission(hi, cfg)
         assert r.exit_code == ALLOW
         assert r.auto_approved is False
@@ -458,11 +456,10 @@ class TestPermissionResultEmit:
 class TestHookInputFromStdin:
     """Tests for HookInput.from_stdin()."""
 
-    def test_from_stdin_parses_correctly(
-        self, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_from_stdin_parses_correctly(self, monkeypatch: pytest.MonkeyPatch) -> None:
         """from_stdin() parses valid JSON from stdin."""
         import io
+
         data = '{"tool_name": "Write", "tool_input": {"file_path": "/x.py"}, "session_id": "s1"}'
         monkeypatch.setattr("sys.stdin", io.StringIO(data))
         hi = HookInput.from_stdin()
@@ -473,19 +470,16 @@ class TestHookInputFromStdin:
 class TestMainFunctionErrors:
     """Tests for main() exception handling (fail-open)."""
 
-    def test_main_invalid_json_fail_open(
-        self, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_main_invalid_json_fail_open(self, monkeypatch: pytest.MonkeyPatch) -> None:
         """main() exits 0 on JSON decode error (fail-open)."""
         import io
+
         monkeypatch.setattr("sys.stdin", io.StringIO("not valid json {"))
         with pytest.raises(SystemExit) as exc_info:
             _apr.main()
         assert exc_info.value.code == ALLOW
 
-    def test_main_unexpected_exception_fail_open(
-        self, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_main_unexpected_exception_fail_open(self, monkeypatch: pytest.MonkeyPatch) -> None:
         """main() exits 0 on unexpected exception (fail-open)."""
         import io
 

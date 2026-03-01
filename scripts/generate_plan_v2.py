@@ -189,12 +189,14 @@ PHASES: list[Phase] = [
                 target="lib/circuit_breaker.py",
                 extraction_type="ADAPT_IMPORTS",
                 loc=150,
-                key_classes=("HookCircuitBreaker", "CircuitBreakerConfig", "CircuitBreakerRegistry"),
+                key_classes=(
+                    "HookCircuitBreaker",
+                    "CircuitBreakerConfig",
+                    "CircuitBreakerRegistry",
+                ),
                 key_methods=("record_success", "record_failure", "is_open"),
                 external_deps=("threading",),
-                adaptation_notes=(
-                    "Remove kazuba_rust_core import, use Pydantic v2 config"
-                ),
+                adaptation_notes=("Remove kazuba_rust_core import, use Pydantic v2 config"),
             ),
             SourceFile(
                 path="analise/.claude/hooks/common/trace_manager.py",
@@ -204,9 +206,7 @@ PHASES: list[Phase] = [
                 key_classes=("TraceManager",),
                 key_methods=("get", "start_session", "record_file_read", "record_search"),
                 external_deps=(),
-                adaptation_notes=(
-                    "Remove kazuba_rust_core.TraceSession dep, pure Python"
-                ),
+                adaptation_notes=("Remove kazuba_rust_core.TraceSession dep, pure Python"),
             ),
             SourceFile(
                 path="analise/.claude/hooks/common/hook_logger.py",
@@ -226,9 +226,7 @@ PHASES: list[Phase] = [
                 key_classes=("EventBus",),
                 key_methods=("subscribe", "publish", "unsubscribe"),
                 external_deps=(),
-                adaptation_notes=(
-                    "Based on event mesh pattern from hypervisor_v2.py"
-                ),
+                adaptation_notes=("Based on event mesh pattern from hypervisor_v2.py"),
             ),
         ],
         pydantic_models=[
@@ -256,7 +254,9 @@ PHASES: list[Phase] = [
             ),
         ],
         files_to_create=[
-            PhaseFile("lib/circuit_breaker.py", "Thread-safe circuit breaker with Pydantic config", 200),
+            PhaseFile(
+                "lib/circuit_breaker.py", "Thread-safe circuit breaker with Pydantic config", 200
+            ),
             PhaseFile("lib/trace_manager.py", "Trace tree for hook execution", 80),
             PhaseFile("lib/hook_logger.py", "Structured JSON hook logger", 80),
             PhaseFile("lib/event_bus.py", "Pub/sub event bus for decoupled communication", 100),
@@ -285,8 +285,7 @@ PHASES: list[Phase] = [
             "723 existing tests still pass (regression)",
         ],
         recovery_plan=(
-            "If circuit breaker threading issues: "
-            "simplify to single-threaded with asyncio.Lock"
+            "If circuit breaker threading issues: simplify to single-threaded with asyncio.Lock"
         ),
         agent_execution_spec="general-purpose with worktree isolation",
         tools_required=["Bash", "Write", "Edit", "Agent(general-purpose)"],
@@ -320,14 +319,22 @@ PHASES: list[Phase] = [
                 extraction_type="DIRECT_COPY",
                 loc=7000,
                 key_classes=(
-                    "SecretsDetector", "BashSafetyValidator",
-                    "CodeQualityValidator", "SkillMatcher",
+                    "SecretsDetector",
+                    "BashSafetyValidator",
+                    "CodeQualityValidator",
+                    "SkillMatcher",
                 ),
                 key_methods=(
-                    "py_detect_secrets", "py_validate_code", "py_skill_match",
+                    "py_detect_secrets",
+                    "py_validate_code",
+                    "py_skill_match",
                 ),
                 external_deps=(
-                    "aho-corasick", "regex", "rayon", "pyo3", "serde",
+                    "aho-corasick",
+                    "regex",
+                    "rayon",
+                    "pyo3",
+                    "serde",
                 ),
                 adaptation_notes="Copy entire crate, verify cargo check passes",
             ),
@@ -351,7 +358,9 @@ PHASES: list[Phase] = [
         ],
         test_specs=[
             TestFileSpec(
-                "tests/phase_12/test_rust_bridge.py", 20, 90,
+                "tests/phase_12/test_rust_bridge.py",
+                20,
+                90,
                 ("unit", "integration"),
             ),
             TestFileSpec("tests/phase_12/test_rust_fallback.py", 15, 90),
@@ -373,8 +382,7 @@ PHASES: list[Phase] = [
             "PyO3 version mismatch -- pin to 0.28.2",
         ],
         recovery_plan=(
-            "If Rust compilation fails: mark phase as OPTIONAL, "
-            "Python-only fallback is sufficient"
+            "If Rust compilation fails: mark phase as OPTIONAL, Python-only fallback is sufficient"
         ),
         agent_execution_spec="general-purpose with Rust toolchain",
         tools_required=["Bash", "Write", "Edit"],
@@ -407,9 +415,7 @@ PHASES: list[Phase] = [
                 target="core/rules/core-governance.md",
                 extraction_type="ADAPT_IMPORTS",
                 loc=233,
-                adaptation_notes=(
-                    "Remove ANTT-specific refs, keep CODE-FIRST 6-step cycle"
-                ),
+                adaptation_notes=("Remove ANTT-specific refs, keep CODE-FIRST 6-step cycle"),
             ),
             SourceFile(
                 path="analise/.claude/rules/agent-teams.md",
@@ -431,7 +437,9 @@ PHASES: list[Phase] = [
                 extraction_type="REIMPLEMENT",
                 loc=200,
                 key_classes=(
-                    "GovernanceRule", "CodeFirstPhase", "ValidationCriteria",
+                    "GovernanceRule",
+                    "CodeFirstPhase",
+                    "ValidationCriteria",
                 ),
                 key_methods=(
                     "validate_code_first_cycle",
@@ -439,9 +447,7 @@ PHASES: list[Phase] = [
                     "enforce_local_cache_first",
                 ),
                 external_deps=("pydantic",),
-                adaptation_notes=(
-                    "Programmatic enforcement of governance rules"
-                ),
+                adaptation_notes=("Programmatic enforcement of governance rules"),
             ),
             SourceFile(
                 path="analise/.claude/hooks/context/strategy_enforcer.py",
@@ -642,12 +648,12 @@ PHASES: list[Phase] = [
                 extraction_type="ADAPT_IMPORTS",
                 loc=200,
                 key_classes=(
-                    "HypervisorConfig", "PhaseDefinition", "ExecutionResult",
+                    "HypervisorConfig",
+                    "PhaseDefinition",
+                    "ExecutionResult",
                 ),
                 key_methods=("execute_phase", "run_sequential", "run_parallel"),
-                adaptation_notes=(
-                    "Refactor imports to lib.*, remove kazuba-cargo-specific code"
-                ),
+                adaptation_notes=("Refactor imports to lib.*, remove kazuba-cargo-specific code"),
             ),
             SourceFile(
                 path="kazuba-cargo/.claude/orchestration/hypervisor_v2.py",
@@ -655,7 +661,9 @@ PHASES: list[Phase] = [
                 extraction_type="ADAPT_IMPORTS",
                 loc=150,
                 key_classes=(
-                    "HypervisorConfig", "HypervisorState", "HookType",
+                    "HypervisorConfig",
+                    "HypervisorState",
+                    "HookType",
                 ),
                 adaptation_notes=(
                     "Abstract interfaces for EventMesh, GPUSkillRouter, "
@@ -669,9 +677,7 @@ PHASES: list[Phase] = [
                 loc=150,
                 key_classes=("LearningEvent",),
                 key_methods=("record_learning_event", "calculate_reward"),
-                adaptation_notes=(
-                    "Bridge between hypervisor and learning/RLM system"
-                ),
+                adaptation_notes=("Bridge between hypervisor and learning/RLM system"),
             ),
         ],
         files_to_create=[
@@ -712,8 +718,7 @@ PHASES: list[Phase] = [
             "Circuit breaker integration for failed phases",
         ],
         recovery_plan=(
-            "If parallel execution deadlocks: "
-            "fall back to sequential mode with circuit breaker"
+            "If parallel execution deadlocks: fall back to sequential mode with circuit breaker"
         ),
         agent_execution_spec="general-purpose with worktree isolation",
         tools_required=["Bash", "Write", "Edit", "Agent(general-purpose)"],
@@ -746,21 +751,19 @@ PHASES: list[Phase] = [
                 extraction_type="ADAPT_IMPORTS",
                 loc=250,
                 key_classes=(
-                    "SessionStateConfig", "CaptureResult", "SessionStateManager",
+                    "SessionStateConfig",
+                    "CaptureResult",
+                    "SessionStateManager",
                 ),
                 key_methods=("capture_state", "restore_state", "mark_checkpoint"),
-                adaptation_notes=(
-                    "Remove StateBus/WAL deps, use lib/checkpoint.py for TOON"
-                ),
+                adaptation_notes=("Remove StateBus/WAL deps, use lib/checkpoint.py for TOON"),
             ),
             SourceFile(
                 path="analise/.claude/hooks/lifecycle/post_compact_reinjector.py",
                 target="modules/hooks-essential/hooks/post_compact_reinjector.py",
                 extraction_type="ADAPT_IMPORTS",
                 loc=96,
-                adaptation_notes=(
-                    "Inject critical rules as additionalContext post-compaction"
-                ),
+                adaptation_notes=("Inject critical rules as additionalContext post-compaction"),
             ),
             SourceFile(
                 path="analise/.claude/hooks/governance/validate_hooks_health.py",
@@ -768,8 +771,7 @@ PHASES: list[Phase] = [
                 extraction_type="REIMPLEMENT",
                 loc=150,
                 adaptation_notes=(
-                    "Rewrite to use framework settings schema instead of "
-                    "settings.local.json"
+                    "Rewrite to use framework settings schema instead of settings.local.json"
                 ),
             ),
         ],
@@ -888,9 +890,7 @@ PHASES: list[Phase] = [
                 target="modules/hooks-routing/hooks/ptc_advisor.py",
                 extraction_type="ADAPT_IMPORTS",
                 loc=200,
-                adaptation_notes=(
-                    "Detect repetitive tool calls, suggest automation"
-                ),
+                adaptation_notes=("Detect repetitive tool calls, suggest automation"),
             ),
         ],
         hook_specs=[
@@ -997,9 +997,7 @@ PHASES: list[Phase] = [
                 extraction_type="REIMPLEMENT",
                 loc=200,
                 key_classes=("ChainOfThought", "GraphOfThought", "TreeOfThought"),
-                adaptation_notes=(
-                    "Reimplement reasoning patterns in Python"
-                ),
+                adaptation_notes=("Reimplement reasoning patterns in Python"),
             ),
             SourceFile(
                 path="kazuba-cargo/.claude/rust/kazuba-hooks/src/learning.rs",
@@ -1007,18 +1005,14 @@ PHASES: list[Phase] = [
                 extraction_type="REIMPLEMENT",
                 loc=600,
                 key_classes=("TDLearner", "ClusterEngine", "WorkingMemory"),
-                adaptation_notes=(
-                    "Reimplement Q-learning in pure Python (no numpy required)"
-                ),
+                adaptation_notes=("Reimplement Q-learning in pure Python (no numpy required)"),
             ),
             SourceFile(
                 path="kazuba-cargo/.claude/orchestration/rlm/",
                 target="modules/rlm/src/",
                 extraction_type="ADAPT_IMPORTS",
                 loc=300,
-                adaptation_notes=(
-                    "Python orchestration for RLM context management and recursion"
-                ),
+                adaptation_notes=("Python orchestration for RLM context management and recursion"),
             ),
         ],
         pydantic_models=[
@@ -1085,8 +1079,7 @@ PHASES: list[Phase] = [
             "Pure Python -- no NumPy required (optional perf boost)",
         ],
         recovery_plan=(
-            "If Q-table grows unbounded: implement LRU eviction with "
-            "configurable max_entries"
+            "If Q-table grows unbounded: implement LRU eviction with configurable max_entries"
         ),
         agent_execution_spec="general-purpose with worktree isolation",
         tools_required=["Bash", "Write", "Edit", "Agent(general-purpose)"],
@@ -1133,7 +1126,9 @@ PHASES: list[Phase] = [
             TestFileSpec("tests/integration_v2/test_e2e_hypervisor.py", 10, 90),
             TestFileSpec("tests/integration_v2/test_e2e_rlm.py", 10, 90),
             TestFileSpec(
-                "tests/integration_v2/test_regression_723.py", 5, 90,
+                "tests/integration_v2/test_regression_723.py",
+                5,
+                90,
                 ("regression",),
             ),
         ],
@@ -1171,7 +1166,9 @@ PHASES: list[Phase] = [
             "Add benchmark regression check to CI",
         ],
         files_to_create=[
-            PhaseFile("scripts/benchmark_hooks.py", "Hook benchmark suite with percentile metrics", 200),
+            PhaseFile(
+                "scripts/benchmark_hooks.py", "Hook benchmark suite with percentile metrics", 200
+            ),
             PhaseFile(".claude/hooks/self_host_config.py", "Self-hosting hook configuration", 50),
         ],
         tests=PhaseTest(
@@ -1292,8 +1289,7 @@ def generate_frontmatter(phase: Phase) -> str:
         slug = _slug(dep_phase.title)
         file_idx = dep_phase.id - 11 + 1
         cross_refs.append(
-            f'  - {{file: "{file_idx:02d}-phase-{slug}.md", '
-            f'relation: "depends_on"}}'
+            f'  - {{file: "{file_idx:02d}-phase-{slug}.md", relation: "depends_on"}}'
         )
 
     for p in PHASES:
@@ -1301,8 +1297,7 @@ def generate_frontmatter(phase: Phase) -> str:
             slug = _slug(p.title)
             file_idx = p.id - 11 + 1
             cross_refs.append(
-                f'  - {{file: "{file_idx:02d}-phase-{slug}.md", '
-                f'relation: "blocks"}}'
+                f'  - {{file: "{file_idx:02d}-phase-{slug}.md", relation: "blocks"}}'
             )
 
     refs_str = "\n".join(cross_refs) if cross_refs else "  []"
@@ -1347,13 +1342,10 @@ def generate_phase_content(phase: Phase) -> str:
 
     if phase.parallel_group:
         parallel_peers = [
-            p for p in PHASES
-            if p.parallel_group == phase.parallel_group and p.id != phase.id
+            p for p in PHASES if p.parallel_group == phase.parallel_group and p.id != phase.id
         ]
         if parallel_peers:
-            peers = ", ".join(
-                f"Phase {p.id} ({p.title})" for p in parallel_peers
-            )
+            peers = ", ".join(f"Phase {p.id} ({p.title})" for p in parallel_peers)
             sections.append(f"**Parallel with**: {peers}\n")
 
     sections.append(f"\n## Description\n\n{phase.description}\n")
@@ -1370,25 +1362,18 @@ def generate_phase_content(phase: Phase) -> str:
         sections.append("| Path | Description | Min Lines |")
         sections.append("|------|-------------|-----------|")
         for f in phase.files_to_create:
-            sections.append(
-                f"| `{f.path}` | {f.description} | {f.min_lines} |"
-            )
+            sections.append(f"| `{f.path}` | {f.description} | {f.min_lines} |")
         sections.append("")
 
     # Source Files (Extraction Map) — AMPLIFIED
     if phase.source_files:
         sections.append("\n## Source Files (Extraction Map)\n")
-        sections.append(
-            "| Source Path | Target | Type | LOC | Key Classes |"
-        )
-        sections.append(
-            "|-------------|--------|------|-----|-------------|"
-        )
+        sections.append("| Source Path | Target | Type | LOC | Key Classes |")
+        sections.append("|-------------|--------|------|-----|-------------|")
         for sf in phase.source_files:
             classes = ", ".join(sf.key_classes) if sf.key_classes else "-"
             sections.append(
-                f"| `{sf.path}` | `{sf.target}` | {sf.extraction_type} "
-                f"| {sf.loc} | {classes} |"
+                f"| `{sf.path}` | `{sf.target}` | {sf.extraction_type} | {sf.loc} | {classes} |"
             )
         sections.append("")
 
@@ -1398,9 +1383,7 @@ def generate_phase_content(phase: Phase) -> str:
             sections.append("### Adaptation Notes\n")
             for sf in phase.source_files:
                 if sf.adaptation_notes:
-                    sections.append(
-                        f"- **`{sf.target}`**: {sf.adaptation_notes}"
-                    )
+                    sections.append(f"- **`{sf.target}`**: {sf.adaptation_notes}")
             sections.append("")
 
         # External dependencies from source files
@@ -1426,25 +1409,18 @@ def generate_phase_content(phase: Phase) -> str:
             if model.fields:
                 sections.append("- **Fields**:")
                 for fname, ftype, fdefault in model.fields:
-                    sections.append(
-                        f"  - `{fname}: {ftype} = {fdefault}`"
-                    )
+                    sections.append(f"  - `{fname}: {ftype} = {fdefault}`")
             sections.append("")
 
     # Hook Specifications — NEW
     if phase.hook_specs:
         sections.append("\n## Hook Specifications\n")
-        sections.append(
-            "| Hook | Event | Module | Exit Codes | P99 Target |"
-        )
-        sections.append(
-            "|------|-------|--------|------------|------------|"
-        )
+        sections.append("| Hook | Event | Module | Exit Codes | P99 Target |")
+        sections.append("|------|-------|--------|------------|------------|")
         for hs in phase.hook_specs:
             codes = ", ".join(str(c) for c in hs.exit_codes)
             sections.append(
-                f"| `{hs.name}` | {hs.event} | {hs.module} "
-                f"| {codes} | {hs.latency_target_ms}ms |"
+                f"| `{hs.name}` | {hs.event} | {hs.module} | {codes} | {hs.latency_target_ms}ms |"
             )
         sections.append("")
 
@@ -1463,18 +1439,11 @@ def generate_phase_content(phase: Phase) -> str:
     # Test Specifications — NEW
     if phase.test_specs:
         sections.append("\n## Test Specifications\n")
-        sections.append(
-            "| Test File | Min Tests | Coverage | Categories |"
-        )
-        sections.append(
-            "|-----------|-----------|----------|------------|"
-        )
+        sections.append("| Test File | Min Tests | Coverage | Categories |")
+        sections.append("|-----------|-----------|----------|------------|")
         for ts in phase.test_specs:
             cats = ", ".join(ts.test_categories)
-            sections.append(
-                f"| `{ts.path}` | {ts.min_tests} "
-                f"| {ts.coverage_target}% | {cats} |"
-            )
+            sections.append(f"| `{ts.path}` | {ts.min_tests} | {ts.coverage_target}% | {cats} |")
         sections.append("")
 
     # TDD spec
@@ -1489,9 +1458,7 @@ def generate_phase_content(phase: Phase) -> str:
     if phase.tests:
         sections.append("\n## Testing\n")
         sections.append(f"- **Test directory**: `{phase.tests.test_dir}`")
-        sections.append(
-            f"- **Min coverage per file**: {phase.tests.min_coverage}%"
-        )
+        sections.append(f"- **Min coverage per file**: {phase.tests.min_coverage}%")
         sections.append("- **Test files**:")
         for tf in phase.tests.test_files:
             sections.append(f"  - `{tf}`")
@@ -1536,9 +1503,7 @@ def generate_phase_content(phase: Phase) -> str:
     sections.append("```bash")
     sections.append(f"python plans/v2/validation/validate_phase_{phase.id}.py")
     sections.append("```")
-    sections.append(
-        f"Checkpoint saved to: `checkpoints/phase_{phase.id}.toon`\n"
-    )
+    sections.append(f"Checkpoint saved to: `checkpoints/phase_{phase.id}.toon`\n")
 
     return "\n".join(sections)
 
@@ -1620,9 +1585,7 @@ def generate_index() -> str:
     lines.append("")
 
     # Source extraction summary
-    total_source_loc = sum(
-        sf.loc for p in PHASES for sf in p.source_files
-    )
+    total_source_loc = sum(sf.loc for p in PHASES for sf in p.source_files)
     total_source_files = sum(len(p.source_files) for p in PHASES)
     total_pydantic = sum(len(p.pydantic_models) for p in PHASES)
     total_hooks = sum(len(p.hook_specs) for p in PHASES)
@@ -1646,18 +1609,10 @@ def generate_index() -> str:
     lines.append("- Phase 22 (release, waits for 20+21)")
     lines.append("")
     lines.append("### Parallel Groups")
-    lines.append(
-        "- **infra** (after Phase 11): Phases 12, 13 (Rust + Governance)"
-    )
-    lines.append(
-        "- **triggers** (after Phases 11, 13): Phase 14"
-    )
-    lines.append(
-        "- **hooks** (after Phase 11): Phases 16, 17 (Advanced hooks batches)"
-    )
-    lines.append(
-        "- **finalize** (after Phase 19): Phases 20, 21 (Bench + Docs)"
-    )
+    lines.append("- **infra** (after Phase 11): Phases 12, 13 (Rust + Governance)")
+    lines.append("- **triggers** (after Phases 11, 13): Phase 14")
+    lines.append("- **hooks** (after Phase 11): Phases 16, 17 (Advanced hooks batches)")
+    lines.append("- **finalize** (after Phase 19): Phases 20, 21 (Bench + Docs)")
     lines.append("")
 
     lines.append("### Swarm Configuration\n")
@@ -1683,21 +1638,12 @@ def generate_index() -> str:
     lines.append("")
 
     lines.append("## Validation\n")
-    lines.append(
-        "Each phase has a validation script in `validation/validate_phase_NN.py`."
-    )
-    lines.append(
-        "Run all validations: `python plans/v2/validation/validate_all.py`"
-    )
+    lines.append("Each phase has a validation script in `validation/validate_phase_NN.py`.")
+    lines.append("Run all validations: `python plans/v2/validation/validate_all.py`")
     lines.append("")
     lines.append("## Checkpoints\n")
-    lines.append(
-        "Checkpoints saved in `.toon` format (msgpack) at "
-        "`checkpoints/phase_NN.toon`."
-    )
-    lines.append(
-        "Recovery: load last .toon checkpoint to resume from any phase.\n"
-    )
+    lines.append("Checkpoints saved in `.toon` format (msgpack) at `checkpoints/phase_NN.toon`.")
+    lines.append("Recovery: load last .toon checkpoint to resume from any phase.\n")
 
     return "\n".join(lines)
 
@@ -1711,144 +1657,137 @@ def generate_validation_script(phase: Phase) -> str:
     lines: list[str] = []
     _a = lines.append  # shorthand
 
-    expected_files_str = ",\n    ".join(
-        f'"{f.path}"' for f in phase.files_to_create
-    )
-    min_lines_map = ", ".join(
-        f'"{f.path}": {f.min_lines}' for f in phase.files_to_create
-    )
+    expected_files_str = ",\n    ".join(f'"{f.path}"' for f in phase.files_to_create)
+    min_lines_map = ", ".join(f'"{f.path}": {f.min_lines}' for f in phase.files_to_create)
 
-    test_dir = (
-        phase.tests.test_dir if phase.tests
-        else f"tests/phase_{phase.id}/"
-    )
+    test_dir = phase.tests.test_dir if phase.tests else f"tests/phase_{phase.id}/"
     min_cov = phase.tests.min_coverage if phase.tests else 90
 
     # --- Header ---
-    _a('#!/usr/bin/env python3')
+    _a("#!/usr/bin/env python3")
     _a('"""')
-    _a(f'Validation Script — Phase {phase.id}: {phase.title}')
-    _a('')
-    _a('Verifies all deliverables, runs tests, checks coverage, lint, typecheck,')
-    _a('regression, and saves checkpoint.')
-    _a('Exit 0 = PASS, Exit 1 = FAIL')
+    _a(f"Validation Script — Phase {phase.id}: {phase.title}")
+    _a("")
+    _a("Verifies all deliverables, runs tests, checks coverage, lint, typecheck,")
+    _a("regression, and saves checkpoint.")
+    _a("Exit 0 = PASS, Exit 1 = FAIL")
     _a('"""')
-    _a('from __future__ import annotations')
-    _a('')
-    _a('import json')
-    _a('import subprocess')
-    _a('import sys')
-    _a('import time')
-    _a('from pathlib import Path')
-    _a('')
-    _a('try:')
-    _a('    import msgpack')
-    _a('except ImportError:')
-    _a('    msgpack = None  # type: ignore[assignment]')
-    _a('')
-    _a(f'PHASE_ID = {phase.id}')
+    _a("from __future__ import annotations")
+    _a("")
+    _a("import json")
+    _a("import subprocess")
+    _a("import sys")
+    _a("import time")
+    _a("from pathlib import Path")
+    _a("")
+    _a("try:")
+    _a("    import msgpack")
+    _a("except ImportError:")
+    _a("    msgpack = None  # type: ignore[assignment]")
+    _a("")
+    _a(f"PHASE_ID = {phase.id}")
     _a(f'PHASE_TITLE = "{phase.title}"')
-    _a('BASE_DIR = Path(__file__).resolve().parent.parent.parent')
+    _a("BASE_DIR = Path(__file__).resolve().parent.parent.parent")
     _a('CHECKPOINT_DIR = BASE_DIR / "checkpoints"')
-    _a('CHECKPOINT_DIR.mkdir(exist_ok=True)')
-    _a('')
-    _a('EXPECTED_FILES = [')
-    _a(f'    {expected_files_str}')
-    _a(']')
-    _a(f'MIN_LINES = {{{min_lines_map}}}')
+    _a("CHECKPOINT_DIR.mkdir(exist_ok=True)")
+    _a("")
+    _a("EXPECTED_FILES = [")
+    _a(f"    {expected_files_str}")
+    _a("]")
+    _a(f"MIN_LINES = {{{min_lines_map}}}")
     _a(f'TEST_DIR = "{test_dir}"')
-    _a(f'MIN_COVERAGE = {min_cov}')
-    _a('')
-    _a('')
+    _a(f"MIN_COVERAGE = {min_cov}")
+    _a("")
+    _a("")
 
     # --- check_files_exist ---
-    _a('def check_files_exist() -> list[str]:')
+    _a("def check_files_exist() -> list[str]:")
     _a('    """Verify all expected files exist and meet minimum line counts."""')
-    _a('    errors: list[str] = []')
-    _a('    for fpath in EXPECTED_FILES:')
-    _a('        full = BASE_DIR / fpath')
-    _a('        if not full.exists():')
+    _a("    errors: list[str] = []")
+    _a("    for fpath in EXPECTED_FILES:")
+    _a("        full = BASE_DIR / fpath")
+    _a("        if not full.exists():")
     _a('            errors.append(f"MISSING: {fpath}")')
-    _a('            continue')
-    _a('        lines = len(full.read_text().splitlines())')
-    _a('        min_l = MIN_LINES.get(fpath, 1)')
-    _a('        if lines < min_l:')
+    _a("            continue")
+    _a("        lines = len(full.read_text().splitlines())")
+    _a("        min_l = MIN_LINES.get(fpath, 1)")
+    _a("        if lines < min_l:")
     _a('            errors.append(f"TOO_SHORT: {fpath} ({lines} < {min_l} lines)")')
-    _a('    return errors')
-    _a('')
-    _a('')
+    _a("    return errors")
+    _a("")
+    _a("")
 
     # --- run_tests ---
-    _a('def run_tests() -> dict:')
+    _a("def run_tests() -> dict:")
     _a('    """Run pytest with coverage for this phase."""')
-    _a('    test_path = BASE_DIR / TEST_DIR')
-    _a('    if not test_path.exists():')
+    _a("    test_path = BASE_DIR / TEST_DIR")
+    _a("    if not test_path.exists():")
     _a('        return {"status": "SKIP", "reason": f"Test dir {TEST_DIR} not found"}')
-    _a('')
-    _a('    result = subprocess.run(')
-    _a('        [')
+    _a("")
+    _a("    result = subprocess.run(")
+    _a("        [")
     _a('            sys.executable, "-m", "pytest", str(test_path),')
     _a('            "--tb=short", "-q",')
     _a("            f\"--cov={BASE_DIR / 'lib'}\",")
     _a('            "--cov-report=json:coverage.json",')
     _a('            f"--cov-fail-under={MIN_COVERAGE}",')
-    _a('        ],')
-    _a('        capture_output=True, text=True, cwd=str(BASE_DIR),')
-    _a('    )')
-    _a('')
-    _a('    cov_data = {}')
+    _a("        ],")
+    _a("        capture_output=True, text=True, cwd=str(BASE_DIR),")
+    _a("    )")
+    _a("")
+    _a("    cov_data = {}")
     _a('    cov_file = BASE_DIR / "coverage.json"')
-    _a('    if cov_file.exists():')
-    _a('        cov_data = json.loads(cov_file.read_text())')
-    _a('        cov_file.unlink()')
-    _a('')
-    _a('    return {')
+    _a("    if cov_file.exists():")
+    _a("        cov_data = json.loads(cov_file.read_text())")
+    _a("        cov_file.unlink()")
+    _a("")
+    _a("    return {")
     _a('        "status": "PASS" if result.returncode == 0 else "FAIL",')
     _a('        "returncode": result.returncode,')
     _a('        "stdout": result.stdout[-500:] if result.stdout else "",')
     _a('        "stderr": result.stderr[-500:] if result.stderr else "",')
     _a('        "coverage": cov_data.get("totals", {}).get("percent_covered", 0),')
-    _a('    }')
-    _a('')
-    _a('')
+    _a("    }")
+    _a("")
+    _a("")
 
     # --- run_lint ---
-    _a('def run_lint() -> dict:')
+    _a("def run_lint() -> dict:")
     _a('    """Run ruff check on lib/ directory."""')
-    _a('    result = subprocess.run(')
+    _a("    result = subprocess.run(")
     _a('        [sys.executable, "-m", "ruff", "check", str(BASE_DIR / "lib"), "--quiet"],')
-    _a('        capture_output=True, text=True, cwd=str(BASE_DIR),')
-    _a('    )')
-    _a('    return {')
+    _a("        capture_output=True, text=True, cwd=str(BASE_DIR),")
+    _a("    )")
+    _a("    return {")
     _a('        "status": "PASS" if result.returncode == 0 else "FAIL",')
     _a('        "errors": result.stdout.strip() if result.stdout else "",')
-    _a('    }')
-    _a('')
-    _a('')
+    _a("    }")
+    _a("")
+    _a("")
 
     # --- run_typecheck ---
-    _a('def run_typecheck() -> dict:')
+    _a("def run_typecheck() -> dict:")
     _a('    """Run pyright on lib/ directory."""')
-    _a('    result = subprocess.run(')
+    _a("    result = subprocess.run(")
     _a('        [sys.executable, "-m", "pyright", str(BASE_DIR / "lib"), "--outputjson"],')
-    _a('        capture_output=True, text=True, cwd=str(BASE_DIR),')
-    _a('    )')
-    _a('    return {')
+    _a("        capture_output=True, text=True, cwd=str(BASE_DIR),")
+    _a("    )")
+    _a("    return {")
     _a('        "status": "PASS" if result.returncode == 0 else "FAIL",')
     _a('        "output": result.stdout[-300:] if result.stdout else "",')
-    _a('    }')
-    _a('')
-    _a('')
+    _a("    }")
+    _a("")
+    _a("")
 
     # --- run_regression ---
-    _a('def run_regression() -> dict:')
+    _a("def run_regression() -> dict:")
     _a('    """Run existing test suite to check for regressions."""')
     _a('    existing_tests = BASE_DIR / "tests"')
-    _a('    if not existing_tests.exists():')
+    _a("    if not existing_tests.exists():")
     _a('        return {"status": "SKIP", "reason": "No existing tests dir"}')
-    _a('')
-    _a('    result = subprocess.run(')
-    _a('        [')
+    _a("")
+    _a("    result = subprocess.run(")
+    _a("        [")
     _a('            sys.executable, "-m", "pytest", str(existing_tests),')
     _a('            "--tb=short", "-q", "--ignore=tests/phase_11",')
     _a('            "--ignore=tests/phase_12", "--ignore=tests/phase_13",')
@@ -1857,163 +1796,167 @@ def generate_validation_script(phase: Phase) -> str:
     _a('            "--ignore=tests/phase_18", "--ignore=tests/phase_19",')
     _a('            "--ignore=tests/phase_20", "--ignore=tests/phase_21",')
     _a('            "--ignore=tests/phase_22", "--ignore=tests/integration_v2",')
-    _a('        ],')
-    _a('        capture_output=True, text=True, cwd=str(BASE_DIR),')
-    _a('    )')
-    _a('    return {')
+    _a("        ],")
+    _a("        capture_output=True, text=True, cwd=str(BASE_DIR),")
+    _a("    )")
+    _a("    return {")
     _a('        "status": "PASS" if result.returncode == 0 else "FAIL",')
     _a('        "returncode": result.returncode,')
     _a('        "stdout": result.stdout[-500:] if result.stdout else "",')
-    _a('    }')
-    _a('')
-    _a('')
+    _a("    }")
+    _a("")
+    _a("")
 
     # --- check_test_specs (conditional) ---
     if phase.test_specs:
-        _a('TEST_SPECS = [')
+        _a("TEST_SPECS = [")
         for ts in phase.test_specs:
             _a(f'    ("{ts.path}", {ts.min_tests}, {ts.coverage_target}),')
-        _a(']')
-        _a('')
-        _a('')
-        _a('def check_test_specs() -> list[str]:')
+        _a("]")
+        _a("")
+        _a("")
+        _a("def check_test_specs() -> list[str]:")
         _a('    """Verify test files meet minimum test count."""')
-        _a('    errors: list[str] = []')
-        _a('    for tpath, min_tests, _cov_target in TEST_SPECS:')
-        _a('        full = BASE_DIR / tpath')
-        _a('        if not full.exists():')
+        _a("    errors: list[str] = []")
+        _a("    for tpath, min_tests, _cov_target in TEST_SPECS:")
+        _a("        full = BASE_DIR / tpath")
+        _a("        if not full.exists():")
         _a('            errors.append(f"MISSING_TEST: {tpath}")')
-        _a('            continue')
-        _a('        content = full.read_text()')
+        _a("            continue")
+        _a("        content = full.read_text()")
         _a('        test_count = content.count("def test_")')
-        _a('        if test_count < min_tests:')
-        _a('            errors.append(')
+        _a("        if test_count < min_tests:")
+        _a("            errors.append(")
         _a('                f"TOO_FEW_TESTS: {tpath} ({test_count} < {min_tests})"')
-        _a('            )')
-        _a('    return errors')
-        _a('')
-        _a('')
+        _a("            )")
+        _a("    return errors")
+        _a("")
+        _a("")
 
     # --- save_checkpoint ---
-    _a('def save_checkpoint(results: dict) -> Path:')
+    _a("def save_checkpoint(results: dict) -> Path:")
     _a('    """Save checkpoint in .toon format (msgpack)."""')
-    _a('    checkpoint = {')
+    _a("    checkpoint = {")
     _a('        "phase_id": PHASE_ID,')
     _a('        "phase_title": PHASE_TITLE,')
     _a('        "timestamp": time.time(),')
     _a('        "iso_time": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),')
     _a('        "results": results,')
     _a('        "version": "3.0",')
-    _a('    }')
-    _a('')
+    _a("    }")
+    _a("")
     _a('    path = CHECKPOINT_DIR / f"phase_{PHASE_ID}.toon"')
-    _a('    if msgpack is not None:')
-    _a('        path.write_bytes(msgpack.packb(checkpoint, use_bin_type=True))')
-    _a('    else:')
-    _a('        # Fallback: JSON with .toon extension')
-    _a('        path.write_text(json.dumps(checkpoint, indent=2, default=str))')
-    _a('')
-    _a('    return path')
-    _a('')
-    _a('')
+    _a("    if msgpack is not None:")
+    _a("        path.write_bytes(msgpack.packb(checkpoint, use_bin_type=True))")
+    _a("    else:")
+    _a("        # Fallback: JSON with .toon extension")
+    _a("        path.write_text(json.dumps(checkpoint, indent=2, default=str))")
+    _a("")
+    _a("    return path")
+    _a("")
+    _a("")
 
     # --- main ---
-    _a('def main() -> int:')
+    _a("def main() -> int:")
     _a('    print(f"\\n{"=" * 60}")')
     _a('    print(f"  Phase {PHASE_ID} Validation: {PHASE_TITLE}")')
     _a('    print(f"{"=" * 60}\\n")')
-    _a('')
+    _a("")
     _a('    results: dict = {"phase": PHASE_ID, "checks": {}}')
-    _a('    all_pass = True')
-    _a('')
-    _a('    # Check 1: Files exist')
-    _a('    file_errors = check_files_exist()')
+    _a("    all_pass = True")
+    _a("")
+    _a("    # Check 1: Files exist")
+    _a("    file_errors = check_files_exist()")
     _a('    results["checks"]["files"] = {')
     _a('        "status": "PASS" if not file_errors else "FAIL",')
     _a('        "total": len(EXPECTED_FILES),')
     _a('        "missing": len(file_errors),')
     _a('        "errors": file_errors,')
-    _a('    }')
-    _a('    if file_errors:')
-    _a('        all_pass = False')
-    _a('        for e in file_errors:')
-    _a('            print(f"  [FAIL] {e}")')
-    _a('    else:')
-    _a('        print(f"  [PASS] All {len(EXPECTED_FILES)} files present")')
-    _a('')
-    _a('    # Check 2: Tests')
-    _a('    test_results = run_tests()')
-    _a('    results["checks"]["tests"] = test_results')
-    _a("    if test_results[\"status\"] == \"FAIL\":")
+    _a("    }")
+    _a("    if file_errors:")
     _a("        all_pass = False")
-    _a("        print(f\"  [FAIL] Tests failed (coverage: {test_results.get('coverage', 'N/A')}%)\")")
-    _a("    elif test_results[\"status\"] == \"SKIP\":")
+    _a("        for e in file_errors:")
+    _a('            print(f"  [FAIL] {e}")')
+    _a("    else:")
+    _a('        print(f"  [PASS] All {len(EXPECTED_FILES)} files present")')
+    _a("")
+    _a("    # Check 2: Tests")
+    _a("    test_results = run_tests()")
+    _a('    results["checks"]["tests"] = test_results')
+    _a('    if test_results["status"] == "FAIL":')
+    _a("        all_pass = False")
+    _a(
+        "        print(f\"  [FAIL] Tests failed (coverage: {test_results.get('coverage', 'N/A')}%)\")"
+    )
+    _a('    elif test_results["status"] == "SKIP":')
     _a("        print(f\"  [SKIP] {test_results['reason']}\")")
-    _a('    else:')
-    _a("        print(f\"  [PASS] Tests passed (coverage: {test_results.get('coverage', 'N/A')}%)\")")
-    _a('')
-    _a('    # Check 3: Lint')
-    _a('    lint_results = run_lint()')
+    _a("    else:")
+    _a(
+        "        print(f\"  [PASS] Tests passed (coverage: {test_results.get('coverage', 'N/A')}%)\")"
+    )
+    _a("")
+    _a("    # Check 3: Lint")
+    _a("    lint_results = run_lint()")
     _a('    results["checks"]["lint"] = lint_results')
     _a('    if lint_results["status"] == "FAIL":')
-    _a('        all_pass = False')
+    _a("        all_pass = False")
     _a('        print("  [FAIL] Lint errors found")')
-    _a('    else:')
+    _a("    else:")
     _a('        print("  [PASS] Lint clean")')
-    _a('')
-    _a('    # Check 4: Type check')
-    _a('    type_results = run_typecheck()')
+    _a("")
+    _a("    # Check 4: Type check")
+    _a("    type_results = run_typecheck()")
     _a('    results["checks"]["typecheck"] = type_results')
     _a('    if type_results["status"] == "FAIL":')
     _a('        print("  [WARN] Type check issues (non-blocking)")')
-    _a('    else:')
+    _a("    else:")
     _a('        print("  [PASS] Type check clean")')
-    _a('')
+    _a("")
 
     # Check 5: Test specs (conditional)
     if phase.test_specs:
-        _a('    # Check 5: Test specifications')
-        _a('    ts_errors = check_test_specs()')
+        _a("    # Check 5: Test specifications")
+        _a("    ts_errors = check_test_specs()")
         _a('    results["checks"]["test_specs"] = {')
         _a('        "status": "PASS" if not ts_errors else "FAIL",')
         _a('        "errors": ts_errors,')
-        _a('    }')
-        _a('    if ts_errors:')
-        _a('        all_pass = False')
-        _a('        for e in ts_errors:')
+        _a("    }")
+        _a("    if ts_errors:")
+        _a("        all_pass = False")
+        _a("        for e in ts_errors:")
         _a('            print(f"  [FAIL] {e}")')
-        _a('    else:')
+        _a("    else:")
         _a('        print("  [PASS] All test specs met")')
-        _a('')
+        _a("")
 
     # Check 6: Regression
-    _a('    # Check 6: Regression (existing tests)')
-    _a('    reg_results = run_regression()')
+    _a("    # Check 6: Regression (existing tests)")
+    _a("    reg_results = run_regression()")
     _a('    results["checks"]["regression"] = reg_results')
     _a('    if reg_results["status"] == "FAIL":')
-    _a('        all_pass = False')
+    _a("        all_pass = False")
     _a('        print("  [FAIL] Regression: existing tests broken")')
     _a('    elif reg_results["status"] == "SKIP":')
     _a("        print(f\"  [SKIP] {reg_results['reason']}\")")
-    _a('    else:')
+    _a("    else:")
     _a('        print("  [PASS] Regression: existing tests still green")')
-    _a('')
+    _a("")
 
     # Save checkpoint and return
-    _a('    # Save checkpoint')
+    _a("    # Save checkpoint")
     _a('    results["overall"] = "PASS" if all_pass else "FAIL"')
-    _a('    cp_path = save_checkpoint(results)')
+    _a("    cp_path = save_checkpoint(results)")
     _a('    print(f"\\n  Checkpoint: {cp_path}")')
-    _a('')
-    _a('    print(f"\\n  Overall: {results[\'overall\']}")')
+    _a("")
+    _a("    print(f\"\\n  Overall: {results['overall']}\")")
     _a('    print(f"{"=" * 60}\\n")')
-    _a('')
-    _a('    return 0 if all_pass else 1')
-    _a('')
-    _a('')
+    _a("")
+    _a("    return 0 if all_pass else 1")
+    _a("")
+    _a("")
     _a('if __name__ == "__main__":')
-    _a('    sys.exit(main())')
-    _a('')
+    _a("    sys.exit(main())")
+    _a("")
 
     return "\n".join(lines)
 
@@ -2079,16 +2022,13 @@ def generate_amplification_report() -> str:
     total_acceptance = sum(len(p.acceptance_criteria) for p in PHASES)
 
     direct_count = sum(
-        1 for p in PHASES for sf in p.source_files
-        if sf.extraction_type == "DIRECT_COPY"
+        1 for p in PHASES for sf in p.source_files if sf.extraction_type == "DIRECT_COPY"
     )
     adapt_count = sum(
-        1 for p in PHASES for sf in p.source_files
-        if sf.extraction_type == "ADAPT_IMPORTS"
+        1 for p in PHASES for sf in p.source_files if sf.extraction_type == "ADAPT_IMPORTS"
     )
     reimplement_count = sum(
-        1 for p in PHASES for sf in p.source_files
-        if sf.extraction_type == "REIMPLEMENT"
+        1 for p in PHASES for sf in p.source_files if sf.extraction_type == "REIMPLEMENT"
     )
 
     phases_with_recovery = sum(1 for p in PHASES if p.recovery_plan)
@@ -2203,9 +2143,7 @@ def _slug(title: str) -> str:
 
 def main() -> int:
     """Generate all v2 plan files and optionally validate them."""
-    parser = argparse.ArgumentParser(
-        description="Generate Pln2 v2 plan files (phases 11-22)"
-    )
+    parser = argparse.ArgumentParser(description="Generate Pln2 v2 plan files (phases 11-22)")
     parser.add_argument(
         "--output-dir",
         default="plans/v2",

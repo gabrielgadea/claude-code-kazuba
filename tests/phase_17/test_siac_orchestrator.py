@@ -109,9 +109,7 @@ class TestSIACResult:
     """Tests for SIACResult aggregation."""
 
     def _make_result(self, actions: list[int]) -> SIACResult:
-        motors = [
-            MotorResult(f"M{i}", a, {}, 1.0) for i, a in enumerate(actions, 1)
-        ]
+        motors = [MotorResult(f"M{i}", a, {}, 1.0) for i, a in enumerate(actions, 1)]
         overall = _determine_overall_action(motors)
         return SIACResult("test.py", motors, overall, "2025-01-01T00:00:00Z")
 
@@ -494,8 +492,7 @@ class TestRunMotorsConcurrentCircuitOpen:
         try:
             result = run_motors({"file_path": "test.py"})
             skipped = [
-                r for r in result.motor_results
-                if r.details.get("reason") == "circuit_open"
+                r for r in result.motor_results if r.details.get("reason") == "circuit_open"
             ]
             assert len(skipped) >= 1
         finally:
@@ -530,6 +527,7 @@ class TestMainFunction:
     def test_main_invalid_json_exits_0(self, monkeypatch: pytest.MonkeyPatch) -> None:
         """main() exits 0 on invalid JSON (fail-open)."""
         import io
+
         monkeypatch.setattr("sys.stdin", io.StringIO("not json"))
         original = list(_siac.MOTORS)
         _siac.MOTORS[:] = []
@@ -543,6 +541,7 @@ class TestMainFunction:
     def test_main_allow_context_exits_0(self, monkeypatch: pytest.MonkeyPatch) -> None:
         """main() exits 0 when all motors ALLOW."""
         import io
+
         monkeypatch.setattr("sys.stdin", io.StringIO('{"file_path": "test.py"}'))
         original = list(_siac.MOTORS)
         _siac.MOTORS[:] = [("M", _make_hook(ALLOW))]
@@ -556,6 +555,7 @@ class TestMainFunction:
     def test_main_block_exits_1(self, monkeypatch: pytest.MonkeyPatch) -> None:
         """main() exits 1 when a motor BLOCKs."""
         import io
+
         monkeypatch.setattr("sys.stdin", io.StringIO('{"file_path": "test.py"}'))
         original = list(_siac.MOTORS)
         _siac.MOTORS[:] = [("B", _make_hook(BLOCK))]
@@ -569,6 +569,7 @@ class TestMainFunction:
     def test_main_warn_exits_2(self, monkeypatch: pytest.MonkeyPatch) -> None:
         """main() exits 2 when a motor WARNs."""
         import io
+
         monkeypatch.setattr("sys.stdin", io.StringIO('{"file_path": "test.py"}'))
         original = list(_siac.MOTORS)
         _siac.MOTORS[:] = [("W", _make_hook(WARN))]

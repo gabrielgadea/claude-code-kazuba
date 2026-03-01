@@ -1,4 +1,5 @@
 """Tests for session_state_manager.py — Phase 16."""
+
 from __future__ import annotations
 
 import importlib.util
@@ -31,13 +32,7 @@ def _import_from_path(name: str, file_path: Path) -> types.ModuleType:
     return mod
 
 
-_SSM_PATH = (
-    PROJECT_ROOT
-    / "modules"
-    / "hooks-essential"
-    / "hooks"
-    / "session_state_manager.py"
-)
+_SSM_PATH = PROJECT_ROOT / "modules" / "hooks-essential" / "hooks" / "session_state_manager.py"
 _ssm = _import_from_path("session_state_manager_ph16", _SSM_PATH)
 
 SessionStateConfig = _ssm.SessionStateConfig
@@ -257,10 +252,12 @@ def test_main_empty_stdin() -> None:
 
 def test_main_with_session_data() -> None:
     """main() processes hook event JSON from stdin, exits 0."""
-    event = json.dumps({
-        "hook_event_name": "PreCompact",
-        "session_id": "abc123",
-    })
+    event = json.dumps(
+        {
+            "hook_event_name": "PreCompact",
+            "session_id": "abc123",
+        }
+    )
     with patch("sys.stdin", StringIO(event)), pytest.raises(SystemExit) as exc_info:
         main()
     assert exc_info.value.code == 0

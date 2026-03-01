@@ -52,7 +52,7 @@ class RLMFacadeConfig(BaseModel, frozen=True):
     """
 
     rlm: RLMConfig = Field(default_factory=RLMConfig.defaults)
-    reward_components: list[dict[str, Any]] = Field(
+    reward_components: list[dict[str, Any]] = Field(  # type: ignore[assignment]
         default_factory=list,
         description="List of RewardComponent dicts (model_dump format)",
     )
@@ -284,7 +284,7 @@ class RLMFacade:
             content=content,
             importance=importance,
             tags=tuple(tags or []),
-            **({"id": entry_id} if entry_id else {}),
+            **({"id": entry_id} if entry_id else {}),  # type: ignore[arg-type]
         )
         return self._memory.add(entry)
 
