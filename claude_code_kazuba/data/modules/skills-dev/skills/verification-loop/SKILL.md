@@ -71,7 +71,7 @@ Run the full test suite with coverage.
 
 | Stack | Command |
 |-------|---------|
-| Python | `pytest tests/ --cov=lib --cov-report=term-missing --tb=short` |
+| Python | `pytest tests/ --cov=claude_code_kazuba --cov-report=term-missing --tb=short` |
 | Rust | `cargo test -- --test-threads=1` |
 | JS/TS | `npm test -- --coverage` |
 

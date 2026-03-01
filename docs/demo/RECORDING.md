@@ -90,6 +90,47 @@ Ou linkar para o asciinema.org:
 [![Kazuba Demo](https://asciinema.org/a/SEU_ID.svg)](https://asciinema.org/a/SEU_ID)
 ```
 
+## Demo PyPI Install (Scripted Cast Generator)
+
+O arquivo `generate_cast.py` gera um `kazuba-demo.cast` **scriptado** — nao depende de
+nenhum pacote instalado nem de gravacao manual. Simula o fluxo completo de PyPI install em ~60s.
+
+### Cenas incluidas
+
+| # | Cena | Duracao |
+|---|------|---------|
+| 1 | `pip install claude-code-kazuba` (com output simulado) | ~16s |
+| 2 | `kazuba --version` | ~3.5s |
+| 3 | `kazuba list-presets` (5 presets) | ~7s |
+| 4 | `kazuba install --preset standard --dry-run` | ~6s |
+| 5 | `kazuba install --preset standard --target .` (5 modulos) | ~11s |
+| 6 | Secrets scanner bloqueia AWS_KEY | ~10s |
+| 7 | `kazuba validate .` (6 checks) | ~8s |
+
+### Como regenerar
+
+```bash
+python docs/demo/generate_cast.py
+```
+
+O script sobrescreve `kazuba-demo.cast` na mesma pasta. Nenhuma dependencia
+externa necessaria — usa apenas stdlib (json, time, dataclasses, pathlib).
+
+### Converter para GIF
+
+```bash
+agg kazuba-demo.cast kazuba-demo.gif \
+  --cols 120 --rows 30 --speed 1.5 --font-size 14
+```
+
+### Personalizar
+
+Edite as funcoes `scene_*()` em `generate_cast.py`. Cada cena eh independente e
+usa o `CastBuilder` para emitir eventos. Parametros de timing (pausas, velocidade
+de digitacao, delays de output) estao documentados nos docstrings.
+
+---
+
 ## Script VHS (Alternativo)
 
 Para um demo reprodutivel e animado via [vhs](https://github.com/charmbracelet/vhs):

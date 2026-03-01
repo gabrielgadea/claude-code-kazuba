@@ -40,10 +40,10 @@ pip install -e ".[dev]"
 pyright lib/
 
 # Phase 3: Lint
-ruff check lib/ tests/ scripts/ --fix
+ruff check claude_code_kazuba/ tests/ scripts/ --fix
 
 # Phase 4: Test
-pytest tests/ --cov=lib --cov-report=term-missing --tb=short
+pytest tests/ --cov=claude_code_kazuba --cov-report=term-missing --tb=short
 
 # Phase 5: Security
 pip audit 2>/dev/null || echo "pip-audit not installed"
