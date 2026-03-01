@@ -201,7 +201,7 @@ detect_stack() {
     info "Detecting project stack..." >&2
     local stack_output
     stack_output="$(cd "$TARGET_DIR" && PYTHONPATH="${SCRIPT_DIR}" "$py" -c "
-from scripts.detect_stack import detect_stack
+from claude_code_kazuba.installer.detect_stack import detect_stack
 from pathlib import Path
 info = detect_stack(Path('.'))
 for k, v in sorted(info.items()):
@@ -226,7 +226,7 @@ resolve_deps() {
     local resolved
     resolved="$(PYTHONPATH="${SCRIPT_DIR}" "$py" -c "
 import sys
-from scripts.resolve_deps import resolve_dependencies
+from claude_code_kazuba.installer.resolve_deps import resolve_dependencies
 from pathlib import Path
 modules_dir = Path('${MODULES_DIR}')
 core_dir = Path('${CORE_DIR}')
@@ -266,7 +266,7 @@ install_one_module() {
     output="$(PYTHONPATH="${SCRIPT_DIR}" "$py" -c "
 import json
 from pathlib import Path
-from scripts.install_module import install_module
+from claude_code_kazuba.installer.install_module import install_module
 variables = {${var_args:2}}
 result = install_module(
     '${module_name}',
@@ -303,7 +303,7 @@ validate() {
     output="$(PYTHONPATH="${SCRIPT_DIR}" "$py" -c "
 import json
 from pathlib import Path
-from scripts.validate_installation import validate_installation
+from claude_code_kazuba.installer.validate_installation import validate_installation
 results = validate_installation(Path('${TARGET_DIR}'))
 messages = results.pop('_messages', [])
 for msg in messages:

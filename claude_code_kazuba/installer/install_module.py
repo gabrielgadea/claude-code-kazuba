@@ -7,7 +7,7 @@ import shutil
 from pathlib import Path
 from typing import Any
 
-from scripts.merge_settings import merge_settings
+from claude_code_kazuba.installer.merge_settings import merge_settings
 
 # Directories within a module that get copied to .claude/
 _CONTENT_DIRS = ("hooks", "skills", "agents", "commands", "contexts", "config", "templates", "src")

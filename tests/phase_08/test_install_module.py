@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from scripts.install_module import install_module
+from claude_code_kazuba.installer.install_module import install_module
 
 if TYPE_CHECKING:
     from pathlib import Path

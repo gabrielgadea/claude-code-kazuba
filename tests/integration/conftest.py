@@ -7,8 +7,8 @@ from typing import Any
 
 import pytest
 
-from scripts.install_module import install_module
-from scripts.resolve_deps import resolve_dependencies
+from claude_code_kazuba.installer.install_module import install_module
+from claude_code_kazuba.installer.resolve_deps import resolve_dependencies
 
 
 @pytest.fixture

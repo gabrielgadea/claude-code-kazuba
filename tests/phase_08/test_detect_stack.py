@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 from typing import TYPE_CHECKING
 
-from scripts.detect_stack import detect_stack
+from claude_code_kazuba.installer.detect_stack import detect_stack
 
 if TYPE_CHECKING:
     from pathlib import Path

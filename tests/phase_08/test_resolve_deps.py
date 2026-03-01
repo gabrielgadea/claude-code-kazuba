@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from scripts.resolve_deps import (
+from claude_code_kazuba.installer.resolve_deps import (
     _parse_yaml_frontmatter,
     resolve_dependencies,
 )
