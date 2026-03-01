@@ -6,7 +6,7 @@ import json
 
 import pytest
 
-from lib.json_output import (
+from claude_code_kazuba.json_output import (
     emit_json,
     pre_compact_output,
     pre_tool_use_output,

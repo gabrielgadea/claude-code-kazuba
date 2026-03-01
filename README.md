@@ -1,8 +1,10 @@
 # Claude Code Kazuba
 
+[![PyPI](https://img.shields.io/pypi/v/claude-code-kazuba)](https://pypi.org/project/claude-code-kazuba/)
+[![Downloads](https://img.shields.io/pypi/dm/claude-code-kazuba)](https://pypi.org/project/claude-code-kazuba/)
+[![Python 3.12+](https://img.shields.io/pypi/pyversions/claude-code-kazuba)](https://pypi.org/project/claude-code-kazuba/)
 [![CI](https://github.com/gabrielgadea/claude-code-kazuba/actions/workflows/ci.yml/badge.svg)](https://github.com/gabrielgadea/claude-code-kazuba/actions/workflows/ci.yml)
-[![Python 3.12+](https://img.shields.io/badge/python-3.12%2B-blue.svg)](https://www.python.org/downloads/)
-[![Tests](https://img.shields.io/badge/tests-1567%20passed-brightgreen.svg)](#test-suite)
+[![Tests](https://img.shields.io/badge/tests-1577%20passed-brightgreen.svg)](#test-suite)
 [![Coverage](https://img.shields.io/badge/coverage-97%25-brightgreen.svg)](#test-suite)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 
@@ -28,19 +30,34 @@ e **Rust** faz tudo isso sem latencia perceptivel.
 
 ## Quick Start
 
-```bash
-# Instalar em qualquer projeto existente
-git clone https://github.com/gabrielgadea/claude-code-kazuba.git
-cd claude-code-kazuba
-./install.sh --preset standard --target /path/to/your/project
+### Via pip (recomendado)
 
-# Ou via curl (remote install)
-curl -sL https://raw.githubusercontent.com/gabrielgadea/claude-code-kazuba/main/install.sh \
-  | bash -s -- --preset standard --target /path/to/your/project
+```bash
+pip install claude-code-kazuba
+
+# Instalar preset standard no seu projeto (COMPLEMENTA sua config existente)
+kazuba install --preset standard --target /path/to/your/project
 
 # Ver o que sera instalado sem escrever nada
-./install.sh --preset professional --target /path/to/your/project --dry-run
+kazuba install --preset professional --target . --dry-run
+
+# Listar presets e modulos disponiveis
+kazuba list-presets
+kazuba list-modules
 ```
+
+### Via git clone
+
+```bash
+git clone https://github.com/gabrielgadea/claude-code-kazuba.git
+cd claude-code-kazuba
+pip install -e .
+kazuba install --preset standard --target /path/to/your/project
+```
+
+> **Importante**: `kazuba install` e um **complemento** a sua configuracao existente do Claude Code.
+> Ele faz merge de hooks, skills e agents no seu `.claude/` — nunca substitui ou sobrescreve
+> seus arquivos existentes.
 
 Em 5 segundos, seu projeto Claude Code tem:
 
@@ -317,7 +334,7 @@ se repete em `bash_safety.rs`, `skill_match.rs` e `knowledge.rs`.
 3. **Zero-allocation hot path** — Aho-Corasick em Rust opera sem alocacao de heap no caminho
    principal. Cada match e uma referencia a memoria pre-alocada.
 
-4. **Fallback Graceful** — `lib/rust_bridge.py` implementa o contrato `@fail_open`:
+4. **Fallback Graceful** — `claude_code_kazuba/rust_bridge.py` implementa o contrato `@fail_open`:
    ```python
    try:
        result = _rust_check_secrets(content, file_path) if self._use_rust else _python_check_secrets(content)
@@ -405,19 +422,18 @@ claude-code-kazuba/
 │   ├── commands-*/        #   6 slash commands (debug-RCA, verify, smart-commit, ...)
 │   └── ...                #   hypervisor, contexts, team-orchestrator, rlm
 ├── scripts/               # Meta-Code-First: generate_plan.py (3.676 linhas)
-├── presets/                # 5 presets (minimal → enterprise)
 ├── examples/              # Projetos-demo (Python, Rust, TypeScript)
-├── install.sh             # One-command installer
-└── tests/                 # 1567 testes (phase_00 → phase_22 + integration_v2)
+├── install.sh             # Legacy one-command installer (backward compat)
+└── tests/                 # 1577 testes (phase_00 → phase_22 + integration_v2 + CLI)
 ```
 
 | Principio | Como se manifesta |
 |-----------|------------------|
 | **Fail-Open** | Hooks nunca crasham o Claude Code — erro interno = exit 0 |
-| **Zero Config** | `./install.sh --preset standard` e tudo que voce precisa |
+| **Zero Config** | `pip install claude-code-kazuba && kazuba install --preset standard` e tudo que voce precisa |
 | **Composable** | Cada modulo e independente com dependencias explicitas |
 | **TDD** | 90% coverage per file (nao media), todos os hooks testados |
-| **Type-Safe** | Pydantic v2 para configs, pyright strict para lib/ |
+| **Type-Safe** | Pydantic v2 para configs, pyright strict para claude_code_kazuba/ |
 | **Checkpoint** | TOON format (msgpack + header) para recovery de estado |
 
 ---
@@ -428,14 +444,14 @@ A credibilidade de um framework de governanca se mede pela propria disciplina.
 O Kazuba aplica a si mesmo o que exige dos projetos que protege:
 
 ```
-============================= 1567 passed in 3.01s =============================
+============================= 1577 passed in 3.01s =============================
 ```
 
 | Metrica | Valor |
 |---------|-------|
-| Testes Python | 1567 (723 v0.1.0 + 844 v0.2.0) |
+| Testes Python | 1577 (723 v0.1.0 + 844 v0.2.0 + 10 CLI) |
 | Testes Rust nativos | 151 |
-| Coverage (lib/) | 97% |
+| Coverage (claude_code_kazuba/) | 97% |
 | Coverage target | 90% per file |
 | Lint (ruff) | 0 errors |
 | Types (pyright strict) | 0 errors |
@@ -488,7 +504,7 @@ source .venv/bin/activate
 pip install -e ".[dev]"
 
 # Quality gate completo
-pytest tests/ --cov=lib --cov-report=term-missing
+pytest tests/ --cov=claude_code_kazuba --cov-report=term-missing
 ruff check lib/ scripts/ tests/
 ruff format --check lib/ scripts/ tests/
 pyright lib/

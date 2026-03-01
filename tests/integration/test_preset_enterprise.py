@@ -7,7 +7,7 @@ from typing import Any
 
 import pytest
 
-from scripts.validate_installation import validate_installation
+from claude_code_kazuba.installer.validate_installation import validate_installation
 
 
 @pytest.mark.integration

@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 from typing import TYPE_CHECKING
 
-from scripts.validate_installation import validate_installation
+from claude_code_kazuba.installer.validate_installation import validate_installation
 
 if TYPE_CHECKING:
     from pathlib import Path

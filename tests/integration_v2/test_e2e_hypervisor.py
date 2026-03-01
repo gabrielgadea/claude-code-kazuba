@@ -23,7 +23,7 @@ import pytest
 # Load hypervisor via importlib (in modules/config-hypervisor/src/)
 # ---------------------------------------------------------------------------
 _ROOT = Path(__file__).resolve().parents[2]
-_HV_PATH = _ROOT / "modules" / "config-hypervisor" / "src" / "hypervisor.py"
+_HV_PATH = _ROOT / "claude_code_kazuba/data/modules" / "config-hypervisor" / "src" / "hypervisor.py"
 
 _hv_spec = importlib.util.spec_from_file_location("hypervisor_e2e", _HV_PATH)
 _hv_mod = importlib.util.module_from_spec(_hv_spec)  # type: ignore[arg-type]

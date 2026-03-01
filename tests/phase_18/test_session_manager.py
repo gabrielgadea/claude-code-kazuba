@@ -7,7 +7,7 @@ from pathlib import Path
 
 import pytest
 
-from modules.rlm.src.session_manager import SessionManager
+from claude_code_kazuba.data.modules.rlm.src.session_manager import SessionManager
 
 # ---------------------------------------------------------------------------
 # Helpers

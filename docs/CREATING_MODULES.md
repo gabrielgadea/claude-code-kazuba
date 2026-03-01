@@ -171,7 +171,7 @@ assert result.returncode == 0  # Should allow
 ### 3. Test dependency resolution
 
 ```python
-from lib.config import resolve_dependencies, ModuleManifest
+from claude_code_kazuba.config import resolve_dependencies, ModuleManifest
 
 manifests = {
     "core": ModuleManifest(name="core", version="1.0.0", description="", dependencies=[], files=[]),
@@ -237,8 +237,8 @@ Checks file line count before writes and warns if too long.
 #!/usr/bin/env python3
 """Line count checker hook — warns when files are too long."""
 from __future__ import annotations
-from lib.hook_base import HookInput, fail_open, ALLOW
-from lib.json_output import pre_tool_use_output, emit_json
+from claude_code_kazuba.hook_base import HookInput, fail_open, ALLOW
+from claude_code_kazuba.json_output import pre_tool_use_output, emit_json
 import sys
 
 MAX_LINES = 200

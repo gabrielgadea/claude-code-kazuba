@@ -1,18 +1,21 @@
 [project]
 name = "claude-code-kazuba"
-version = "0.1.0"
-description = "Framework de configuração de excelência para Claude Code — módulos, hooks, skills, agents e presets reutilizáveis"
+version = "0.2.0"
+description = "Excellence configuration framework for Claude Code — modules, hooks, skills, agents, and reusable presets"
 readme = "README.md"
-license = {text = "MIT"}
+license = "MIT"
 requires-python = ">=3.12"
 authors = [{name = "Gabriel Gadea"}]
-keywords = ["claude-code", "ai", "configuration", "framework", "hooks", "skills"]
+keywords = ["claude-code", "ai", "configuration", "framework", "hooks", "skills", "agents", "presets"]
 classifiers = [
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Topic :: Software Development :: Libraries :: Application Frameworks",
+    "Topic :: Software Development :: Quality Assurance",
+    "Typing :: Typed",
 ]
 
 dependencies = [
@@ -28,10 +31,15 @@ dev = [
     "pytest-cov>=6.0",
     "ruff>=0.8",
     "pyright>=1.1.390",
+    "build>=1.2",
+    "twine>=6.0",
 ]
 rust = [
     "maturin>=1.0",
 ]
+
+[project.scripts]
+kazuba = "claude_code_kazuba.cli:main"
 
 [project.urls]
 Homepage = "https://github.com/gabrielgadea/claude-code-kazuba"
@@ -43,7 +51,15 @@ requires = ["setuptools>=75.0"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]
-include = ["lib*"]
+include = ["claude_code_kazuba*"]
+
+[tool.setuptools.package-data]
+claude_code_kazuba = [
+    "py.typed",
+    "data/modules/**/*",
+    "data/core/**/*",
+    "data/presets/**/*",
+]
 
 [tool.ruff]
 line-length = 99
@@ -74,7 +90,7 @@ markers = [
 ]
 
 [tool.coverage.run]
-source = ["lib"]
+source = ["claude_code_kazuba"]
 branch = true
 
 [tool.coverage.report]

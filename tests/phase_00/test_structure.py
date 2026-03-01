@@ -16,16 +16,16 @@ class TestDirectoryStructure:
     """Verify all required directories exist."""
 
     REQUIRED_DIRS = [
-        "lib",
+        "claude_code_kazuba",
+        "claude_code_kazuba/data/modules",
+        "claude_code_kazuba/data/presets",
+        "claude_code_kazuba/data/core",
+        "claude_code_kazuba/data/core/rules",
         "tests",
         "scripts",
         "plans",
         "plans/validation",
-        "modules",
-        "presets",
         "docs",
-        "core",
-        "core/rules",
         "checkpoints",
         ".claude",
         ".github/workflows",
@@ -43,7 +43,7 @@ class TestBootstrapFiles:
         ("pyproject.toml", 40),
         (".gitignore", 15),
         ("LICENSE", 15),
-        ("lib/__init__.py", 3),
+        ("claude_code_kazuba/__init__.py", 3),
         ("tests/__init__.py", 0),
         ("tests/conftest.py", 15),
         (".claude/CLAUDE.md", 20),
@@ -115,11 +115,11 @@ class TestLibInit:
     """Verify lib package is importable."""
 
     def test_has_version(self, project_root: Path) -> None:
-        content = (project_root / "lib" / "__init__.py").read_text()
+        content = (project_root / "claude_code_kazuba" / "__init__.py").read_text()
         assert "__version__" in content
 
     def test_has_future_annotations(self, project_root: Path) -> None:
-        content = (project_root / "lib" / "__init__.py").read_text()
+        content = (project_root / "claude_code_kazuba" / "__init__.py").read_text()
         assert "from __future__ import annotations" in content
 
 

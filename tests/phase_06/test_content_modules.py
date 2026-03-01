@@ -23,7 +23,7 @@ def project_root() -> Path:
 
 @pytest.fixture
 def modules_dir(project_root: Path) -> Path:
-    return project_root / "modules"
+    return project_root / "claude_code_kazuba/data/modules"
 
 
 def _extract_frontmatter(path: Path) -> dict | None:

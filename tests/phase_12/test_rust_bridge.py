@@ -8,8 +8,8 @@ from __future__ import annotations
 
 import pytest
 
-from lib.patterns import BashSafetyPatterns, SecretPatterns
-from lib.rust_bridge import (
+from claude_code_kazuba.patterns import BashSafetyPatterns, SecretPatterns
+from claude_code_kazuba.rust_bridge import (
     _RUST_AVAILABLE,
     BashValidation,
     BenchmarkResult,

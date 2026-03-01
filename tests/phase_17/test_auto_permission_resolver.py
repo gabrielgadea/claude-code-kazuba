@@ -26,7 +26,7 @@ def _import_from_path(name: str, file_path: Path) -> types.ModuleType:
     return mod
 
 
-_APR_PATH = PROJECT_ROOT / "modules" / "hooks-routing" / "hooks" / "auto_permission_resolver.py"
+_APR_PATH = PROJECT_ROOT / "claude_code_kazuba/data/modules" / "hooks-routing" / "hooks" / "auto_permission_resolver.py"
 _apr = _import_from_path("auto_permission_resolver_ph17", _APR_PATH)
 
 # Aliases

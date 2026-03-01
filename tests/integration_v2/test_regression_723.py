@@ -21,27 +21,27 @@ _ROOT = Path(__file__).resolve().parents[2]
 
 
 def test_lib_rlm_imports() -> None:
-    """lib.rlm module imports without error."""
-    mod = importlib.import_module("lib.rlm")
+    """claude_code_kazuba.rlm module imports without error."""
+    mod = importlib.import_module("claude_code_kazuba.rlm")
     assert hasattr(mod, "RLMFacade")
     assert hasattr(mod, "RLMFacadeConfig")
 
 
 def test_lib_config_imports() -> None:
-    """lib.config module imports without error."""
-    mod = importlib.import_module("lib.config")
+    """claude_code_kazuba.config module imports without error."""
+    mod = importlib.import_module("claude_code_kazuba.config")
     assert mod is not None
 
 
 def test_lib_circuit_breaker_imports() -> None:
-    """lib.circuit_breaker module imports without error."""
-    mod = importlib.import_module("lib.circuit_breaker")
+    """claude_code_kazuba.circuit_breaker module imports without error."""
+    mod = importlib.import_module("claude_code_kazuba.circuit_breaker")
     assert mod is not None
 
 
 def test_lib_governance_imports() -> None:
-    """lib.governance module imports without error."""
-    mod = importlib.import_module("lib.governance")
+    """claude_code_kazuba.governance module imports without error."""
+    mod = importlib.import_module("claude_code_kazuba.governance")
     assert mod is not None
 
 
@@ -83,7 +83,7 @@ def test_migration_script_importable() -> None:
 def test_conftest_base_dir_fixture(base_dir: Path) -> None:
     """base_dir fixture from conftest resolves to project root."""
     assert base_dir.exists()
-    assert (base_dir / "lib").exists()
+    assert (base_dir / "claude_code_kazuba").exists()
 
 
 def test_conftest_tmp_settings_fixture(tmp_settings: Path) -> None:

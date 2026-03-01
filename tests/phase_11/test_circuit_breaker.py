@@ -7,7 +7,7 @@ import time
 
 import pytest
 
-from lib.circuit_breaker import (
+from claude_code_kazuba.circuit_breaker import (
     CircuitBreaker,
     CircuitBreakerConfig,
     CircuitBreakerOpenError,

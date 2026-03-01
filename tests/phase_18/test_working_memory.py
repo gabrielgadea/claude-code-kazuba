@@ -6,8 +6,8 @@ import time
 
 import pytest
 
-from modules.rlm.src.models import MemoryEntry
-from modules.rlm.src.working_memory import WorkingMemory
+from claude_code_kazuba.data.modules.rlm.src.models import MemoryEntry
+from claude_code_kazuba.data.modules.rlm.src.working_memory import WorkingMemory
 
 # ---------------------------------------------------------------------------
 # Helpers

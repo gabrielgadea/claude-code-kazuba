@@ -76,7 +76,7 @@ def _make_config(**kwargs: object) -> SelfHostConfig:
 def test_self_host_config_hooks_dir() -> None:
     """hooks_dir points to project_root/modules."""
     config = _make_config()
-    assert config.hooks_dir == PROJECT_ROOT / "modules"
+    assert config.hooks_dir == PROJECT_ROOT / "claude_code_kazuba/data/modules"
 
 
 def test_self_host_config_get_hooks_for_event() -> None:

@@ -233,7 +233,7 @@ class TestCrossReferences:
     def test_readme_references_actual_presets(self) -> None:
         """README must reference the actual preset names."""
         readme = (BASE_DIR / "README.md").read_text()
-        presets_dir = BASE_DIR / "presets"
+        presets_dir = BASE_DIR / "claude_code_kazuba" / "data" / "presets"
         for preset_file in presets_dir.glob("*.txt"):
             preset_name = preset_file.stem
             assert preset_name in readme, f"README missing reference to preset: {preset_name}"

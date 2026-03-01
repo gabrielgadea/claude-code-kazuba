@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from modules.rlm.src.reward_calculator import RewardCalculator, RewardComponent
+from claude_code_kazuba.data.modules.rlm.src.reward_calculator import RewardCalculator, RewardComponent
 
 # ---------------------------------------------------------------------------
 # Tests

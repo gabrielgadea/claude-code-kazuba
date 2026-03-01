@@ -1,5 +1,0 @@
-"""Claude Code Kazuba — Excellence Configuration Framework."""
-
-from __future__ import annotations
-
-__version__ = "0.1.0"

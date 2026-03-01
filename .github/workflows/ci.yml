@@ -25,10 +25,10 @@ jobs:
         run: pip install ruff>=0.8
 
       - name: Check linting rules
-        run: ruff check lib/ scripts/ tests/
+        run: ruff check claude_code_kazuba/ scripts/ tests/
 
       - name: Check formatting
-        run: ruff format --check lib/ scripts/ tests/
+        run: ruff format --check claude_code_kazuba/ scripts/ tests/
 
   typecheck:
     name: Type Check (pyright)
@@ -44,7 +44,7 @@ jobs:
         run: pip install -e ".[dev]"
 
       - name: Run pyright
-        run: pyright lib/
+        run: pyright claude_code_kazuba/
 
   test:
     name: Test (pytest)

@@ -10,7 +10,7 @@ import pytest
 
 # Load hypervisor_v2 from hyphenated directory using importlib
 _PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
-_HV2_PATH = _PROJECT_ROOT / "modules" / "config-hypervisor" / "src" / "hypervisor_v2.py"
+_HV2_PATH = _PROJECT_ROOT / "claude_code_kazuba/data/modules" / "config-hypervisor" / "src" / "hypervisor_v2.py"
 _spec = importlib.util.spec_from_file_location("hypervisor_v2", _HV2_PATH)
 _mod = importlib.util.module_from_spec(_spec)  # type: ignore[arg-type]
 sys.modules.setdefault("hypervisor_v2", _mod)

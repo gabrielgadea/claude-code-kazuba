@@ -7,7 +7,7 @@ from pathlib import Path
 import pytest
 import yaml
 
-from lib.config import RecoveryTrigger, TriggerRegistry
+from claude_code_kazuba.config import RecoveryTrigger, TriggerRegistry
 
 # --- RecoveryTrigger creation and defaults ---
 
@@ -114,8 +114,8 @@ def test_registry_from_yaml_recovery_triggers(tmp_path: Path) -> None:
 
 def test_registry_from_real_recovery_yaml() -> None:
     base = Path(__file__).resolve().parent.parent.parent
-    recovery_path = base / "modules/config-hypervisor/config/recovery_triggers.yaml"
-    agent_path = base / "modules/config-hypervisor/config/agent_triggers.yaml"
+    recovery_path = base / "claude_code_kazuba/data/modules/config-hypervisor/config/recovery_triggers.yaml"
+    agent_path = base / "claude_code_kazuba/data/modules/config-hypervisor/config/agent_triggers.yaml"
 
     if recovery_path.exists() and agent_path.exists():
         reg = TriggerRegistry.from_yaml(agent_path, recovery_path)
@@ -150,7 +150,7 @@ def test_from_yaml_with_non_dict_entry(tmp_path: Path) -> None:
 
 
 def test_resolve_dependencies_basic() -> None:
-    from lib.config import ModuleManifest, resolve_dependencies
+    from claude_code_kazuba.config import ModuleManifest, resolve_dependencies
 
     manifests = {
         "a": ModuleManifest(
@@ -167,7 +167,7 @@ def test_resolve_dependencies_basic() -> None:
 def test_resolve_dependencies_missing_raises() -> None:
     import pytest
 
-    from lib.config import ModuleManifest, resolve_dependencies
+    from claude_code_kazuba.config import ModuleManifest, resolve_dependencies
 
     manifests = {
         "a": ModuleManifest(
@@ -186,14 +186,14 @@ def test_resolve_dependencies_missing_raises() -> None:
 def test_resolve_dependencies_module_not_found() -> None:
     import pytest
 
-    from lib.config import resolve_dependencies
+    from claude_code_kazuba.config import resolve_dependencies
 
     with pytest.raises(ValueError, match="Module not found"):
         resolve_dependencies(["nonexistent"], {})
 
 
 def test_resolve_dependencies_no_duplicates() -> None:
-    from lib.config import ModuleManifest, resolve_dependencies
+    from claude_code_kazuba.config import ModuleManifest, resolve_dependencies
 
     manifests = {
         "a": ModuleManifest(

@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, Any
 
 import pytest
 
-from scripts.merge_settings import merge_settings, merge_settings_file
+from claude_code_kazuba.installer.merge_settings import merge_settings, merge_settings_file
 
 if TYPE_CHECKING:
     from pathlib import Path

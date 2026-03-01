@@ -5,8 +5,8 @@ from __future__ import annotations
 import tempfile
 from pathlib import Path
 
-from lib.rlm import RLMFacade, RLMFacadeConfig
-from modules.rlm.src.config import RLMConfig
+from claude_code_kazuba.rlm import RLMFacade, RLMFacadeConfig
+from claude_code_kazuba.data.modules.rlm.src.config import RLMConfig
 
 # ---------------------------------------------------------------------------
 # Helpers

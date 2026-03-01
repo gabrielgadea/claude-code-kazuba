@@ -7,7 +7,7 @@ from pathlib import Path
 import jinja2
 import pytest
 
-from lib.template_engine import TemplateEngine, render_string
+from claude_code_kazuba.template_engine import TemplateEngine, render_string
 
 
 class TestRenderString:

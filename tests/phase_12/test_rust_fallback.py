@@ -12,8 +12,8 @@ from unittest.mock import patch
 
 import pytest
 
-from lib.patterns import SecretPatterns
-from lib.rust_bridge import (
+from claude_code_kazuba.patterns import SecretPatterns
+from claude_code_kazuba.rust_bridge import (
     BashValidation,
     PatternHit,
     PatternMatcher,
@@ -184,8 +184,8 @@ def test_graceful_degradation() -> None:
     cfg = RustBridgeConfig(prefer_rust=True, fallback_on_error=True)
 
     with (
-        patch("lib.rust_bridge._RUST_AVAILABLE", True),
-        patch("lib.rust_bridge._kazuba_hooks") as mock_hooks,
+        patch("claude_code_kazuba.rust_bridge._RUST_AVAILABLE", True),
+        patch("claude_code_kazuba.rust_bridge._kazuba_hooks") as mock_hooks,
     ):
         mock_hooks.detect_secrets.side_effect = RuntimeError("Rust exploded")
         bridge = RustBridge(config=cfg)
@@ -207,8 +207,8 @@ def test_error_handling_fallback() -> None:
     cfg = RustBridgeConfig(prefer_rust=True, fallback_on_error=True)
 
     with (
-        patch("lib.rust_bridge._RUST_AVAILABLE", True),
-        patch("lib.rust_bridge._kazuba_hooks") as mock_hooks,
+        patch("claude_code_kazuba.rust_bridge._RUST_AVAILABLE", True),
+        patch("claude_code_kazuba.rust_bridge._kazuba_hooks") as mock_hooks,
     ):
         mock_hooks.validate_bash_command.side_effect = RuntimeError("crash")
         bridge = RustBridge(config=cfg)

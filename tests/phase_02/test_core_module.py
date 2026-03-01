@@ -18,7 +18,7 @@ from pathlib import Path
 import pytest
 import yaml
 
-from lib.template_engine import TemplateEngine
+from claude_code_kazuba.template_engine import TemplateEngine
 
 
 @pytest.fixture
@@ -30,7 +30,7 @@ def project_root() -> Path:
 @pytest.fixture
 def core_dir(project_root: Path) -> Path:
     """Return the core/ directory."""
-    return project_root / "core"
+    return project_root / "claude_code_kazuba" / "data" / "core"
 
 
 @pytest.fixture
@@ -106,7 +106,7 @@ class TestFileExistence:
     def test_file_meets_min_lines(self, core_dir: Path, file_path: str, min_lines: int) -> None:
         full_path = core_dir / file_path
         lines = len(full_path.read_text().splitlines())
-        assert lines >= min_lines, f"core/{file_path}: {lines} lines < {min_lines} required"
+        assert lines >= min_lines, f"claude_code_kazuba/data/core/{file_path}: {lines} lines < {min_lines} required"
 
 
 # ---------------------------------------------------------------------------

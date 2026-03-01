@@ -7,7 +7,7 @@ from pathlib import Path
 import pytest
 from pydantic import ValidationError
 
-from lib.config import (
+from claude_code_kazuba.config import (
     HookRegistration,
     InstallerConfig,
     ModuleManifest,
@@ -131,7 +131,7 @@ class TestDependencyResolution:
     """Dependency resolution validation."""
 
     def test_resolve_valid_deps(self) -> None:
-        from lib.config import resolve_dependencies
+        from claude_code_kazuba.config import resolve_dependencies
 
         manifests = {
             "core": ModuleManifest(
@@ -149,7 +149,7 @@ class TestDependencyResolution:
         assert order.index("core") < order.index("security")
 
     def test_missing_dependency_raises(self) -> None:
-        from lib.config import resolve_dependencies
+        from claude_code_kazuba.config import resolve_dependencies
 
         manifests = {
             "security": ModuleManifest(

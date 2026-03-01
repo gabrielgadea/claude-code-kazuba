@@ -7,7 +7,7 @@ from pathlib import Path
 
 import pytest
 
-from modules.rlm.src.q_table import QTable, _decode, _encode
+from claude_code_kazuba.data.modules.rlm.src.q_table import QTable, _decode, _encode
 
 # ---------------------------------------------------------------------------
 # Helpers

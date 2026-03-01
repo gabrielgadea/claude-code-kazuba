@@ -57,7 +57,7 @@ class SelfHostConfig:
     @property
     def hooks_dir(self) -> Path:
         """Absolute path to the hooks directory."""
-        return self.project_root / "modules"
+        return self.project_root / "claude_code_kazuba" / "data" / "modules"
 
     def get_hooks_for_event(self, event: str) -> list[HookRegistration]:
         """Return all hooks registered for a given event type."""
@@ -79,7 +79,7 @@ def get_default_hooks(project_root: Path | None = None) -> list[HookRegistration
         List of HookRegistration objects for core hooks.
     """
     root = project_root or Path.cwd()
-    hooks_base = root / "modules"
+    hooks_base = root / "claude_code_kazuba" / "data" / "modules"
 
     return [
         HookRegistration(
