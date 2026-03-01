@@ -17,6 +17,8 @@ persistem contexto automaticamente, sem nenhuma configuracao manual.
 [UserPromptSubmit] cila_router: complexity=L3 → routing=detailed_analysis
 ```
 
+![Kazuba Demo](docs/demo/kazuba-demo.gif)
+
 ---
 
 ## Quick Start
