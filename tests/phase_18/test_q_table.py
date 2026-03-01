@@ -2,14 +2,12 @@
 
 from __future__ import annotations
 
-import json
 import tempfile
 from pathlib import Path
 
 import pytest
 
 from modules.rlm.src.q_table import QTable, _decode, _encode
-
 
 # ---------------------------------------------------------------------------
 # Helpers

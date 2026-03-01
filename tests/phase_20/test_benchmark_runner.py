@@ -2,9 +2,7 @@
 
 from __future__ import annotations
 
-import json
 import sys
-import tempfile
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
@@ -18,15 +16,14 @@ if str(PROJECT_ROOT) not in sys.path:
 from scripts.benchmark_hooks import (  # noqa: E402
     BenchmarkConfig,
     BenchmarkResult,
+    _build_parser,
     compute_percentiles,
     discover_hooks,
     format_report,
     run_all_benchmarks,
     run_hook_benchmark,
     run_single_hook,
-    _build_parser,
 )
-
 
 # ---------------------------------------------------------------------------
 # compute_percentiles

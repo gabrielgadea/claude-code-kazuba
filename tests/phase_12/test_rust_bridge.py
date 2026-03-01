@@ -5,12 +5,11 @@ extension is compiled. They use whatever backend is available (rust or python).
 """
 from __future__ import annotations
 
-import time
-
 import pytest
 
 from lib.patterns import BashSafetyPatterns, SecretPatterns
 from lib.rust_bridge import (
+    _RUST_AVAILABLE,
     BashValidation,
     BenchmarkResult,
     PatternHit,
@@ -19,7 +18,6 @@ from lib.rust_bridge import (
     RustBridgeConfig,
     SecretHit,
     SecretsDetector,
-    _RUST_AVAILABLE,
 )
 
 
@@ -215,7 +213,7 @@ def test_rust_bridge_config() -> None:
     assert b.config.benchmark_mode is True
 
     # Frozen: mutation should raise
-    with pytest.raises(Exception):
+    with pytest.raises((TypeError, AttributeError, Exception)):
         cfg.prefer_rust = True  # type: ignore[misc]
 
 

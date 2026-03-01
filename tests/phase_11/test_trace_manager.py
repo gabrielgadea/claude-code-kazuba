@@ -69,9 +69,8 @@ class TestTraceManager:
 
     def test_nested_spans(self) -> None:
         tm = TraceManager("test")
-        with tm.start_span("parent"):
-            with tm.start_span("child"):
-                pass
+        with tm.start_span("parent"), tm.start_span("child"):
+            pass
         result = tm.to_dict()
         assert len(result["spans"]) == 1
         parent = result["spans"][0]

@@ -5,9 +5,9 @@ Directly exercises all major functions to achieve 90%+ coverage.
 """
 from __future__ import annotations
 
+import importlib.util
 import json
 import sys
-import importlib.util
 from pathlib import Path
 
 import pytest

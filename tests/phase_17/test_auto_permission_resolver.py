@@ -205,7 +205,7 @@ class TestResolvePermission:
 
     def _make_input(
         self, tool_name: str, tool_input: dict
-    ) -> "HookInput":
+    ) -> HookInput:
         return HookInput.from_dict(
             {"tool_name": tool_name, "tool_input": tool_input, "session_id": "test"}
         )
@@ -438,7 +438,6 @@ class TestPermissionResultEmit:
         self, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture
     ) -> None:
         """emit() always writes JSON to stdout."""
-        import io as _io
         import json as _json
 
         # Capture sys.stdout writes via monkeypatching json.dump

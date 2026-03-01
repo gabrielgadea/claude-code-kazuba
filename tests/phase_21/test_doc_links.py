@@ -4,8 +4,6 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import pytest
-
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 MIGRATION_MD = PROJECT_ROOT / "docs" / "MIGRATION.md"
 DOCS_DIR = PROJECT_ROOT / "docs"
@@ -42,7 +40,7 @@ def test_migration_md_is_not_empty() -> None:
 def test_migration_md_has_title_header() -> None:
     """MIGRATION.md must start with a markdown title."""
     content = MIGRATION_MD.read_text()
-    lines = [l for l in content.splitlines() if l.strip()]
+    lines = [ln for ln in content.splitlines() if ln.strip()]
     assert lines[0].startswith("#"), f"First non-empty line is not a header: {lines[0]!r}"
 
 

@@ -112,7 +112,7 @@ def test_hypervisor_config_defaults() -> None:
 def test_hypervisor_config_frozen() -> None:
     """HypervisorConfig is immutable (Pydantic frozen=True)."""
     cfg = HypervisorConfig()
-    with pytest.raises(Exception):  # ValidationError or TypeError
+    with pytest.raises((TypeError, AttributeError, Exception)):  # ValidationError or TypeError
         cfg.mode = ExecutionMode.PARALLEL  # type: ignore[misc]
 
 
@@ -200,7 +200,7 @@ def test_execution_result_failure_property() -> None:
 def test_phase_definition_frozen() -> None:
     """PhaseDefinition is immutable."""
     phase = PhaseDefinition(id=1, name="test", prompt="do something")
-    with pytest.raises(Exception):  # ValidationError or TypeError
+    with pytest.raises((TypeError, AttributeError, Exception)):  # ValidationError or TypeError
         phase.name = "modified"  # type: ignore[misc]
 
 

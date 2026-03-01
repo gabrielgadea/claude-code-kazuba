@@ -5,7 +5,6 @@ from __future__ import annotations
 import importlib.util
 import json
 import sys
-import tempfile
 import types
 from pathlib import Path
 
@@ -296,11 +295,10 @@ def test_validate_config_negative_timeout_returns_error() -> None:
 
 def test_main_prints_json(capsys: pytest.CaptureFixture) -> None:
     """main() prints valid JSON fragment to stdout."""
+    import contextlib
     import json as _json
-    try:
+    with contextlib.suppress(SystemExit):
         _shc.main()
-    except SystemExit:
-        pass
     captured = capsys.readouterr()
     if captured.out.strip():
         data = _json.loads(captured.out)

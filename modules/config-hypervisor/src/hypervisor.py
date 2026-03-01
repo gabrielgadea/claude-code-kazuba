@@ -13,7 +13,7 @@ import json
 import logging
 import subprocess
 from datetime import datetime
-from enum import Enum
+from enum import StrEnum
 from pathlib import Path
 from typing import Any
 
@@ -27,7 +27,7 @@ logger = logging.getLogger(__name__)
 # ============================================================================
 
 
-class ExecutionMode(str, Enum):
+class ExecutionMode(StrEnum):
     """Execution modes for the Hypervisor."""
 
     SEQUENTIAL = "sequential"    # Execute phases in dependency order
@@ -36,7 +36,7 @@ class ExecutionMode(str, Enum):
     DRY_RUN = "dry_run"          # Simulate execution without running phases
 
 
-class PhaseStatus(str, Enum):
+class PhaseStatus(StrEnum):
     """Status of a phase execution."""
 
     PENDING = "pending"
@@ -406,7 +406,6 @@ class Hypervisor:
         Raises:
             ValueError: If a dependency cycle is detected.
         """
-        id_map = {p.id: p for p in phases}
         sorted_phases: list[PhaseDefinition] = []
         remaining = list(phases)
         completed: set[int] = set(self._completed_phases)

@@ -4,8 +4,6 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import pytest
-
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 DOCS_DIR = PROJECT_ROOT / "docs"
 MIGRATION_MD = DOCS_DIR / "MIGRATION.md"
@@ -44,7 +42,7 @@ def test_docs_modules_catalog_exists() -> None:
 def test_migration_md_has_minimum_sections() -> None:
     """MIGRATION.md must have at least 3 level-2 sections (##)."""
     content = MIGRATION_MD.read_text()
-    sections = [l for l in content.splitlines() if l.startswith("## ")]
+    sections = [ln for ln in content.splitlines() if ln.startswith("## ")]
     assert len(sections) >= 3, (
         f"Expected >= 3 level-2 sections, found {len(sections)}: {sections}"
     )

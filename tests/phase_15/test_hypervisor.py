@@ -33,14 +33,14 @@ PhaseStatus = _mod.PhaseStatus
 
 
 def _phase(
-    id: int = 1,
+    phase_id: int = 1,
     name: str = "test-phase",
     depends_on: list[int] | None = None,
     parallel_group: str | None = None,
     can_skip: bool = False,
 ) -> PhaseDefinition:
     return PhaseDefinition(
-        id=id,
+        id=phase_id,
         name=name,
         depends_on=depends_on or [],
         parallel_group=parallel_group,
@@ -105,7 +105,7 @@ def test_hypervisor_config_custom_values():
 
 def test_phase_definition_creation():
     """PhaseDefinition must be constructable with required fields."""
-    phase = _phase(id=3, name="build")
+    phase = _phase(phase_id=3, name="build")
     assert phase.id == 3
     assert phase.name == "build"
     assert phase.depends_on == []
@@ -113,7 +113,7 @@ def test_phase_definition_creation():
 
 def test_phase_definition_deps():
     """PhaseDefinition must store dependency list correctly."""
-    phase = _phase(id=5, name="deploy", depends_on=[1, 2, 3])
+    phase = _phase(phase_id=5, name="deploy", depends_on=[1, 2, 3])
     assert 1 in phase.depends_on
     assert 3 in phase.depends_on
     assert len(phase.depends_on) == 3
@@ -121,7 +121,7 @@ def test_phase_definition_deps():
 
 def test_phase_definition_parallel_group():
     """PhaseDefinition must support optional parallel_group."""
-    phase = _phase(id=1, parallel_group="group-a")
+    phase = _phase(phase_id=1, parallel_group="group-a")
     assert phase.parallel_group == "group-a"
 
 
@@ -185,9 +185,9 @@ def test_hypervisor_run_dry_returns_phase_names():
     """run_dry must return an ordered list of phase names."""
     h = Hypervisor()
     phases = [
-        _phase(id=1, name="alpha"),
-        _phase(id=2, name="beta"),
-        _phase(id=3, name="gamma"),
+        _phase(phase_id=1, name="alpha"),
+        _phase(phase_id=2, name="beta"),
+        _phase(phase_id=3, name="gamma"),
     ]
     names = h.run_dry(phases)
     assert names == ["alpha", "beta", "gamma"]
@@ -197,8 +197,8 @@ def test_hypervisor_run_dry_respects_deps():
     """run_dry must order phases respecting dependency order."""
     h = Hypervisor()
     phases = [
-        _phase(id=2, name="second", depends_on=[1]),
-        _phase(id=1, name="first"),
+        _phase(phase_id=2, name="second", depends_on=[1]),
+        _phase(phase_id=1, name="first"),
     ]
     names = h.run_dry(phases)
     assert names.index("first") < names.index("second")
@@ -212,7 +212,7 @@ def test_hypervisor_run_dry_respects_deps():
 def test_hypervisor_execute_phase_dry_run():
     """execute_phase in DRY_RUN mode must return a SUCCESS result."""
     h = Hypervisor(_dry_config())
-    phase = _phase(id=10, name="test-phase")
+    phase = _phase(phase_id=10, name="test-phase")
     result = h.execute_phase(phase)
     assert result.phase_id == 10
     assert result.status == PhaseStatus.SUCCESS
@@ -222,7 +222,7 @@ def test_hypervisor_execute_phase_dry_run():
 def test_hypervisor_execute_phase_records_log():
     """execute_phase must append an entry to the execution log."""
     h = Hypervisor(_dry_config())
-    h.execute_phase(_phase(id=7, name="log-test"))
+    h.execute_phase(_phase(phase_id=7, name="log-test"))
     log = h.get_execution_log()
     assert len(log) == 1
     assert log[0]["phase_id"] == 7
@@ -236,7 +236,7 @@ def test_hypervisor_execute_phase_records_log():
 def test_hypervisor_execute_all_dry_run():
     """execute_all in DRY_RUN mode must succeed for all phases."""
     h = Hypervisor(_dry_config())
-    phases = [_phase(id=i, name=f"phase-{i}") for i in range(1, 5)]
+    phases = [_phase(phase_id=i, name=f"phase-{i}") for i in range(1, 5)]
     results = h.execute_all(phases)
     assert len(results) == 4
     assert all(r.success for r in results)
@@ -246,9 +246,9 @@ def test_hypervisor_execute_all_respects_dependencies():
     """execute_all must execute phases in dependency order."""
     h = Hypervisor(_dry_config())
     phases = [
-        _phase(id=3, name="third", depends_on=[2]),
-        _phase(id=2, name="second", depends_on=[1]),
-        _phase(id=1, name="first"),
+        _phase(phase_id=3, name="third", depends_on=[2]),
+        _phase(phase_id=2, name="second", depends_on=[1]),
+        _phase(phase_id=1, name="first"),
     ]
     results = h.execute_all(phases)
     assert len(results) == 3
@@ -308,7 +308,7 @@ def test_hypervisor_execute_phase_sequential_success(tmp_path):
         checkpoint_dir=tmp_path / "cps",
     )
     h = Hypervisor(cfg)
-    phase = _phase(id=1, name="seq-success")
+    phase = _phase(phase_id=1, name="seq-success")
 
     mock_proc = MagicMock()
     mock_proc.stdout = b'{"status": "success"}'
@@ -330,7 +330,7 @@ def test_hypervisor_execute_phase_sequential_failure(tmp_path):
         checkpoint_dir=tmp_path / "cps",
     )
     h = Hypervisor(cfg)
-    phase = _phase(id=2, name="seq-fail")
+    phase = _phase(phase_id=2, name="seq-fail")
 
     mock_proc = MagicMock()
     mock_proc.stdout = b"error output"
@@ -353,7 +353,7 @@ def test_hypervisor_execute_phase_timeout(tmp_path):
         timeout_per_phase=5,
     )
     h = Hypervisor(cfg)
-    phase = _phase(id=3, name="timeout-phase")
+    phase = _phase(phase_id=3, name="timeout-phase")
 
     with patch("subprocess.run", side_effect=subprocess.TimeoutExpired(cmd="claude", timeout=5)):
         result = h.execute_phase(phase)
@@ -370,7 +370,7 @@ def test_hypervisor_execute_phase_exception(tmp_path):
         checkpoint_dir=tmp_path / "cps",
     )
     h = Hypervisor(cfg)
-    phase = _phase(id=4, name="exc-phase")
+    phase = _phase(phase_id=4, name="exc-phase")
 
     with patch("subprocess.run", side_effect=OSError("permission denied")):
         result = h.execute_phase(phase)
@@ -397,8 +397,8 @@ def test_hypervisor_execute_all_skip_phase(tmp_path):
     # Phase 2 depends on phase 1; since phase 1 will fail (not in completed),
     # phase 2 should be skipped (can_skip=True)
     phases = [
-        _phase(id=1, name="first"),
-        _phase(id=2, name="skippable", depends_on=[1], can_skip=True),
+        _phase(phase_id=1, name="first"),
+        _phase(phase_id=2, name="skippable", depends_on=[1], can_skip=True),
     ]
 
     mock_proc_fail = MagicMock()
@@ -420,12 +420,11 @@ def test_hypervisor_execute_all_deps_satisfied_skip(tmp_path):
         mode=ExecutionMode.SEQUENTIAL,
         checkpoint_dir=tmp_path / "cps",
     )
-    h = Hypervisor(cfg)
     # Manually mark phase 99 as NOT completed (it's not in phases list)
     # Phase 2 depends on it and can_skip=True
     # We run phase 2 directly via execute_all where sort succeeds but deps fail
     # To test _deps_satisfied branch, execute phases in sorted order manually
-    phase2 = _phase(id=2, name="skippable", depends_on=[1], can_skip=True)
+    phase2 = _phase(phase_id=2, name="skippable", depends_on=[1], can_skip=True)
     # No phase 1 in completed set, but we can use _deps_satisfied directly
     h2 = Hypervisor(cfg)
     # Phase 1 is not in completed, so phase 2 deps not satisfied
@@ -443,8 +442,8 @@ def test_hypervisor_execute_all_fail_fast_on_unsatisfied_deps(tmp_path):
 
     # Phase 1 fails, so phase 2 (depends on 1, can_skip=False) should fail-fast
     phases = [
-        _phase(id=1, name="first"),
-        _phase(id=2, name="dependent", depends_on=[1], can_skip=False),
+        _phase(phase_id=1, name="first"),
+        _phase(phase_id=2, name="dependent", depends_on=[1], can_skip=False),
     ]
 
     mock_proc_fail = MagicMock()
@@ -469,8 +468,8 @@ def test_hypervisor_execute_all_stops_on_phase_failure(tmp_path):
     )
     h = Hypervisor(cfg)
     phases = [
-        _phase(id=1, name="first"),
-        _phase(id=2, name="second"),
+        _phase(phase_id=1, name="first"),
+        _phase(phase_id=2, name="second"),
     ]
 
     mock_proc_fail = MagicMock()
@@ -530,8 +529,8 @@ def test_hypervisor_topological_sort_cycle_raises():
     h = Hypervisor()
     # Phase 1 depends on 2, phase 2 depends on 1 — cycle
     phases = [
-        _phase(id=1, name="a", depends_on=[2]),
-        _phase(id=2, name="b", depends_on=[1]),
+        _phase(phase_id=1, name="a", depends_on=[2]),
+        _phase(phase_id=2, name="b", depends_on=[1]),
     ]
     with pytest.raises(ValueError, match="[Cc]ycle|[Dd]ependency"):
         h.run_dry(phases)
@@ -550,7 +549,7 @@ def test_hypervisor_saves_checkpoint_to_disk(tmp_path):
         checkpoint_dir=cp_dir,
     )
     h = Hypervisor(cfg)
-    phase = _phase(id=42, name="disk-checkpoint")
+    phase = _phase(phase_id=42, name="disk-checkpoint")
 
     mock_proc = MagicMock()
     mock_proc.stdout = b"ok"
@@ -573,7 +572,7 @@ def test_hypervisor_save_checkpoint_oserror(tmp_path):
         checkpoint_dir=tmp_path / "cps",
     )
     h = Hypervisor(cfg)
-    phase = _phase(id=50, name="save-fail")
+    phase = _phase(phase_id=50, name="save-fail")
 
     mock_proc = MagicMock()
     mock_proc.stdout = b"ok"
@@ -581,9 +580,9 @@ def test_hypervisor_save_checkpoint_oserror(tmp_path):
     mock_proc.returncode = 0
 
     # Patch mkdir to raise OSError so _save_checkpoint returns None
-    with patch("subprocess.run", return_value=mock_proc):
-        with patch("pathlib.Path.mkdir", side_effect=OSError("no space left")):
-            result = h.execute_phase(phase)
+    with patch("subprocess.run", return_value=mock_proc), \
+         patch("pathlib.Path.mkdir", side_effect=OSError("no space left")):
+        result = h.execute_phase(phase)
 
     assert result.phase_id == 50
     # Checkpoint path should be None when save fails
@@ -603,22 +602,9 @@ def test_hypervisor_execute_all_skips_phase_with_unsatisfied_deps_mid_run(tmp_pa
     # because phase 2 depends on phase 99 (externally completed before sort)
     h._completed_phases.add(99)  # type: ignore[attr-defined]
 
-    phases = [
-        _phase(id=1, name="first"),
-        _phase(id=2, name="skippable", depends_on=[99], can_skip=True),
-    ]
-
-    # Topological sort will succeed (99 is in completed)
-    # but after execution starts, _deps_satisfied checks _completed_phases
-    # which initially has 99. After phase 1 runs, phase 2 deps (99) are still there.
-    # So to trigger the skip branch we need deps NOT in _completed_phases.
-    # Reset 99 from completed after sort but before execute
-    # Actually, let's test the opposite: use DRY_RUN to get success on phase1
-    # then verify skip branch by having phase 2 depend on a phase that never runs
-
     # Simpler approach: use _deps_satisfied directly to verify the logic
     h2 = Hypervisor(cfg)
-    phase_with_unmet_dep = _phase(id=5, name="unmet", depends_on=[888], can_skip=True)
+    phase_with_unmet_dep = _phase(phase_id=5, name="unmet", depends_on=[888], can_skip=True)
     assert h2._deps_satisfied(phase_with_unmet_dep) is False  # type: ignore[attr-defined]
 
 
@@ -633,7 +619,7 @@ def test_hypervisor_execute_all_fail_fast_unsatisfied_no_skip(tmp_path):
     h._completed_phases.add(99)  # type: ignore[attr-defined]
 
     # Test _deps_satisfied logic directly
-    phase_no_skip = _phase(id=3, name="no-skip", depends_on=[888], can_skip=False)
+    phase_no_skip = _phase(phase_id=3, name="no-skip", depends_on=[888], can_skip=False)
     h2 = Hypervisor(cfg)
     satisfied = h2._deps_satisfied(phase_no_skip)  # type: ignore[attr-defined]
     assert satisfied is False
@@ -652,7 +638,7 @@ def test_hypervisor_execute_all_deps_not_satisfied_skip_branch(tmp_path):
     h._completed_phases.add(99)  # type: ignore[attr-defined]
 
     phases = [
-        _phase(id=2, name="skippable", depends_on=[99], can_skip=True),
+        _phase(phase_id=2, name="skippable", depends_on=[99], can_skip=True),
     ]
 
     # After sort (which sees 99 in completed), remove 99 from _completed_phases
@@ -684,7 +670,7 @@ def test_hypervisor_execute_all_deps_not_satisfied_fail_branch(tmp_path):
     h._completed_phases.add(99)  # type: ignore[attr-defined]
 
     phases = [
-        _phase(id=3, name="non-skippable", depends_on=[99], can_skip=False),
+        _phase(phase_id=3, name="non-skippable", depends_on=[99], can_skip=False),
     ]
 
     original_sort = h._topological_sort  # type: ignore[attr-defined]

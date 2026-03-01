@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-import math
-import tempfile
 from pathlib import Path
 
 import pytest
@@ -12,7 +10,6 @@ from lib.rlm import RLMFacade, RLMFacadeConfig
 from modules.rlm.src.config import RLMConfig
 from modules.rlm.src.models import Episode, LearningRecord, MemoryEntry, SessionMeta
 from modules.rlm.src.session_manager import SessionManager
-
 
 # ===========================================================================
 # Config coverage
@@ -294,7 +291,6 @@ def test_facade_top_memories() -> None:
 
 
 def test_facade_compute_reward_breakdown() -> None:
-    from modules.rlm.src.reward_calculator import RewardComponent
 
     rlm = RLMFacade()
     rlm.add_reward_component("acc", weight=1.0, target=1.0, scale=0.2)

@@ -9,7 +9,6 @@ import pytest
 from modules.rlm.src.models import MemoryEntry
 from modules.rlm.src.working_memory import WorkingMemory
 
-
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------

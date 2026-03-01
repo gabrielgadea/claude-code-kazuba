@@ -313,7 +313,7 @@ def migrate_hooks_settings(
             migrated_hooks[event] = list(hooks[event])
 
     # Migrate v0.1 flat hooks
-    for hook_name, hook_val in hooks.items():
+    for hook_name, _hook_val in hooks.items():
         if hook_name in _HOOK_MIGRATION_MAP:
             mapping = _HOOK_MIGRATION_MAP[hook_name]
             event = mapping["event"]

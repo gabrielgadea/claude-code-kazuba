@@ -6,7 +6,6 @@ import pytest
 
 from modules.rlm.src.reward_calculator import RewardCalculator, RewardComponent
 
-
 # ---------------------------------------------------------------------------
 # Tests
 # ---------------------------------------------------------------------------

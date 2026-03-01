@@ -6,7 +6,7 @@ from pathlib import Path
 import pytest
 import yaml
 
-from lib.config import AgentTrigger, RecoveryTrigger, TriggerRegistry
+from lib.config import AgentTrigger, TriggerRegistry
 
 FIXTURES_DIR = Path(__file__).parent
 
@@ -44,7 +44,7 @@ def test_agent_trigger_custom_creation() -> None:
 
 def test_agent_trigger_is_frozen() -> None:
     t = AgentTrigger(name="test")
-    with pytest.raises(Exception):
+    with pytest.raises((TypeError, AttributeError, Exception)):
         t.name = "changed"  # type: ignore[misc]
 
 

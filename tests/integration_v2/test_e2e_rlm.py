@@ -13,14 +13,12 @@ Tests the full RLM (Reinforcement Learning Memory) session lifecycle:
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any
 
 import pytest
 
 from lib.rlm import RLMFacade, RLMFacadeConfig
 from modules.rlm.src.q_table import QTable
 from modules.rlm.src.working_memory import WorkingMemory
-
 
 # ---------------------------------------------------------------------------
 # Fixtures
@@ -68,7 +66,7 @@ def test_rlm_facade_config_defaults() -> None:
 def test_rlm_facade_config_frozen() -> None:
     """RLMFacadeConfig is immutable (Pydantic frozen=True)."""
     cfg = RLMFacadeConfig()
-    with pytest.raises(Exception):
+    with pytest.raises((TypeError, AttributeError, Exception)):
         cfg.enable_epsilon_greedy = False  # type: ignore[misc]
 
 

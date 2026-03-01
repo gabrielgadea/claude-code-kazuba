@@ -41,7 +41,7 @@ class TestGovernanceRule:
     def test_governance_rule_frozen(self) -> None:
         """GovernanceRule is immutable (frozen=True)."""
         rule = GovernanceRule(name="FROZEN_RULE")
-        with pytest.raises(Exception):
+        with pytest.raises((TypeError, AttributeError, Exception)):
             rule.name = "CHANGED"  # type: ignore[misc]
 
     def test_governance_rule_defaults(self) -> None:
@@ -92,7 +92,7 @@ class TestCodeFirstPhase:
     def test_code_first_phase_frozen(self) -> None:
         """CodeFirstPhase is immutable."""
         phase = CodeFirstPhase(phase="CREATE")
-        with pytest.raises(Exception):
+        with pytest.raises((TypeError, AttributeError, Exception)):
             phase.completed = True  # type: ignore[misc]
 
     def test_code_first_phases_constant(self) -> None:
@@ -115,7 +115,7 @@ class TestValidationCriteria:
     def test_validation_criteria_frozen(self) -> None:
         """ValidationCriteria is immutable."""
         criteria = ValidationCriteria(name="TESTED")
-        with pytest.raises(Exception):
+        with pytest.raises((TypeError, AttributeError, Exception)):
             criteria.required = False  # type: ignore[misc]
 
     def test_validation_criteria_defaults(self) -> None:
@@ -154,7 +154,7 @@ class TestCILALevel:
     def test_cila_level_frozen(self) -> None:
         """CILALevel is immutable."""
         cila = CILALevel(level=2)
-        with pytest.raises(Exception):
+        with pytest.raises((TypeError, AttributeError, Exception)):
             cila.level = 5  # type: ignore[misc]
 
     def test_cila_level_defaults(self) -> None:

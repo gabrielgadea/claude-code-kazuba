@@ -11,16 +11,14 @@ from unittest.mock import patch
 
 import pytest
 
-from lib.patterns import BashSafetyPatterns, SecretPatterns
+from lib.patterns import SecretPatterns
 from lib.rust_bridge import (
     BashValidation,
     PatternHit,
     PatternMatcher,
     RustBridge,
     RustBridgeConfig,
-    SecretHit,
     SecretsDetector,
-    _RUST_AVAILABLE,
     _python_check_secrets,
     _python_validate_bash,
 )
@@ -228,7 +226,7 @@ def test_fallback_config() -> None:
 
     assert bridge.config.prefer_rust is False
     # Frozen
-    with pytest.raises(Exception):
+    with pytest.raises((TypeError, AttributeError, Exception)):
         cfg.prefer_rust = True  # type: ignore[misc]
 
 

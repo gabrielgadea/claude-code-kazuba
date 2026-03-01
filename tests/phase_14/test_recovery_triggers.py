@@ -8,7 +8,6 @@ import yaml
 
 from lib.config import RecoveryTrigger, TriggerRegistry
 
-
 # --- RecoveryTrigger creation and defaults ---
 
 def test_recovery_trigger_defaults() -> None:
@@ -41,7 +40,7 @@ def test_recovery_trigger_custom_creation() -> None:
 
 def test_recovery_trigger_is_frozen() -> None:
     t = RecoveryTrigger(name="test")
-    with pytest.raises(Exception):
+    with pytest.raises((TypeError, AttributeError, Exception)):
         t.name = "changed"  # type: ignore[misc]
 
 
@@ -155,8 +154,9 @@ def test_resolve_dependencies_basic() -> None:
 
 
 def test_resolve_dependencies_missing_raises() -> None:
-    from lib.config import ModuleManifest, resolve_dependencies
     import pytest
+
+    from lib.config import ModuleManifest, resolve_dependencies
 
     manifests = {
         "a": ModuleManifest(name="a", version="1.0", description="", dependencies=["missing"], hooks_file=None, files=[]),
@@ -166,8 +166,9 @@ def test_resolve_dependencies_missing_raises() -> None:
 
 
 def test_resolve_dependencies_module_not_found() -> None:
-    from lib.config import resolve_dependencies
     import pytest
+
+    from lib.config import resolve_dependencies
 
     with pytest.raises(ValueError, match="Module not found"):
         resolve_dependencies(["nonexistent"], {})

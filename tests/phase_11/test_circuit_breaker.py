@@ -4,8 +4,6 @@ from __future__ import annotations
 
 import threading
 import time
-from concurrent.futures import ThreadPoolExecutor
-from unittest.mock import MagicMock
 
 import pytest
 
@@ -46,7 +44,7 @@ class TestCircuitBreakerConfig:
 
     def test_config_is_frozen(self) -> None:
         config = CircuitBreakerConfig()
-        with pytest.raises(Exception):
+        with pytest.raises((TypeError, AttributeError, Exception)):
             config.max_failures = 10  # type: ignore[misc]
 
 

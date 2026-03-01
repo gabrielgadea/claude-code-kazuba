@@ -12,18 +12,17 @@ layer used by the Hypervisor and by tests that verify interface compliance.
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from enum import Enum
+from enum import StrEnum
 from typing import Any
 
 from pydantic import BaseModel, Field
-
 
 # ============================================================================
 # Enums
 # ============================================================================
 
 
-class HookType(str, Enum):
+class HookType(StrEnum):
     """Types of hook events emitted by the hypervisor lifecycle.
 
     Attributes:

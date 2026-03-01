@@ -5,11 +5,8 @@ from __future__ import annotations
 import tempfile
 from pathlib import Path
 
-import pytest
-
 from lib.rlm import RLMFacade, RLMFacadeConfig
 from modules.rlm.src.config import RLMConfig
-
 
 # ---------------------------------------------------------------------------
 # Helpers

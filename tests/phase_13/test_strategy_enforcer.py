@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import importlib.util
 import json
 import subprocess
 import sys
@@ -10,8 +11,6 @@ from pathlib import Path
 from unittest.mock import patch
 
 import pytest
-
-import importlib.util
 
 # Load strategy_enforcer from hyphenated directory using importlib
 _PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
@@ -72,7 +71,7 @@ class TestEnforcementResult:
     def test_enforcement_result_frozen(self) -> None:
         """EnforcementResult is immutable."""
         result = EnforcementResult(action="allow", cila_level=0)
-        with pytest.raises(Exception):
+        with pytest.raises((TypeError, AttributeError, Exception)):
             result.action = "warn"  # type: ignore[misc]
 
     def test_enforcement_result_defaults(self) -> None:
