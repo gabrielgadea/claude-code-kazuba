@@ -6,96 +6,125 @@
 [![Coverage](https://img.shields.io/badge/coverage-97%25-brightgreen.svg)](#test-suite)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 
-**Framework de excelencia para Claude Code** — transforma o Claude Code de um assistente generico
-em um sistema de engenharia de software completo com quality gates automaticos, seguranca proativa,
-roteamento inteligente de complexidade, e orquestracao multi-agente.
-
-> *"Nao e sobre configurar o Claude Code. E sobre tornar impossivel escrever codigo inseguro,
-> entregar sem testes, ou perder contexto no meio do trabalho."*
-
-## O Problema
-
-O Claude Code sem configuracao e poderoso, mas **fragil**:
-- Nenhuma protecao contra commitar secrets ou PII
-- Sem validacao de qualidade antes de escrever arquivos
-- Comandos bash perigosos passam sem alerta
-- Sem memoria entre sessoes, sem checkpoints, sem contexto persistente
-- Cada projeto comeca do zero — sem reuso de configuracoes testadas
-
-## A Solucao
-
-Kazuba e um sistema modular de **15 modulos** que se instala em qualquer projeto com um unico comando.
-Cada modulo resolve um problema real, testado com 1567 testes e 97% de coverage:
-
-```bash
-./install.sh --preset professional --target /path/to/your/project
-```
-
-Em 5 segundos, seu projeto tem:
-- **10 hooks automaticos** que interceptam cada acao do Claude Code
-- **11 skills** com workflows estruturados (debugging, planning, verification)
-- **3 agents especializados** (code review, security audit, meta-orchestrator)
-- **6 slash commands** prontos para uso (`/debug-RCA`, `/verify`, `/smart-commit`)
-- **4 contextos** que mudam o comportamento conforme a tarefa (dev, review, research, audit)
-- **Templates Jinja2** que se adaptam ao stack do projeto automaticamente
-
-## Por Que Kazuba
-
-### Seguranca como Default, Nao como Opcao
+**Claude Code sem configuracao comete erros que voce so descobre no code review.**
+Kazuba instala 15 modulos em 5 segundos — hooks que bloqueiam secrets, validam qualidade e
+persistem contexto automaticamente, sem nenhuma configuracao manual.
 
 ```
 [PreToolUse] secrets_scanner: BLOCKED — AWS access key detected in config.py
-[PreToolUse] bash_safety: BLOCKED — rm -rf / attempted
-[PreToolUse] pii_scanner: WARNING — CPF pattern found in user_data.py
-[PreToolUse] quality_gate: WARNING — debug print() found in production code
+[PreToolUse] bash_safety:     BLOCKED — rm -rf / attempted
+[PreToolUse] pii_scanner:     WARNING — CPF pattern found in user_data.py
+[UserPromptSubmit] cila_router: complexity=L3 → routing=detailed_analysis
 ```
 
-4 hooks de seguranca rodam **antes de cada escrita de arquivo** e **antes de cada comando bash**.
+---
+
+## Quick Start
+
+```bash
+# Instalar em qualquer projeto existente
+git clone https://github.com/gabrielgadea/claude-code-kazuba.git
+cd claude-code-kazuba
+./install.sh --preset standard --target /path/to/your/project
+
+# Ou via curl (remote install)
+curl -sL https://raw.githubusercontent.com/gabrielgadea/claude-code-kazuba/main/install.sh \
+  | bash -s -- --preset standard --target /path/to/your/project
+
+# Ver o que sera instalado sem escrever nada
+./install.sh --preset professional --target /path/to/your/project --dry-run
+```
+
+Em 5 segundos, seu projeto Claude Code tem:
+
+| O que voce ganha | Como |
+|-----------------|------|
+| Nenhum secret vai para o git | Hooks bloqueiam antes de escrever |
+| Qualidade checada em cada arquivo | Quality gate pre-escrita |
+| Contexto persistente entre sessoes | Checkpoints automaticos |
+| Prompts enriquecidos automaticamente | Classificacao + tecnicas cognitivas |
+| Stack-aware (Python, Rust, TS, Go...) | Deteccao automatica + templates Jinja2 |
+
+---
+
+## Presets
+
+| Preset | Modulos | Ideal para |
+|--------|---------|-----------|
+| **minimal** | 1 | Templates e regras basicas |
+| **standard** | 5 | Desenvolvimento diario + prompt enhancement |
+| **research** | 6 | Projetos academicos com skills de pesquisa |
+| **professional** | 10 | Engenharia completa com quality gates e agents |
+| **enterprise** | 14 | Orquestracao multi-agente + hypervisor + compliance |
+
+Cada modulo declara dependencias; o installer resolve via topological sort. Sem `npm install` que
+instala o universo — voce escolhe exatamente o que precisa.
+
+---
+
+## Por Que Kazuba
+
+### Seguranca Como Default
+
+4 hooks rodam **antes de cada escrita de arquivo** e **antes de cada comando bash**:
+
+```
+[PreToolUse] secrets_scanner: BLOCKED — AWS access key detected in config.py
+[PreToolUse] bash_safety:     BLOCKED — rm -rf / attempted
+[PreToolUse] pii_scanner:     WARNING — CPF pattern found in user_data.py
+[PreToolUse] quality_gate:    WARNING — debug print() found in production code
+```
+
 Secrets nunca chegam ao git. PII nunca entra no codigo. Comandos destrutivos sao bloqueados.
 
-### Inteligencia na Entrada — Prompt Enhancement + CILA Routing
+### Prompt Enhancement + Roteamento CILA
 
-Cada prompt que voce escreve e automaticamente:
+Cada prompt e automaticamente:
 1. **Classificado** em 8 categorias (code, debug, test, refactor, plan, analysis, creative, general)
 2. **Enriquecido** com tecnicas cognitivas (chain-of-thought, structured output, constitutional constraints)
 3. **Roteado** por complexidade CILA (L0-L6) para calibrar profundidade de resposta
 
 ```
-[UserPromptSubmit] prompt_enhancer: intent=debug, techniques=[chain_of_thought, few_shot_reasoning, self_validation]
-[UserPromptSubmit] cila_router: complexity=L3 (multi-step), routing=detailed_analysis
+[UserPromptSubmit] prompt_enhancer: intent=debug → chain_of_thought + few_shot + self_validation
+[UserPromptSubmit] cila_router: complexity=L3 (multi-step) → routing=detailed_analysis
 ```
 
-### Modularidade Real — Use So o que Precisa
+### Modularidade Real
 
-| Preset | Modulos | Ideal para |
-|--------|---------|-----------|
-| **minimal** | 1 | Templates e regras basicas |
-| **standard** | 5 | Desenvolvimento diario com prompt enhancement |
-| **research** | 6 | Projetos academicos com skills de pesquisa |
-| **professional** | 10 | Engenharia completa com quality gates e agents |
-| **enterprise** | 14 | Orquestracao multi-agente com hypervisor e compliance |
+Cada modulo em `modules/` tem:
+- `MODULE.md` — manifest com nome, descricao, dependencias
+- `hooks/`, `skills/`, `agents/`, `commands/`, `config/`, `contexts/`
+- `settings.hooks.json` — fragment de hook registration (merge automatico)
 
-Cada modulo declara dependencias, o installer resolve automaticamente via topological sort.
-Nao tem `npm install` que instala o universo — voce escolhe exatamente o que precisa.
+### Meta-Code-First — O Framework Se Auto-Hospeda
 
-### Meta-Code-First — Planos sao Dados, Nao Documentos
+Construido com seu proprio principio: **plans are data, not documents**.
+Um script Python de 515 linhas gerou programaticamente todas as 23 fases do plano,
+24 arquivos, 3.463 linhas — com frontmatter YAML, cross-references e checkpoints msgpack.
 
-O framework foi construido com seu proprio principio: **plans are data, not documents**.
-Um script Python de 515 linhas gerou programaticamente todas as 11 fases do plano de construcao,
-24 arquivos, 3.463 linhas — com frontmatter YAML, cross-references, validation scripts, e checkpoints.
-
-Este pattern esta disponivel como skill para seus proprios projetos:
 ```
 modules/skills-planning/skills/code-first-planner/SKILL.md
 ```
+
+---
+
+## Exemplos Praticos
+
+Veja `examples/` para projetos-demo com antes/depois:
+
+- [`examples/python-api/`](examples/python-api/) — FastAPI: hooks interceptando commit de credencial
+- [`examples/rust-cli/`](examples/rust-cli/) — CLI Rust: bash safety em acao
+- [`examples/typescript-web/`](examples/typescript-web/) — Next.js: quality gate + PII scanner
+
+---
 
 ## Arquitetura
 
 ```
 claude-code-kazuba/
-├── lib/                    # 7 modulos compartilhados (hook_base, patterns, performance, ...)
+├── lib/                    # 8 modulos compartilhados (hook_base, patterns, config, rlm, ...)
 ├── core/                   # Templates Jinja2 + rules universais (sempre instalado)
-├── modules/                # 14 modulos opcionais organizados por categoria
+├── modules/                # 15 modulos opcionais organizados por categoria
 │   ├── hooks-essential/    #   Prompt enhancer, status monitor, auto compact
 │   ├── hooks-quality/      #   Secrets, PII, bash safety, quality gate
 │   ├── hooks-routing/      #   CILA router, knowledge manager, compliance
@@ -107,6 +136,7 @@ claude-code-kazuba/
 │   ├── team-orchestrator/  #   Multi-agent coordination (routing, SLA, templates)
 │   └── rlm/                #   RLM Learning Memory (Q-Table, WorkingMemory, RewardCalc)
 ├── presets/                # 5 presets (minimal → enterprise)
+├── examples/               # Projetos-demo com antes/depois (Python, Rust, TypeScript)
 ├── scripts/                # Installer CLI (detect stack, resolve deps, merge settings)
 ├── install.sh              # One-command installer
 └── tests/                  # 1567 testes (phase_00 → phase_22 + integration_v2)
@@ -124,6 +154,8 @@ claude-code-kazuba/
 | **Checkpoint** | TOON format (msgpack + header) para recovery de estado |
 | **Stack-Aware** | Detecta Python/Rust/JS/TS/Go/Java e adapta templates |
 
+---
+
 ## Hooks em Detalhe
 
 | Hook | Evento | Modulo | O que faz |
@@ -131,19 +163,21 @@ claude-code-kazuba/
 | **Prompt Enhancer** | UserPromptSubmit | hooks-essential | Classifica intent (8 categorias) + injeta tecnicas cognitivas |
 | **Status Monitor** | SessionStart | hooks-essential | Reports env info (Python, git branch, TODOs pendentes) |
 | **Auto Compact** | PreCompact | hooks-essential | Salva checkpoint antes de compactacao de contexto |
+| **Session State Manager** | SessionStart/Stop | hooks-essential | Persistencia de estado entre sessoes (v0.2.0) |
+| **Post Compact Reinjector** | PreCompact | hooks-essential | Reinjecao de contexto critico pos-compactacao (v0.2.0) |
 | **Quality Gate** | PreToolUse (Write/Edit) | hooks-quality | Limites de tamanho, debug code, docstrings |
 | **Secrets Scanner** | PreToolUse (Write/Edit) | hooks-quality | Bloqueia API keys, tokens, credenciais (whitelist para tests) |
 | **PII Scanner** | PreToolUse (Write/Edit) | hooks-quality | CPF, CNPJ, SSN, email, telefone (BR/US/EU, warn-only) |
 | **Bash Safety** | PreToolUse (Bash) | hooks-quality | rm -rf, chmod 777, curl\|bash, fork bombs |
+| **SIAC Orchestrator** | PreToolUse | hooks-quality | Quality gates com circuit breaker (v0.2.0) |
+| **Validate Hooks Health** | Heartbeat | hooks-quality | Health check periodico de todos os hooks (v0.2.0) |
 | **CILA Router** | UserPromptSubmit | hooks-routing | Classificacao L0-L6 com cache (120s TTL) |
 | **Knowledge Manager** | PreToolUse | hooks-routing | 3-tier: cache local → docs do projeto → busca externa |
 | **Compliance Tracker** | PostToolUse | hooks-routing | Audit logging JSONL + compliance scoring |
-| **SIAC Orchestrator** | PreToolUse | hooks-quality | Quality gates com circuit breaker (v0.2.0) |
 | **Auto Permission Resolver** | PreToolUse | hooks-routing | Resolucao automatica de permissoes CILA-aware (v0.2.0) |
 | **PTC Advisor** | UserPromptSubmit | hooks-routing | Advisor de complexidade CILA L0-L6 (v0.2.0) |
-| **Session State Manager** | SessionStart/Stop | hooks-essential | Persistencia de estado entre sessoes (v0.2.0) |
-| **Post Compact Reinjector** | PreCompact | hooks-essential | Reinjecao de contexto critico pos-compactacao (v0.2.0) |
-| **Validate Hooks Health** | Heartbeat | hooks-quality | Health check periodico de todos os hooks (v0.2.0) |
+
+---
 
 ## Skills, Agents e Commands
 
@@ -182,31 +216,28 @@ claude-code-kazuba/
 | `/prp-base-create` | Criar Product Requirements Prompt (pesquisa + geracao + ultrathink) |
 | `/prp-base-execute` | Executar PRP (load + plan + implement + verify) |
 
-## Quick Start
+---
 
-```bash
-# 1. Clone
-git clone https://github.com/gabrielgadea/claude-code-kazuba.git
-cd claude-code-kazuba
+## Test Suite
 
-# 2. Escolha um preset
-cat presets/standard.txt        # Ver modulos incluidos
-cat presets/professional.txt    # Mais completo
-
-# 3. Instale no seu projeto
-./install.sh --preset standard --target /path/to/your/project
-
-# 4. (Opcional) Dry-run para ver o plano sem instalar
-./install.sh --preset enterprise --target /path/to/your/project --dry-run
+```
+============================= 1567 passed in 3.01s =============================
 ```
 
-O installer:
-1. **Detecta** o stack do projeto (Python, Rust, JS, TS, Go, Java)
-2. **Resolve** dependencias entre modulos (topological sort)
-3. **Renderiza** templates Jinja2 com variaveis do projeto
-4. **Instala** hooks, skills, agents, commands em `.claude/`
-5. **Merge** settings.json sem sobrescrever configuracoes existentes
-6. **Valida** a instalacao com health check automatico
+| Metrica | Valor |
+|---------|-------|
+| Testes | 1567 (723 v0.1.0 + 844 v0.2.0) |
+| Coverage (lib/) | 97% |
+| Coverage target | 90% per file |
+| Lint (ruff) | 0 errors |
+| Format (ruff) | 0 reformats |
+| Types (pyright strict) | 0 errors |
+| CI | GitHub Actions (lint + typecheck + test) |
+
+Testes organizados por fase (phase_00 → phase_22) + integration tests por preset
+e `integration_v2/` para os novos componentes v0.2.0.
+
+---
 
 ## Documentacao
 
@@ -217,25 +248,9 @@ O installer:
 | [MODULES_CATALOG.md](docs/MODULES_CATALOG.md) | Catalogo completo com dependencias e presets |
 | [CREATING_MODULES.md](docs/CREATING_MODULES.md) | Guia para criar modulos customizados |
 | [MIGRATION.md](docs/MIGRATION.md) | Migracao para usuarios com `.claude/` existente |
+| [GLOSSARY.md](docs/GLOSSARY.md) | Terminologia: Kazuba, CILA, TOON, RLM, presets |
 
-## Test Suite
-
-```
-============================= 723 passed in 1.34s ==============================
-```
-
-| Metrica | Valor |
-|---------|-------|
-| Testes | 1567 |
-| Coverage (lib/) | 97% |
-| Coverage target | 90% per file |
-| Lint (ruff) | 0 errors |
-| Format (ruff) | 0 reformats |
-| Types (pyright strict) | 0 errors |
-| CI | GitHub Actions (lint + typecheck + test) |
-
-Testes organizados por fase de desenvolvimento (phase_00 → phase_22) + integration tests
-para cada preset e integration_v2 para os novos componentes v0.2.0.
+---
 
 ## Desenvolvimento
 
@@ -251,6 +266,8 @@ ruff check lib/ scripts/ tests/
 ruff format --check lib/ scripts/ tests/
 pyright lib/
 ```
+
+---
 
 ## O que ha de novo na v0.2.0
 
@@ -270,17 +287,22 @@ pyright lib/
 
 - [ ] **GPU Acceleration** — Embeddings e similarity via CUDA/Metal
 - [ ] **Multi-tenant Isolation** — Isolamento de contexto por workspace
+- [ ] **Web Dashboard** — Visualizacao de metricas de hooks em tempo real
+
+---
 
 ## Contribuindo
 
 1. Fork o repositorio
 2. Crie uma branch (`git checkout -b feature/my-module`)
-3. Escreva testes primeiro (TDD)
+3. Escreva testes primeiro (TDD, 90% coverage por arquivo)
 4. Implemente as mudancas
 5. Rode o quality gate: `ruff check && ruff format --check && pyright lib/ && pytest tests/`
 6. Abra um Pull Request
 
-Veja [CREATING_MODULES.md](docs/CREATING_MODULES.md) para o guia completo de criacao de modulos.
+Veja [CREATING_MODULES.md](docs/CREATING_MODULES.md) para o guia completo.
+
+---
 
 ## Licenca
 
@@ -288,4 +310,4 @@ MIT License. Veja [pyproject.toml](pyproject.toml) para detalhes.
 
 ---
 
-**Construido com o proprio principio meta-code-first — o framework que se auto-hospeda.**
+*Construido com o proprio principio meta-code-first — o framework que se auto-hospeda.*
