@@ -110,8 +110,8 @@ python scripts/generate_plan.py --output-dir plans/ --validate
 # → 24 arquivos markdown + 24 scripts de validacao + orquestrador
 ```
 
-Um script Python de 3.676 linhas gera programaticamente todas as 24 fases do
-plano, com frontmatter YAML padronizado, cross-references validadas e scripts de
+Um script Python gera programaticamente todas as 24 fases do
+plano (se o plano for extenso assim), com frontmatter YAML padronizado, cross-references validadas e scripts de
 validacao por fase. A consequencia direta: mudar o plano significa mudar dados em
 Python e regenerar — nao cacar inconsistencias em 24 arquivos markdown.
 
