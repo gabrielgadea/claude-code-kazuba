@@ -14,7 +14,7 @@ import pytest
 
 # Load strategy_enforcer from hyphenated directory using importlib
 _PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
-_SE_PATH = _PROJECT_ROOT / "modules" / "hooks-routing" / "hooks" / "strategy_enforcer.py"
+_SE_PATH = _PROJECT_ROOT / "claude_code_kazuba/data/modules" / "hooks-routing" / "hooks" / "strategy_enforcer.py"
 _spec = importlib.util.spec_from_file_location("strategy_enforcer", _SE_PATH)
 _mod = importlib.util.module_from_spec(_spec)  # type: ignore[arg-type]
 sys.modules.setdefault("strategy_enforcer", _mod)

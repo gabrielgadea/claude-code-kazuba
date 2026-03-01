@@ -18,8 +18,8 @@ from pathlib import Path
 import pytest
 
 from claude_code_kazuba.rlm import RLMFacade, RLMFacadeConfig
-from modules.rlm.src.q_table import QTable
-from modules.rlm.src.working_memory import WorkingMemory
+from claude_code_kazuba.data.modules.rlm.src.q_table import QTable
+from claude_code_kazuba.data.modules.rlm.src.working_memory import WorkingMemory
 
 # ---------------------------------------------------------------------------
 # Fixtures
@@ -180,7 +180,7 @@ def test_facade_recall_by_tag(active_facade: RLMFacade) -> None:
 
 def test_working_memory_add_and_get(working_memory: WorkingMemory) -> None:
     """WorkingMemory add/get round-trips correctly."""
-    from modules.rlm.src.models import MemoryEntry
+    from claude_code_kazuba.data.modules.rlm.src.models import MemoryEntry
 
     entry = MemoryEntry(content="Test memory", importance=0.6, tags=["test"])
     entry_id = working_memory.add(entry)
@@ -191,7 +191,7 @@ def test_working_memory_add_and_get(working_memory: WorkingMemory) -> None:
 
 def test_working_memory_size(working_memory: WorkingMemory) -> None:
     """WorkingMemory tracks size correctly."""
-    from modules.rlm.src.models import MemoryEntry
+    from claude_code_kazuba.data.modules.rlm.src.models import MemoryEntry
 
     assert working_memory.size() == 0
     working_memory.add(MemoryEntry(content="A", importance=0.5, tags=[]))

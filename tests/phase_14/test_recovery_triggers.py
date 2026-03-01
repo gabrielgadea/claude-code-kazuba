@@ -114,8 +114,8 @@ def test_registry_from_yaml_recovery_triggers(tmp_path: Path) -> None:
 
 def test_registry_from_real_recovery_yaml() -> None:
     base = Path(__file__).resolve().parent.parent.parent
-    recovery_path = base / "modules/config-hypervisor/config/recovery_triggers.yaml"
-    agent_path = base / "modules/config-hypervisor/config/agent_triggers.yaml"
+    recovery_path = base / "claude_code_kazuba/data/modules/config-hypervisor/config/recovery_triggers.yaml"
+    agent_path = base / "claude_code_kazuba/data/modules/config-hypervisor/config/agent_triggers.yaml"
 
     if recovery_path.exists() and agent_path.exists():
         reg = TriggerRegistry.from_yaml(agent_path, recovery_path)

@@ -21,7 +21,7 @@ import pytest
 # Load siac_orchestrator via importlib (directory name has hyphen)
 # ---------------------------------------------------------------------------
 _ROOT = Path(__file__).resolve().parents[2]
-_PATH = _ROOT / "modules" / "hooks-quality" / "hooks" / "siac_orchestrator.py"
+_PATH = _ROOT / "claude_code_kazuba/data/modules" / "hooks-quality" / "hooks" / "siac_orchestrator.py"
 
 _spec = importlib.util.spec_from_file_location("siac_orch_e2e", _PATH)
 _mod = importlib.util.module_from_spec(_spec)  # type: ignore[arg-type]

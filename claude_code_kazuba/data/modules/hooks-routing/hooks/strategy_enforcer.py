@@ -34,14 +34,7 @@ import logging
 import re
 import sys
 from dataclasses import dataclass, field
-from pathlib import Path
 from typing import Any
-
-# Ensure lib/ is importable when run directly as a hook script
-_HOOK_DIR = Path(__file__).resolve().parent
-_MODULE_DIR = _HOOK_DIR.parent.parent.parent  # modules/hooks-routing/hooks → project root
-if str(_MODULE_DIR) not in sys.path:
-    sys.path.insert(0, str(_MODULE_DIR))
 
 try:
     from claude_code_kazuba.governance import CILARouter, GovernanceEnforcer

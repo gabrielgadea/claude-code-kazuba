@@ -30,15 +30,7 @@ from concurrent.futures import Future, ThreadPoolExecutor
 from concurrent.futures import TimeoutError as FuturesTimeout
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
-from pathlib import Path
 from typing import Any
-
-# ---------------------------------------------------------------------------
-# Lib path setup (for lib.* imports in the kazuba framework)
-# ---------------------------------------------------------------------------
-_BASE_DIR = Path(__file__).resolve().parents[3]
-if str(_BASE_DIR) not in sys.path:
-    sys.path.insert(0, str(_BASE_DIR))
 
 logger = logging.getLogger(__name__)
 

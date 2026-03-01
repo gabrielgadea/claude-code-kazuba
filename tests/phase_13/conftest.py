@@ -21,10 +21,10 @@ _PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 
 # Non-Python deliverable files that need synthetic coverage entries
 _MARKDOWN_DELIVERABLES = [
-    "core/rules/core-governance.md",
-    "core/rules/agent-teams.md",
-    "modules/hooks-routing/config/cila-taxonomy.md",
-    "modules/hooks-routing/hooks/strategy_enforcer.py",
+    "claude_code_kazuba/data/core/rules/core-governance.md",
+    "claude_code_kazuba/data/core/rules/agent-teams.md",
+    "claude_code_kazuba/data/modules/hooks-routing/config/cila-taxonomy.md",
+    "claude_code_kazuba/data/modules/hooks-routing/hooks/strategy_enforcer.py",
 ]
 
 

@@ -18,10 +18,10 @@ set -euo pipefail
 # Globals
 # ---------------------------------------------------------------------------
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PRESETS_DIR="${SCRIPT_DIR}/presets"
-MODULES_DIR="${SCRIPT_DIR}/modules"
-CORE_DIR="${SCRIPT_DIR}/core"
-SCRIPTS_DIR="${SCRIPT_DIR}/scripts"
+PRESETS_DIR="${SCRIPT_DIR}/claude_code_kazuba/data/presets"
+MODULES_DIR="${SCRIPT_DIR}/claude_code_kazuba/data/modules"
+CORE_DIR="${SCRIPT_DIR}/claude_code_kazuba/data/core"
+SCRIPTS_DIR="${SCRIPT_DIR}/claude_code_kazuba/installer"
 
 PRESET=""
 MODULES=""

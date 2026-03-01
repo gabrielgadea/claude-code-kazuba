@@ -20,9 +20,6 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 def _import_from_path(name: str, file_path: Path) -> types.ModuleType:
     """Import a Python module from an arbitrary file path."""
-    lib_parent = str(PROJECT_ROOT)
-    if lib_parent not in sys.path:
-        sys.path.insert(0, lib_parent)
     spec = importlib.util.spec_from_file_location(name, str(file_path))
     assert spec is not None, f"Cannot load spec for {file_path}"
     assert spec.loader is not None
@@ -32,7 +29,7 @@ def _import_from_path(name: str, file_path: Path) -> types.ModuleType:
     return mod
 
 
-_VHH_PATH = PROJECT_ROOT / "modules" / "hooks-quality" / "hooks" / "validate_hooks_health.py"
+_VHH_PATH = PROJECT_ROOT / "claude_code_kazuba/data/modules" / "hooks-quality" / "hooks" / "validate_hooks_health.py"
 _vhh = _import_from_path("validate_hooks_health_ph16", _VHH_PATH)
 
 HookStatus = _vhh.HookStatus

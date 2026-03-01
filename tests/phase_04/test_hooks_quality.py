@@ -19,9 +19,6 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 def _import_from_path(name: str, file_path: Path) -> ModuleType:
     """Import a Python module from an arbitrary file path."""
-    lib_parent = str(PROJECT_ROOT)
-    if lib_parent not in sys.path:
-        sys.path.insert(0, lib_parent)
     spec = importlib.util.spec_from_file_location(name, str(file_path))
     assert spec is not None, f"Cannot load spec for {file_path}"
     assert spec.loader is not None
@@ -31,7 +28,7 @@ def _import_from_path(name: str, file_path: Path) -> ModuleType:
     return mod
 
 
-_hooks_dir = PROJECT_ROOT / "modules" / "hooks-quality" / "hooks"
+_hooks_dir = PROJECT_ROOT / "claude_code_kazuba/data/modules" / "hooks-quality" / "hooks"
 qg = _import_from_path("quality_gate", _hooks_dir / "quality_gate.py")
 ss = _import_from_path("secrets_scanner", _hooks_dir / "secrets_scanner.py")
 ps = _import_from_path("pii_scanner", _hooks_dir / "pii_scanner.py")
@@ -45,15 +42,15 @@ class TestModuleManifest:
     """Test MODULE.md exists and has correct structure."""
 
     def test_module_md_exists(self, base_dir: Path) -> None:
-        module_md = base_dir / "modules" / "hooks-quality" / "MODULE.md"
+        module_md = base_dir / "claude_code_kazuba/data/modules" / "hooks-quality" / "MODULE.md"
         assert module_md.is_file()
 
     def test_module_md_has_name(self, base_dir: Path) -> None:
-        content = (base_dir / "modules" / "hooks-quality" / "MODULE.md").read_text()
+        content = (base_dir / "claude_code_kazuba/data/modules" / "hooks-quality" / "MODULE.md").read_text()
         assert "name: hooks-quality" in content
 
     def test_module_md_has_dependencies(self, base_dir: Path) -> None:
-        content = (base_dir / "modules" / "hooks-quality" / "MODULE.md").read_text()
+        content = (base_dir / "claude_code_kazuba/data/modules" / "hooks-quality" / "MODULE.md").read_text()
         assert "core" in content
         assert "hooks-essential" in content
 
@@ -65,16 +62,16 @@ class TestSettingsJson:
     """Test settings.hooks.json is valid."""
 
     def test_settings_exists(self, base_dir: Path) -> None:
-        path = base_dir / "modules" / "hooks-quality" / "settings.hooks.json"
+        path = base_dir / "claude_code_kazuba/data/modules" / "hooks-quality" / "settings.hooks.json"
         assert path.is_file()
 
     def test_settings_valid_json(self, base_dir: Path) -> None:
-        path = base_dir / "modules" / "hooks-quality" / "settings.hooks.json"
+        path = base_dir / "claude_code_kazuba/data/modules" / "hooks-quality" / "settings.hooks.json"
         data = json.loads(path.read_text())
         assert "hooks" in data
 
     def test_settings_has_pre_tool_use(self, base_dir: Path) -> None:
-        path = base_dir / "modules" / "hooks-quality" / "settings.hooks.json"
+        path = base_dir / "claude_code_kazuba/data/modules" / "hooks-quality" / "settings.hooks.json"
         data = json.loads(path.read_text())
         assert "PreToolUse" in data["hooks"]
         assert len(data["hooks"]["PreToolUse"]) == 4
@@ -275,26 +272,26 @@ class TestFileStructure:
         ["quality_gate.py", "secrets_scanner.py", "pii_scanner.py", "bash_safety.py"],
     )
     def test_hook_files_exist(self, base_dir: Path, hook_file: str) -> None:
-        path = base_dir / "modules" / "hooks-quality" / "hooks" / hook_file
+        path = base_dir / "claude_code_kazuba/data/modules" / "hooks-quality" / "hooks" / hook_file
         assert path.is_file(), f"{hook_file} must exist"
 
     def test_quality_gate_min_lines(self, base_dir: Path) -> None:
-        path = base_dir / "modules" / "hooks-quality" / "hooks" / "quality_gate.py"
+        path = base_dir / "claude_code_kazuba/data/modules" / "hooks-quality" / "hooks" / "quality_gate.py"
         lines = path.read_text().count("\n")
         assert lines >= 80, f"quality_gate.py must have 80+ lines, has {lines}"
 
     def test_secrets_scanner_min_lines(self, base_dir: Path) -> None:
-        path = base_dir / "modules" / "hooks-quality" / "hooks" / "secrets_scanner.py"
+        path = base_dir / "claude_code_kazuba/data/modules" / "hooks-quality" / "hooks" / "secrets_scanner.py"
         lines = path.read_text().count("\n")
         assert lines >= 60, f"secrets_scanner.py must have 60+ lines, has {lines}"
 
     def test_pii_scanner_min_lines(self, base_dir: Path) -> None:
-        path = base_dir / "modules" / "hooks-quality" / "hooks" / "pii_scanner.py"
+        path = base_dir / "claude_code_kazuba/data/modules" / "hooks-quality" / "hooks" / "pii_scanner.py"
         lines = path.read_text().count("\n")
         assert lines >= 50, f"pii_scanner.py must have 50+ lines, has {lines}"
 
     def test_bash_safety_min_lines(self, base_dir: Path) -> None:
-        path = base_dir / "modules" / "hooks-quality" / "hooks" / "bash_safety.py"
+        path = base_dir / "claude_code_kazuba/data/modules" / "hooks-quality" / "hooks" / "bash_safety.py"
         lines = path.read_text().count("\n")
         assert lines >= 50, f"bash_safety.py must have 50+ lines, has {lines}"
 
@@ -303,6 +300,6 @@ class TestFileStructure:
         ["quality_gate.py", "secrets_scanner.py", "pii_scanner.py", "bash_safety.py"],
     )
     def test_future_annotations(self, base_dir: Path, hook_file: str) -> None:
-        path = base_dir / "modules" / "hooks-quality" / "hooks" / hook_file
+        path = base_dir / "claude_code_kazuba/data/modules" / "hooks-quality" / "hooks" / hook_file
         content = path.read_text()
         assert "from __future__ import annotations" in content

@@ -20,9 +20,6 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 def _import_from_path(name: str, file_path: Path) -> types.ModuleType:
     """Import a Python module from an arbitrary file path."""
-    lib_parent = str(PROJECT_ROOT)
-    if lib_parent not in sys.path:
-        sys.path.insert(0, lib_parent)
     spec = importlib.util.spec_from_file_location(name, str(file_path))
     assert spec is not None, f"Cannot load spec for {file_path}"
     assert spec.loader is not None
@@ -32,7 +29,7 @@ def _import_from_path(name: str, file_path: Path) -> types.ModuleType:
     return mod
 
 
-_SSM_PATH = PROJECT_ROOT / "modules" / "hooks-essential" / "hooks" / "session_state_manager.py"
+_SSM_PATH = PROJECT_ROOT / "claude_code_kazuba/data/modules" / "hooks-essential" / "hooks" / "session_state_manager.py"
 _ssm = _import_from_path("session_state_manager_ph16", _SSM_PATH)
 
 SessionStateConfig = _ssm.SessionStateConfig

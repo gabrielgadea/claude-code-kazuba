@@ -26,7 +26,7 @@ def _import_from_path(name: str, file_path: Path) -> types.ModuleType:
     return mod
 
 
-_PTC_PATH = PROJECT_ROOT / "modules" / "hooks-routing" / "hooks" / "ptc_advisor.py"
+_PTC_PATH = PROJECT_ROOT / "claude_code_kazuba/data/modules" / "hooks-routing" / "hooks" / "ptc_advisor.py"
 _ptc = _import_from_path("ptc_advisor_ph17", _PTC_PATH)
 
 # Aliases

@@ -52,7 +52,10 @@ class TestResolveDependencies:
 
     def _make_module(self, tmp_path: Path, name: str, deps: list[str]) -> None:
         """Create a minimal MODULE.md in the right location."""
-        module_dir = tmp_path / "core" if name == "core" else tmp_path / "modules" / name
+        if name == "core":
+            module_dir = tmp_path / "core"
+        else:
+            module_dir = tmp_path / "modules" / name
 
         module_dir.mkdir(parents=True, exist_ok=True)
         dep_str = ", ".join(deps) if deps else ""
@@ -122,8 +125,9 @@ class TestResolveDependencies:
 
     def test_real_modules(self, base_dir: Path) -> None:
         """Test with actual project modules."""
-        modules_dir = base_dir / "modules"
-        core_dir = base_dir / "core"
+        data_dir = base_dir / "claude_code_kazuba" / "data"
+        modules_dir = data_dir / "modules"
+        core_dir = data_dir / "core"
         result = resolve_dependencies(["hooks-essential"], modules_dir, core_dir=core_dir)
         assert "core" in result
         assert "hooks-essential" in result

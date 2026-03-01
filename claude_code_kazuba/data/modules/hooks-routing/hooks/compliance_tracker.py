@@ -13,9 +13,6 @@ from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any
 
-# Ensure lib is importable from project root
-sys.path.insert(0, str(Path(__file__).resolve().parents[3]))
-
 from claude_code_kazuba.hook_base import fail_open
 
 # --- Configuration ---

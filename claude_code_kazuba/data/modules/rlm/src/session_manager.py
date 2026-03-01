@@ -7,7 +7,7 @@ import time
 import uuid
 from typing import TYPE_CHECKING, Any
 
-from modules.rlm.src.models import Episode, LearningRecord, SessionMeta
+from claude_code_kazuba.data.modules.rlm.src.models import Episode, LearningRecord, SessionMeta
 
 if TYPE_CHECKING:
     from pathlib import Path

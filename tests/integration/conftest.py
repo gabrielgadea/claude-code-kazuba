@@ -33,7 +33,7 @@ def install_preset(
         target.mkdir(parents=True, exist_ok=True)
 
         # Read preset file
-        preset_file = installer_source / "presets" / f"{preset_name}.txt"
+        preset_file = installer_source / "claude_code_kazuba" / "data" / "presets" / f"{preset_name}.txt"
         assert preset_file.exists(), f"Preset file not found: {preset_file}"
 
         module_names: list[str] = []
@@ -43,8 +43,8 @@ def install_preset(
                 module_names.append(stripped)
 
         # Resolve dependencies
-        modules_dir = installer_source / "modules"
-        core_dir = installer_source / "core"
+        modules_dir = installer_source / "claude_code_kazuba/data/modules"
+        core_dir = installer_source / "claude_code_kazuba" / "data" / "core"
         ordered = resolve_dependencies(module_names, modules_dir, core_dir=core_dir)
 
         # Install each module in order
@@ -55,8 +55,9 @@ def install_preset(
             "version": "3.12",
         }
 
+        data_dir = installer_source / "claude_code_kazuba" / "data"
         for module_name in ordered:
-            install_module(module_name, installer_source, target, variables)
+            install_module(module_name, data_dir, target, variables)
 
         return target
 

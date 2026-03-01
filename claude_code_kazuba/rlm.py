@@ -34,12 +34,12 @@ from typing import Any
 
 from pydantic import BaseModel, Field
 
-from modules.rlm.src.config import RLMConfig
-from modules.rlm.src.models import MemoryEntry
-from modules.rlm.src.q_table import QTable
-from modules.rlm.src.reward_calculator import RewardCalculator, RewardComponent
-from modules.rlm.src.session_manager import SessionManager
-from modules.rlm.src.working_memory import WorkingMemory
+from claude_code_kazuba.data.modules.rlm.src.config import RLMConfig
+from claude_code_kazuba.data.modules.rlm.src.models import MemoryEntry
+from claude_code_kazuba.data.modules.rlm.src.q_table import QTable
+from claude_code_kazuba.data.modules.rlm.src.reward_calculator import RewardCalculator, RewardComponent
+from claude_code_kazuba.data.modules.rlm.src.session_manager import SessionManager
+from claude_code_kazuba.data.modules.rlm.src.working_memory import WorkingMemory
 
 logger = logging.getLogger(__name__)
 

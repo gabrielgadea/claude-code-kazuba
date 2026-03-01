@@ -6,7 +6,7 @@ import threading
 import time
 from typing import Any
 
-from modules.rlm.src.models import MemoryEntry
+from claude_code_kazuba.data.modules.rlm.src.models import MemoryEntry
 
 
 class WorkingMemory:

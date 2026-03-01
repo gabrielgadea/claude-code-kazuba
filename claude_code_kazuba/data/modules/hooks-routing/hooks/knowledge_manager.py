@@ -14,9 +14,6 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-# Ensure lib is importable from project root
-sys.path.insert(0, str(Path(__file__).resolve().parents[3]))
-
 from claude_code_kazuba.hook_base import fail_open
 from claude_code_kazuba.json_output import emit_json, pre_tool_use_output
 from claude_code_kazuba.performance import L0Cache

@@ -20,9 +20,6 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 def _import_from_path(name: str, file_path: Path) -> ModuleType:
     """Import a Python module from an arbitrary file path."""
-    lib_parent = str(PROJECT_ROOT)
-    if lib_parent not in sys.path:
-        sys.path.insert(0, lib_parent)
     spec = importlib.util.spec_from_file_location(name, str(file_path))
     assert spec is not None, f"Cannot load spec for {file_path}"
     assert spec.loader is not None
@@ -32,7 +29,7 @@ def _import_from_path(name: str, file_path: Path) -> ModuleType:
     return mod
 
 
-_hooks_dir = PROJECT_ROOT / "modules" / "hooks-routing" / "hooks"
+_hooks_dir = PROJECT_ROOT / "claude_code_kazuba/data/modules" / "hooks-routing" / "hooks"
 cr = _import_from_path("cila_router", _hooks_dir / "cila_router.py")
 km = _import_from_path("knowledge_manager", _hooks_dir / "knowledge_manager.py")
 ct = _import_from_path("compliance_tracker", _hooks_dir / "compliance_tracker.py")
@@ -45,15 +42,15 @@ class TestModuleManifest:
     """Test MODULE.md exists and has correct structure."""
 
     def test_module_md_exists(self, base_dir: Path) -> None:
-        module_md = base_dir / "modules" / "hooks-routing" / "MODULE.md"
+        module_md = base_dir / "claude_code_kazuba/data/modules" / "hooks-routing" / "MODULE.md"
         assert module_md.is_file()
 
     def test_module_md_has_name(self, base_dir: Path) -> None:
-        content = (base_dir / "modules" / "hooks-routing" / "MODULE.md").read_text()
+        content = (base_dir / "claude_code_kazuba/data/modules" / "hooks-routing" / "MODULE.md").read_text()
         assert "name: hooks-routing" in content
 
     def test_module_md_has_dependencies(self, base_dir: Path) -> None:
-        content = (base_dir / "modules" / "hooks-routing" / "MODULE.md").read_text()
+        content = (base_dir / "claude_code_kazuba/data/modules" / "hooks-routing" / "MODULE.md").read_text()
         assert "core" in content
         assert "hooks-essential" in content
 
@@ -65,16 +62,16 @@ class TestSettingsJson:
     """Test settings.hooks.json is valid."""
 
     def test_settings_exists(self, base_dir: Path) -> None:
-        path = base_dir / "modules" / "hooks-routing" / "settings.hooks.json"
+        path = base_dir / "claude_code_kazuba/data/modules" / "hooks-routing" / "settings.hooks.json"
         assert path.is_file()
 
     def test_settings_valid_json(self, base_dir: Path) -> None:
-        path = base_dir / "modules" / "hooks-routing" / "settings.hooks.json"
+        path = base_dir / "claude_code_kazuba/data/modules" / "hooks-routing" / "settings.hooks.json"
         data = json.loads(path.read_text())
         assert "hooks" in data
 
     def test_settings_has_all_events(self, base_dir: Path) -> None:
-        path = base_dir / "modules" / "hooks-routing" / "settings.hooks.json"
+        path = base_dir / "claude_code_kazuba/data/modules" / "hooks-routing" / "settings.hooks.json"
         data = json.loads(path.read_text())
         assert "UserPromptSubmit" in data["hooks"]
         assert "PreToolUse" in data["hooks"]
@@ -327,21 +324,21 @@ class TestFileStructure:
         ["cila_router.py", "knowledge_manager.py", "compliance_tracker.py"],
     )
     def test_hook_files_exist(self, base_dir: Path, hook_file: str) -> None:
-        path = base_dir / "modules" / "hooks-routing" / "hooks" / hook_file
+        path = base_dir / "claude_code_kazuba/data/modules" / "hooks-routing" / "hooks" / hook_file
         assert path.is_file()
 
     def test_cila_router_min_lines(self, base_dir: Path) -> None:
-        path = base_dir / "modules" / "hooks-routing" / "hooks" / "cila_router.py"
+        path = base_dir / "claude_code_kazuba/data/modules" / "hooks-routing" / "hooks" / "cila_router.py"
         lines = path.read_text().count("\n")
         assert lines >= 80, f"cila_router.py must have 80+ lines, has {lines}"
 
     def test_knowledge_manager_min_lines(self, base_dir: Path) -> None:
-        path = base_dir / "modules" / "hooks-routing" / "hooks" / "knowledge_manager.py"
+        path = base_dir / "claude_code_kazuba/data/modules" / "hooks-routing" / "hooks" / "knowledge_manager.py"
         lines = path.read_text().count("\n")
         assert lines >= 60, f"knowledge_manager.py must have 60+ lines, has {lines}"
 
     def test_compliance_tracker_min_lines(self, base_dir: Path) -> None:
-        path = base_dir / "modules" / "hooks-routing" / "hooks" / "compliance_tracker.py"
+        path = base_dir / "claude_code_kazuba/data/modules" / "hooks-routing" / "hooks" / "compliance_tracker.py"
         lines = path.read_text().count("\n")
         assert lines >= 50, f"compliance_tracker.py must have 50+ lines, has {lines}"
 
@@ -350,6 +347,6 @@ class TestFileStructure:
         ["cila_router.py", "knowledge_manager.py", "compliance_tracker.py"],
     )
     def test_future_annotations(self, base_dir: Path, hook_file: str) -> None:
-        path = base_dir / "modules" / "hooks-routing" / "hooks" / hook_file
+        path = base_dir / "claude_code_kazuba/data/modules" / "hooks-routing" / "hooks" / hook_file
         content = path.read_text()
         assert "from __future__ import annotations" in content

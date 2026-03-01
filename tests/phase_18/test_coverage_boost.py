@@ -7,9 +7,9 @@ from pathlib import Path
 import pytest
 
 from claude_code_kazuba.rlm import RLMFacade, RLMFacadeConfig
-from modules.rlm.src.config import RLMConfig
-from modules.rlm.src.models import Episode, LearningRecord, MemoryEntry, SessionMeta
-from modules.rlm.src.session_manager import SessionManager
+from claude_code_kazuba.data.modules.rlm.src.config import RLMConfig
+from claude_code_kazuba.data.modules.rlm.src.models import Episode, LearningRecord, MemoryEntry, SessionMeta
+from claude_code_kazuba.data.modules.rlm.src.session_manager import SessionManager
 
 # ===========================================================================
 # Config coverage
@@ -18,7 +18,7 @@ from modules.rlm.src.session_manager import SessionManager
 
 def test_config_from_yaml_loads_defaults() -> None:
     """RLMConfig.from_yaml reads the bundled rlm.yaml correctly."""
-    yaml_path = Path(__file__).parents[2] / "modules/rlm/config/rlm.yaml"
+    yaml_path = Path(__file__).parents[2] / "claude_code_kazuba/data/modules/rlm/config/rlm.yaml"
     cfg = RLMConfig.from_yaml(yaml_path)
     assert cfg.learning_rate == pytest.approx(0.1)
     assert cfg.discount_factor == pytest.approx(0.95)
@@ -256,7 +256,7 @@ def test_end_with_open_episode_auto_closes() -> None:
 
 
 def test_facade_from_yaml() -> None:
-    yaml_path = Path(__file__).parents[2] / "modules/rlm/config/rlm.yaml"
+    yaml_path = Path(__file__).parents[2] / "claude_code_kazuba/data/modules/rlm/config/rlm.yaml"
     cfg = RLMFacadeConfig.from_yaml(yaml_path)
     assert cfg.rlm.learning_rate == pytest.approx(0.1)
 

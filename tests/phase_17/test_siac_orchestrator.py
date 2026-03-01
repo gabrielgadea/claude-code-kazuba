@@ -28,7 +28,7 @@ def _import_from_path(name: str, file_path: Path) -> types.ModuleType:
     return mod
 
 
-_SIAC_PATH = PROJECT_ROOT / "modules" / "hooks-quality" / "hooks" / "siac_orchestrator.py"
+_SIAC_PATH = PROJECT_ROOT / "claude_code_kazuba/data/modules" / "hooks-quality" / "hooks" / "siac_orchestrator.py"
 _siac = _import_from_path("siac_orchestrator_ph17", _SIAC_PATH)
 
 # Aliases for convenience
