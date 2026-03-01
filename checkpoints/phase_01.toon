@@ -1,0 +1,26 @@
+†¨phase_id«phase_titleµShared Library (lib/)©timestampËAÚhì'Íd£¨iso_time´2026-03-01T03:21:03Z§resultsƒ¥phase¦checks„¥files„¦status¤FAIL¥total§missing¦errors“Ù-TOO_SHORT: lib/hook_base.py (103 < 120 lines)Ù,TOO_SHORT: lib/patterns.py (144 < 150 lines)Ù.TOO_SHORT: lib/performance.py (97 < 100 lines)¥tests…¦status¤FAILªreturncode¦stdoutÚôR: Coverage failure: total of 28 is less than fail-under=90
+                                                                         [100%]
+
+================================ tests coverage ================================
+_______________ coverage: platform linux, python 3.12.3-final-0 ________________
+
+Coverage JSON written to file coverage.json
+FAIL Required test coverage of 90% not reached. Total coverage: 28.38%
+============================== 89 passed in 0.57s ==============================
+¦stderr ¨coverageË@<a¹äa¹ä¤lint‚¦status¤PASS¦errors ©typecheck‚¦status¤FAIL¦outputÚ,
+                    "character": 10
+                }
+            },
+            "rule": "reportUnknownVariableType"
+        }
+    ],
+    "summary": {
+        "filesAnalyzed": 15,
+        "errorCount": 60,
+        "warningCount": 0,
+        "informationCount": 0,
+        "timeInSec": 0.79
+    }
+}
+
+§overall¤FAIL§version£2.0

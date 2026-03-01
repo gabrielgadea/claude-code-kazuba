@@ -1,0 +1,26 @@
+†¨phase_id«phase_title¸Hooks Quality + Security©timestampËAÚhì(ÉN2¨iso_time´2026-03-01T03:21:07Z§resultsƒ¥phase¦checks„¥files„¦status¤FAIL¥total
+§missing¦errors˜Ù9MISSING: modules/hooks-quality/hooks/post_quality_gate.pyÙ?MISSING: modules/hooks-quality/hooks/code_standards_enforcer.pyÙ6MISSING: modules/hooks-quality/hooks/stop_validator.pyÙ)MISSING: modules/hooks-security/MODULE.mdÙ9MISSING: modules/hooks-security/hooks/secrets_detector.pyÙ5MISSING: modules/hooks-security/hooks/pii_detector.pyÙ4MISSING: modules/hooks-security/hooks/bash_safety.pyÙ3MISSING: modules/hooks-security/settings.hooks.json¥tests…¦status¤FAILªreturncode¦stdoutÚôROR: Coverage failure: total of 8 is less than fail-under=90
+                                                                         [100%]
+
+================================ tests coverage ================================
+_______________ coverage: platform linux, python 3.12.3-final-0 ________________
+
+Coverage JSON written to file coverage.json
+FAIL Required test coverage of 90% not reached. Total coverage: 7.97%
+============================== 51 passed in 0.15s ==============================
+¦stderr ¨coverageË@ÞÞ ¤lint‚¦status¤PASS¦errors ©typecheck‚¦status¤FAIL¦outputÚ,                    "character": 10
+                }
+            },
+            "rule": "reportUnknownVariableType"
+        }
+    ],
+    "summary": {
+        "filesAnalyzed": 15,
+        "errorCount": 60,
+        "warningCount": 0,
+        "informationCount": 0,
+        "timeInSec": 0.765
+    }
+}
+
+§overall¤FAIL§version£2.0

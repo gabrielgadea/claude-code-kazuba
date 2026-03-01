@@ -12,7 +12,7 @@ venv/
 # Claude Code
 .claude/settings.local.json
 .claude/CLAUDE.local.md
-checkpoints/*.toon
+# checkpoints/*.toon — tracked (release validation artifacts)
 coverage.json
 .coverage
 htmlcov/
