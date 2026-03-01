@@ -6,6 +6,10 @@
 [![Coverage](https://img.shields.io/badge/coverage-97%25-brightgreen.svg)](#test-suite)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 
+<p align="center">
+  <img src="docs/demo/kazuba-hero-banner.png" alt="Kazuba: The Meta Code Orchestrator" width="800">
+</p>
+
 O framework "Claude Code Kazuba" transforma Claude Code em um **Meta Code Orchestrator** — uma IA que nao
 apenas escreve codigo, mas *governa a si mesma* atraves de tres camadas:
 **CLAUDE.md** diz como pensar, **Hooks** impedem erros em tempo real,
