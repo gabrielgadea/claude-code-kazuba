@@ -1,0 +1,42 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          {"type": "command", "command": "python hooks/siac_pre_validator.py", "timeout": 5, "async": false},
+          {"type": "command", "command": "python hooks/code_standards_enforcer.py", "timeout": 5, "async": false},
+          {"type": "command", "command": "python hooks/pgcc_validator.py", "timeout": 3, "async": false}
+        ]
+      },
+      {
+        "matcher": "Read|Grep|Glob",
+        "hooks": [
+          {"type": "command", "command": "python hooks/cipher_knowledge_retrieval.py", "timeout": 2, "async": true}
+        ]
+      },
+      {
+        "matcher": "mcp__plugin_serena_serena__(replace_symbol_body|insert_after_symbol|insert_before_symbol|rename_symbol|create_text_file|replace_content)",
+        "hooks": [
+          {"type": "command", "command": "python hooks/serena_context_retrieval.py", "timeout": 2, "async": false}
+        ]
+      },
+      {
+        "matcher": "Task",
+        "hooks": [
+          {"type": "command", "command": "python hooks/prp_complexity_router.py", "timeout": 2, "async": true},
+          {"type": "command", "command": "python hooks/code_first_validator_entry.py", "timeout": 5, "async": false},
+          {"type": "command", "command": "python hooks/ptc_advisor.py", "timeout": 2, "async": true},
+          {"type": "command", "command": "python hooks/task_skill_router.py", "timeout": 2, "async": true},
+          {"type": "command", "command": "python hooks/aco_rollback_enforcer.py", "timeout": 2, "async": true}
+        ]
+      },
+      {
+        "matcher": "Skill",
+        "hooks": [
+          {"type": "command", "command": "python hooks/code_first_pipeline_validator.py", "timeout": 3, "async": false}
+        ]
+      }
+    ]
+  }
+}

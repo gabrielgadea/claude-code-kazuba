@@ -1,0 +1,17 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {"type": "command", "command": "python hooks/rust_accelerator_setup.py", "timeout": 15, "async": true},
+          {"type": "command", "command": "python hooks/learning_system_session_startup.py", "timeout": 10, "async": true},
+          {"type": "command", "command": "python hooks/guidance_injection_hook.py", "timeout": 5, "async": false},
+          {"type": "command", "command": "python hooks/lexcore_workflow_tracker.py", "timeout": 10, "async": true},
+          {"type": "command", "command": "python hooks/context_monitor.py", "timeout": 15, "async": true},
+          {"type": "command", "command": "python hooks/context_warning_display.py", "timeout": 3, "async": true},
+          {"type": "command", "command": "python hooks/warmup_index.py", "timeout": 15, "async": true}
+        ]
+      }
+    ]
+  }
+}

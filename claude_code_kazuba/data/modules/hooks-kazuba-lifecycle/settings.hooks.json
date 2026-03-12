@@ -1,0 +1,24 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {"type": "command", "command": "python hooks/stop_transcript_hook.py", "timeout": 15, "async": true},
+          {"type": "command", "command": "python hooks/session_finalizer.py", "timeout": 10, "async": true},
+          {"type": "command", "command": "python hooks/aco_evolution_hook.py", "timeout": 10, "async": true},
+          {"type": "command", "command": "python hooks/generator_learning_hook.py", "timeout": 10, "async": true},
+          {"type": "command", "command": "python hooks/dspy_session_optimizer.py", "timeout": 10, "async": true},
+          {"type": "command", "command": "python hooks/cost_tracker.py", "timeout": 10, "async": true},
+          {"type": "command", "command": "python hooks/observer_learning_loop.py", "timeout": 10, "async": true}
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "hooks": [
+          {"type": "command", "command": "python hooks/post_compact_reinjector.py", "timeout": 10, "async": false}
+        ]
+      }
+    ]
+  }
+}

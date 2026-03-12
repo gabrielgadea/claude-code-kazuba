@@ -1,0 +1,18 @@
+{
+  "hooks": {
+    "TeammateIdle": [
+      {
+        "hooks": [
+          {"type": "command", "command": "python hooks/teammate_idle_quality_gate.py", "timeout": 10, "async": false}
+        ]
+      }
+    ],
+    "TaskCompleted": [
+      {
+        "hooks": [
+          {"type": "command", "command": "python hooks/task_completed_validator.py", "timeout": 10, "async": false}
+        ]
+      }
+    ]
+  }
+}

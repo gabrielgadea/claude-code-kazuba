@@ -1,0 +1,43 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          {"type": "command", "command": "python hooks/post_quality_gate.py", "timeout": 20, "async": true},
+          {"type": "command", "command": "python hooks/cipher_knowledge_capture.py", "timeout": 10, "async": true},
+          {"type": "command", "command": "python hooks/incremental_indexer.py", "timeout": 5, "async": true},
+          {"type": "command", "command": "python hooks/siac_hook_entry.py", "timeout": 5, "async": true},
+          {"type": "command", "command": "python hooks/siac_orchestrator.py", "timeout": 10, "async": true},
+          {"type": "command", "command": "python hooks/qa_hook_entry.py", "timeout": 5, "async": true},
+          {"type": "command", "command": "python hooks/dspy_quality_gates.py", "timeout": 10, "async": true},
+          {"type": "command", "command": "python hooks/pgcc_warmer.py", "timeout": 30, "async": true}
+        ]
+      },
+      {
+        "matcher": "Task|Bash|Write|Edit",
+        "hooks": [
+          {"type": "command", "command": "python hooks/compliance_collector_entry.py", "timeout": 5, "async": true}
+        ]
+      },
+      {
+        "matcher": "Task|Bash",
+        "hooks": [
+          {"type": "command", "command": "python hooks/failure_recovery_orchestrator.py", "timeout": 10, "async": true}
+        ]
+      },
+      {
+        "matcher": "Task|Bash|Skill",
+        "hooks": [
+          {"type": "command", "command": "python hooks/aco_goal_tracker_hook.py", "timeout": 10, "async": true}
+        ]
+      },
+      {
+        "matcher": "Task",
+        "hooks": [
+          {"type": "command", "command": "python hooks/rlm_execution_capture_post.py", "timeout": 5, "async": true}
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "hooks": {
+    "SubagentStart": [
+      {
+        "hooks": [
+          {"type": "command", "command": "python hooks/subagent_skill_injector.py", "timeout": 5, "async": false}
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "hooks": [
+          {"type": "command", "command": "python hooks/cipher_agent_output_capture.py", "timeout": 10, "async": true},
+          {"type": "command", "command": "python hooks/rlm_execution_capture.py", "timeout": 5, "async": true}
+        ]
+      }
+    ]
+  }
+}
