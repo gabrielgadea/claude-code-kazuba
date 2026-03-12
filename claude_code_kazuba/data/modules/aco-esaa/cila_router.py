@@ -151,7 +151,7 @@ def _make_classify_step(ctx: RouteContext) -> SagaStep:
         ctx.cila_level = _classify_prompt(ctx.prompt)
         return {"cila_level": ctx.cila_level}
 
-    def _compensate(_result: Any = None) -> None:
+    def _compensate(_: Any = None) -> None:
         ctx.cila_level = 0
 
     return SagaStep(name="classify_intent", action=_execute, compensation=_compensate)
@@ -164,7 +164,7 @@ def _make_inject_step(ctx: RouteContext) -> SagaStep:
         ctx.technique = _LEVEL_TECHNIQUE.get(ctx.cila_level, "direct_response")
         return {"technique": ctx.technique}
 
-    def _compensate(_result: Any = None) -> None:
+    def _compensate(_: Any = None) -> None:
         ctx.technique = ""
 
     return SagaStep(name="inject_technique", action=_execute, compensation=_compensate)
@@ -177,7 +177,7 @@ def _make_emit_step(ctx: RouteContext) -> SagaStep:
         ctx.route_event_id = new_event_id()
         return {"route_event_id": ctx.route_event_id}
 
-    def _compensate(_result: Any = None) -> None:
+    def _compensate(_: Any = None) -> None:
         ctx.route_event_id = ""
 
     return SagaStep(name="emit_route_event", action=_execute, compensation=_compensate)
