@@ -228,10 +228,7 @@ class CachedQuerySide:
             List of agent states.
         """
         with self._lock:
-            if status:
-                agent_ids = list(self._index_by_status.get(status, set()))
-            else:
-                agent_ids = list(self._cache.keys())
+            agent_ids = list(self._index_by_status.get(status, set())) if status else list(self._cache.keys())
 
             if limit:
                 agent_ids = agent_ids[:limit]

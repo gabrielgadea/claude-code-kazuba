@@ -25,9 +25,10 @@ from __future__ import annotations
 
 import random
 from collections import deque
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
-from scripts.aco.esaa.cognitive_event import KazubaCognitiveEvent
+if TYPE_CHECKING:
+    from .cognitive_event import KazubaCognitiveEvent
 
 _ALPHA: float = 0.1  # learning rate
 _MAX_Q_DEFAULT: float = 1.0  # optimistic bootstrap for unknown next states

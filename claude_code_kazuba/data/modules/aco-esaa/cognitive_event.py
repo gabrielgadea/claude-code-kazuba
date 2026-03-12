@@ -24,7 +24,7 @@ from decimal import Decimal
 
 from pydantic import BaseModel, ConfigDict
 
-from scripts.aco.esaa.event_buffer import DomainEvent
+from .event_buffer import DomainEvent
 
 
 class CognitiveTrace(BaseModel):

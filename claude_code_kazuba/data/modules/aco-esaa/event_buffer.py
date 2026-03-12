@@ -15,17 +15,19 @@ import threading
 import time
 import uuid
 from collections import defaultdict
-from collections.abc import Callable, Mapping
 from dataclasses import dataclass, replace
 from pathlib import Path
 from types import MappingProxyType
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
-from scripts.aco.esaa.hash_chain import (
+from .hash_chain import (
     GENESIS_HASH,
     canonical_payload,
     compute_event_hash,
 )
+
+if TYPE_CHECKING:
+    from collections.abc import Callable, Mapping
 
 logger = logging.getLogger(__name__)
 

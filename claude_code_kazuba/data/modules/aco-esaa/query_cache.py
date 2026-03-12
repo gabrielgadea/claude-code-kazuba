@@ -188,7 +188,7 @@ class LRUQueryCache[K, T]:
             Number of entries invalidated.
         """
         with self._lock:
-            to_remove = [k for k in self._cache.keys() if isinstance(k, str) and pattern in k]
+            to_remove = [k for k in self._cache if isinstance(k, str) and pattern in k]
             for key in to_remove:
                 del self._cache[key]
             return len(to_remove)

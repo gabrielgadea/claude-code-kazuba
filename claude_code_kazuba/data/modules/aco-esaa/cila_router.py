@@ -9,11 +9,13 @@ from __future__ import annotations
 import time
 import uuid
 from dataclasses import dataclass
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
-from scripts.aco.esaa.event_buffer import DomainEvent, new_event_id
-from scripts.aco.esaa.saga_orchestrator_v2 import OptimizedSaga, SagaResult, SagaStep
-from scripts.aco.esaa.sqlite_backend import SQLiteEventStore
+from .event_buffer import DomainEvent, new_event_id
+from .saga_orchestrator_v2 import OptimizedSaga, SagaResult, SagaStep
+
+if TYPE_CHECKING:
+    from .sqlite_backend import SQLiteEventStore
 
 # DEFAULT_CILA_KEYWORDS — full L0-L6 coverage, domain-independent
 DEFAULT_CILA_KEYWORDS: dict[int, list[str]] = {

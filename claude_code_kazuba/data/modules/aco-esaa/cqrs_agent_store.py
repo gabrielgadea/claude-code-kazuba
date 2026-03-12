@@ -26,18 +26,17 @@ from __future__ import annotations
 
 import json
 import logging
-import sys
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
-# Project root resolution for imports
-_PROJECT_ROOT = Path(__file__).resolve().parents[3]
-if str(_PROJECT_ROOT) not in sys.path:
-    sys.path.insert(0, str(_PROJECT_ROOT))
-
-from scripts.aco.models.agent_spec import AgentCategory, AgentSpec
+try:
+    from scripts.aco.models.agent_spec import AgentCategory, AgentSpec
+except ImportError:
+    # Standalone mode — AgentSpec/AgentCategory will be provided by the ACO orchestrator module
+    AgentCategory = Any  # type: ignore[assignment,misc]
+    AgentSpec = Any  # type: ignore[assignment,misc]
 
 logger = logging.getLogger(__name__)
 

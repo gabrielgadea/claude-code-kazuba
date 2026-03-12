@@ -9,16 +9,26 @@ from __future__ import annotations
 
 import subprocess
 import sys
-from collections.abc import Callable
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
-from scripts.aco.esaa.saga_orchestrator_v2 import SagaStep
-from scripts.aco.models.core import (
-    GeneratorContract,
-    GeneratorNode,
-    GeneratorOutputs,
-    GeneratorType,
-)
+from .saga_orchestrator_v2 import SagaStep
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
+
+try:
+    from scripts.aco.models.core import (
+        GeneratorContract,
+        GeneratorNode,
+        GeneratorOutputs,
+        GeneratorType,
+    )
+except ImportError:
+    # Standalone mode — these will be provided by the ACO orchestrator module
+    GeneratorContract = Any  # type: ignore[assignment,misc]
+    GeneratorNode = Any  # type: ignore[assignment,misc]
+    GeneratorOutputs = Any  # type: ignore[assignment,misc]
+    GeneratorType = Any  # type: ignore[assignment,misc]
 
 
 def _make_execute_fn(script_path: str) -> Callable[[], dict[str, Any]]:

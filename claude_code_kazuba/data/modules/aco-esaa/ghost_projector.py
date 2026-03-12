@@ -19,10 +19,12 @@ from __future__ import annotations
 
 import asyncio
 from collections.abc import Callable, Coroutine
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
-from scripts.aco.esaa.cqrs_read_model import AgentState
-from scripts.aco.esaa.sqlite_backend import SQLiteEventStore
+from .cqrs_read_model import AgentState
+
+if TYPE_CHECKING:
+    from .sqlite_backend import SQLiteEventStore
 
 # Type aliases for readability
 HypothesisFn = Callable[[], Coroutine[Any, Any, AgentState]]

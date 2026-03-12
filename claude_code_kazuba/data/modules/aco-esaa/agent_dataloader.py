@@ -12,7 +12,7 @@ from __future__ import annotations
 import asyncio
 import logging
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Any, Generic, TypeVar
+from typing import TYPE_CHECKING, Any, TypeVar
 
 if TYPE_CHECKING:
     from collections.abc import Callable, Coroutine
@@ -54,7 +54,7 @@ class DataLoaderStats:
         return 1.0 - (self.batches_executed / self.loads_issued)
 
 
-class DataLoader(Generic[K, T]):
+class DataLoader[K, T]:
     """Generic DataLoader for automatic query batching.
 
     The DataLoader pattern coalesces multiple individual load()
@@ -295,7 +295,7 @@ class OptimizedAgentDataLoader:
         return {aid: state for aid, state in results if state is not None}
 
 
-def create_dataloader(
+def create_dataloader[K, T](
     batch_load_fn: Callable[[list[K]], Coroutine[Any, Any, list[T | None]]],
     max_batch_size: int | None = None,
 ) -> DataLoader[K, T]:

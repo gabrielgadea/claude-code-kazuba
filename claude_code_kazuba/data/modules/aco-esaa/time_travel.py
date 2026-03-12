@@ -16,12 +16,14 @@ CLI::
 
 from __future__ import annotations
 
-from collections.abc import Generator
 from datetime import UTC, datetime
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
-from scripts.aco.esaa.cqrs_read_model import AgentState, _default_projector
-from scripts.aco.esaa.sqlite_backend import SQLiteEventStore
+from .cqrs_read_model import AgentState, _default_projector
+from .sqlite_backend import SQLiteEventStore
+
+if TYPE_CHECKING:
+    from collections.abc import Generator
 
 
 def _parse_iso(ts_str: str) -> float:

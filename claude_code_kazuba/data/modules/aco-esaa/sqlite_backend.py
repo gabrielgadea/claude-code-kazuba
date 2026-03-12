@@ -19,17 +19,19 @@ import json
 import logging
 import sqlite3
 import time
-from collections.abc import Generator
 from contextlib import contextmanager
-from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
-from scripts.aco.esaa.event_buffer import DomainEvent
-from scripts.aco.esaa.hash_chain import (
+from .event_buffer import DomainEvent
+from .hash_chain import (
     GENESIS_HASH,
     canonical_payload,
     compute_event_hash,
 )
+
+if TYPE_CHECKING:
+    from collections.abc import Generator
+    from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
@@ -287,7 +289,7 @@ class SQLiteEventStore:
             ValueError: If any tampered or broken-link event is found.
         """
         events = self.get_stream(agent_id)
-        from scripts.aco.esaa.hash_chain import verify_chain as _verify
+        from .hash_chain import verify_chain as _verify
 
         return _verify(events)
 
