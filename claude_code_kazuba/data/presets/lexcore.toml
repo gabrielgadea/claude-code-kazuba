@@ -1,0 +1,38 @@
+[meta]
+name = "lexcore"
+description = "LexCore platform — Brazilian legal AI infrastructure"
+version = "1.0.0"
+
+[project]
+name = "LexCore"
+domain = "Brazilian legal AI infrastructure"
+primary_languages = ["python", "rust", "typescript"]
+
+[hooks]
+include_all_core = true
+include_aco = true
+include_generator_learning = true
+
+[intelligence]
+dspy_compiled_path = ".claude/intelligence/dspy/compiled"
+ums_data_path = ".claude/intelligence/memory/.data"
+tantivy_roots = [".claude/intelligence/memory/.data/tantivy"]
+
+[rust_core]
+build_on_install = false
+features = ["python", "simd", "agents"]
+
+[rust_binaries]
+tier1 = ["hook-pii-detector", "hook-data-structure"]
+tier2 = ["hook-strategy-enforcer", "rlm-cli", "rlm-hooks"]
+
+[generators.starters]
+include = ["gen_rust_module", "gen_test_suite", "gen_api_endpoint"]
+
+[rules.lexcore]
+domain_context = "rules/lexcore/domain-context.md"
+pipeline_rules = "rules/lexcore/pipeline-rules.md"
+
+[cila_router]
+[cila_router.domain_keywords]
+3 = ["pipeline", "lexcore", "convert", "lei", "resolucao"]

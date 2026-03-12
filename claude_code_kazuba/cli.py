@@ -1,4 +1,4 @@
-"""CLI entry point: kazuba install/validate/list-presets/list-modules.
+"""CLI entry point: kazuba install/validate/list-presets/list-modules/build-rust.
 
 IMPORTANT: kazuba install is a COMPLEMENT to the user's existing Claude Code
 configuration. It MERGES content (hooks, skills, agents, etc.) on top of the
@@ -11,6 +11,7 @@ from __future__ import annotations
 import argparse
 import sys
 from pathlib import Path
+from typing import Any
 
 
 def _lazy_version() -> str:
@@ -37,14 +38,26 @@ def cmd_install(args: argparse.Namespace) -> int:
             print(f"Available: {', '.join(sorted(available))}", file=sys.stderr)
             return 1
         module_names = [
-            line.strip()
-            for line in preset_file.read_text().splitlines()
-            if line.strip() and not line.startswith("#")
+            line.strip() for line in preset_file.read_text().splitlines() if line.strip() and not line.startswith("#")
         ]
     else:
         module_names = [m.strip() for m in args.modules.split(",")]
 
+    # Load optional TOML sidecar for domain config (e.g. cila_router keywords)
+    toml_config: dict[str, Any] = {}
+    if args.preset:
+        import tomllib
+
+        toml_file = get_presets_dir() / f"{args.preset}.toml"
+        if toml_file.exists():
+            toml_config = tomllib.loads(toml_file.read_text())
+
     stack_vars = detect_stack(target)
+    if "cila_router" in toml_config:
+        stack_vars["cila_router_config"] = toml_config["cila_router"]
+    if "project" in toml_config:
+        stack_vars["project_config"] = toml_config["project"]
+
     ordered = resolve_dependencies(module_names, get_modules_dir(), core_dir=get_core_dir())
 
     if args.dry_run:
@@ -96,6 +109,49 @@ def cmd_list_modules(_args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_build_rust(args: argparse.Namespace) -> int:
+    """Build Rust core from source in target project."""
+    import glob
+    import subprocess
+
+    target = Path(args.target).resolve()
+    rust_dir = target / ".claude" / "rust-core"
+    if not rust_dir.exists():
+        print(f"Error: {rust_dir} does not exist", file=sys.stderr)
+        print("Install a preset with aco-rust-core first.", file=sys.stderr)
+        return 1
+
+    (target / ".claude" / "bin").mkdir(parents=True, exist_ok=True)
+
+    print(f"Building Rust core in {rust_dir}...")
+    build_result = subprocess.run(
+        ["maturin", "build", "--features", "python", "--release"],
+        cwd=rust_dir,
+        capture_output=True,
+        text=True,
+    )
+    if build_result.returncode != 0:
+        print(f"maturin build failed:\n{build_result.stderr}", file=sys.stderr)
+        return 1
+    print("  [OK] maturin build --release")
+
+    wheels = glob.glob(str(rust_dir / "target" / "wheels" / "*.whl"))
+    if not wheels:
+        print("Error: no wheel found after build", file=sys.stderr)
+        return 1
+    wheel = sorted(wheels)[-1]
+    install_result = subprocess.run(
+        ["pip", "install", "--user", "--force-reinstall", "--break-system-packages", wheel],
+        capture_output=True,
+        text=True,
+    )
+    if install_result.returncode != 0:
+        print(f"pip install failed:\n{install_result.stderr}", file=sys.stderr)
+        return 1
+    print(f"  [OK] installed {Path(wheel).name}")
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     """CLI entry point for kazuba command."""
     parser = argparse.ArgumentParser(
@@ -109,7 +165,7 @@ def main(argv: list[str] | None = None) -> int:
     grp = p_install.add_mutually_exclusive_group(required=True)
     grp.add_argument(
         "--preset",
-        choices=["minimal", "standard", "professional", "enterprise", "research"],
+        choices=["minimal", "standard", "professional", "enterprise", "research", "full-stack", "lexcore"],
     )
     grp.add_argument("--modules", help="Comma-separated module names")
     p_install.add_argument("--target", default=".", help="Target project directory (default: .)")
@@ -122,6 +178,10 @@ def main(argv: list[str] | None = None) -> int:
 
     sub.add_parser("list-presets", help="List available presets").set_defaults(func=cmd_list_presets)
     sub.add_parser("list-modules", help="List available modules").set_defaults(func=cmd_list_modules)
+
+    p_build_rust = sub.add_parser("build-rust", help="Build Rust core from source in target project")
+    p_build_rust.add_argument("--target", default=".", help="Target project directory")
+    p_build_rust.set_defaults(func=cmd_build_rust)
 
     args = parser.parse_args(argv)
     if not args.command:

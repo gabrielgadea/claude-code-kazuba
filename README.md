@@ -69,6 +69,7 @@ Em 5 segundos, seu projeto Claude Code tem:
 | Prompts enriquecidos automaticamente | Hook `prompt_enhancer` + CILA (enforcement) |
 | Stack-aware (Python, Rust, TS, Go...) | Templates Jinja2 (diretiva) |
 | Deteccao de padroes em nanosegundos | Aho-Corasick (aceleracao Rust) |
+| Event sourcing para agentes autonomos | ESAA com hash criptografico SHA-256 |
 
 O que acabou de acontecer por baixo e o resultado de tres camadas arquiteturais
 trabalhando em conjunto. Entenda cada uma delas — e por que a ordem importa.
@@ -392,6 +393,8 @@ com base nas dependencias declaradas:
 | **research** | 6 | Projetos academicos com skills de pesquisa |
 | **professional** | 10 | Engenharia completa com quality gates e agents |
 | **enterprise** | 14 | Orquestracao multi-agente + hypervisor + compliance |
+| **full-stack** | 19 | Tier 1 + Tier 2 completo (ACO + RLM + generators + Rust core) |
+| **lexcore** | 19 | full-stack + TOML domain config para legal AI (LexCore) |
 
 ---
 
@@ -468,7 +471,8 @@ O Kazuba aplica a si mesmo o que exige dos projetos que protege:
 | [MODULES_CATALOG.md](docs/MODULES_CATALOG.md) | Catalogo completo com dependencias e presets |
 | [CREATING_MODULES.md](docs/CREATING_MODULES.md) | Guia para criar modulos customizados |
 | [MIGRATION.md](docs/MIGRATION.md) | Migracao para usuarios com `.claude/` existente |
-| [GLOSSARY.md](docs/GLOSSARY.md) | Terminologia: Kazuba, CILA, TOON, RLM, presets |
+| [GLOSSARY.md](docs/GLOSSARY.md) | Terminologia: Kazuba, CILA, TOON, RLM, ESAA, presets |
+| [ESAA.md](docs/ESAA.md) | Event Sourcing for Autonomous Agents — arquitetura completa |
 
 ---
 
@@ -486,8 +490,20 @@ O Kazuba aplica a si mesmo o que exige dos projetos que protege:
 - [x] **Integration + Migration** — E2E tests, migrate_v01_v02.py, MIGRATION.md
 - [x] **Benchmark Suite** — benchmark_hooks.py CLI + self_host_config.py
 
+## v0.3.0 ESAA (Event Sourcing for Autonomous Agents)
+
+- [x] **ESAA Core Models** — Pydantic v2 types: ESAAEventEnvelope, CommandPayload, CognitiveTrace
+- [x] **Rust FFI ESAA** — PyO3 bindings para project_events em Rust (performance O(n))
+- [x] **CLI ESAA** — Comandos: `esaa init`, `esaa submit`, `esaa verify`, `esaa replay`
+- [x] **Hook esaa_bridge** — PreToolUse hook convertendo tool calls em eventos ESAA
+- [x] **RLM Integration** — ingest_esaa_events() para aprendizado por reforco com eventos
+- [x] **Shadow Mode** — Benchmark ESAA vs TOON com <20% overhead validado
+- [x] **SHA-256 Verification** — Hash criptografico por evento para integridade
+- [x] **CILA-aware Events** — Inferencia automatica de nivel CILA L0-L6 por operacao
+
 ### Roadmap
 
+- [ ] **ESAA Query Engine** — DSL para consultas complexas no stream de eventos
 - [ ] **GPU Acceleration** — Embeddings e similarity via CUDA/Metal
 - [ ] **Multi-tenant Isolation** — Isolamento de contexto por workspace
 - [ ] **Web Dashboard** — Visualizacao de metricas de hooks em tempo real

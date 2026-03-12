@@ -1,0 +1,124 @@
+[package]
+name = "claude_learning_kernel"
+version = "0.1.0"
+edition = "2021"
+authors = ["Claude Code Learning System"]
+description = "SIMD-accelerated Rust kernel for Claude Code Learning System"
+license = "MIT"
+rust-version = "1.75"
+
+[lib]
+name = "claude_learning_kernel"
+crate-type = ["cdylib", "rlib"]
+
+[features]
+default = ["python"]
+python = ["dep:pyo3", "dep:numpy"]
+# Enable when stable: simd = []
+
+[dependencies]
+# PyO3 for Python bindings (optional)
+pyo3 = { version = "0.24", features = ["extension-module"], optional = true }
+numpy = { version = "0.24", optional = true }
+
+# Parallel computation
+rayon = "1.10"
+
+# Linear algebra
+ndarray = { version = "0.16", features = ["rayon"] }
+
+# Clustering (HDBSCAN via linfa)
+linfa = "0.7"
+linfa-clustering = "0.7"
+
+# Statistical functions
+statrs = "0.17"
+
+# Collections
+indexmap = "2.6"
+lru = "0.12"
+
+# Graph algorithms (Pln2 Module 3: cross_validator)
+petgraph = "0.6"
+
+# Serialization
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+toml = "0.8"  # Module 8: checkpoints (.toon format)
+
+# Hashing
+rustc-hash = "2.1"
+
+# Persistence (SQLite for cross-session memory)
+rusqlite = { version = "0.32", features = ["bundled"] }
+sha2 = "0.10"
+
+# Error handling
+thiserror = "2.0"
+
+# NLP Module (Pln2)
+regex = "1.11"
+once_cell = "1.20"
+chrono = { version = "0.4", features = ["serde"] }
+unicode-segmentation = "1.12"
+aho-corasick = "1.1"  # Module 4: keyword_matcher
+
+[dev-dependencies]
+criterion = { version = "0.5", features = ["html_reports"] }
+approx = "0.5"
+proptest = "1.5"
+rand = "0.8"
+rstest = "0.23"
+tempfile = "3.14"
+
+# Benchmarks - NLP Pipeline (Pln2 Module 7)
+[[bench]]
+name = "bench_monetary"
+harness = false
+
+[[bench]]
+name = "bench_chunker"
+harness = false
+
+[[bench]]
+name = "bench_keyword"
+harness = false
+
+[[bench]]
+name = "bench_full_pipeline"
+harness = false
+
+# Standalone hook binaries (H1 — compile with --no-default-features)
+[[bin]]
+name = "hook-intent-router"
+path = "src/bin/hook_intent_router.rs"
+
+[[bin]]
+name = "hook-pii-detector"
+path = "src/bin/hook_pii_detector.rs"
+
+[[bin]]
+name = "hook-data-structure"
+path = "src/bin/hook_data_structure.rs"
+
+[[bin]]
+name = "hook-strategy-enforcer"
+path = "src/bin/hook_strategy_enforcer.rs"
+
+[[bin]]
+name = "hook-aco-phase0"
+path = "src/bin/hook_aco_phase0.rs"
+
+[[bin]]
+name = "hook-dspy-perception"
+path = "src/bin/hook_dspy_perception.rs"
+
+[profile.release]
+lto = "thin"
+opt-level = 3
+codegen-units = 1
+strip = true
+
+[profile.bench]
+lto = "thin"
+opt-level = 3

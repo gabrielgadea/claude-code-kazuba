@@ -10,7 +10,7 @@ from typing import Any
 from claude_code_kazuba.installer.merge_settings import merge_settings
 
 # Directories within a module that get copied to .claude/
-_CONTENT_DIRS = ("hooks", "skills", "agents", "commands", "contexts", "config", "templates", "src")
+_CONTENT_DIRS = ("hooks", "skills", "agents", "commands", "contexts", "config", "templates", "src", "rust-core")
 
 # Template file extensions
 _TEMPLATE_EXT = ".template"
@@ -98,10 +98,7 @@ def install_module(
     }
 
     # Determine module source path
-    if module_name == "core":
-        module_path = source_dir / "core"
-    else:
-        module_path = source_dir / "modules" / module_name
+    module_path = source_dir / "core" if module_name == "core" else source_dir / "modules" / module_name
 
     if not module_path.exists():
         msg = f"Module directory not found: {module_path}"
@@ -135,6 +132,22 @@ def install_module(
     if hooks_json.exists():
         settings_path = claude_dir / "settings.json"
         _merge_hooks_settings(settings_path, hooks_json, result["merged"])
+
+    # Inject TOML sidecar domain config (e.g. cila_router keywords from preset TOML)
+    if variables.get("cila_router_config") and module_name == "aco-esaa":
+        for candidate in [
+            claude_dir / "src" / "aco" / "esaa" / "cila_router.py",
+            claude_dir / "src" / "aco" / "cila_router.py",
+        ]:
+            if candidate.exists():
+                domain_kw = variables["cila_router_config"].get("domain_keywords", {})
+                if domain_kw:
+                    config_block = "\n\n# Domain-specific CILA keywords (injected by kazuba installer)\n"
+                    config_block += f"DOMAIN_KEYWORDS: dict[int, list[str]] = {domain_kw!r}\n"
+                    with candidate.open("a") as f:
+                        f.write(config_block)
+                    result["rendered"].append(str(candidate))
+                break
 
     return result
 
