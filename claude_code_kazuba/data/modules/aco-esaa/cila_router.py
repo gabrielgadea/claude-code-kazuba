@@ -22,7 +22,7 @@ DEFAULT_CILA_KEYWORDS: dict[int, list[str]] = {
     6: ["team", "swarm", "orchestrat", "multi-agent"],
     5: ["evolve", "self-modif", "meta"],
     4: ["agent", "loop", "cycle"],
-    3: ["pipeline", "process"],  # "antt" removed — was hardcoded domain keyword
+    3: ["pipeline", "process"],  # domain-specific keywords removed
     2: ["search", "retriev", "query"],
     1: ["compute", "calculat", "run"],
     0: [],
