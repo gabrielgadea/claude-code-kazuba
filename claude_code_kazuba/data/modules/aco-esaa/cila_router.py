@@ -15,20 +15,94 @@ from scripts.aco.esaa.event_buffer import DomainEvent, new_event_id
 from scripts.aco.esaa.saga_orchestrator_v2 import OptimizedSaga, SagaResult, SagaStep
 from scripts.aco.esaa.sqlite_backend import SQLiteEventStore
 
-# CILA level → keyword triggers (highest level wins on first match)
+# DEFAULT_CILA_KEYWORDS — full L0-L6 coverage, domain-independent
+DEFAULT_CILA_KEYWORDS: dict[int, list[str]] = {
+    6: ["team", "swarm", "orchestrat", "multi-agent"],
+    5: ["evolve", "self-modif", "meta"],
+    4: ["agent", "loop", "cycle"],
+    3: ["pipeline", "process"],  # "antt" removed — was hardcoded domain keyword
+    2: ["search", "retriev", "query"],
+    1: ["compute", "calculat", "run"],
+    0: [],
+}
+
+# Module-level default used by _classify_prompt (set by build_cila_router or default)
 _CILA_KEYWORDS: list[tuple[int, list[str]]] = [
-    (6, ["team", "swarm", "orchestrat", "multi-agent"]),
-    (5, ["evolve", "self-modif", "meta"]),
-    (3, ["pipeline", "process", "antt"]),
-    (2, ["search", "retriev", "query"]),
-    (1, ["compute", "calculat", "run"]),
+    (level, words)
+    for level, words in sorted(
+        DEFAULT_CILA_KEYWORDS.items(),
+        reverse=True,
+    )
+    if words
 ]
+
+
+def build_cila_router(
+    domain_keywords: dict[int, list[str]] | None = None,
+) -> _CILARouterConfig:
+    """Build a CILARouter config with merged domain keywords.
+
+    Merges domain_keywords onto DEFAULT_CILA_KEYWORDS (additive, not replace).
+    Domain keywords are ADDED to existing level lists.
+
+    Args:
+        domain_keywords: Optional dict mapping CILA level (0-6) to keyword lists.
+            These are ADDED to the default keywords for each level.
+
+    Returns:
+        A _CILARouterConfig instance.
+
+    Example:
+        >>> router = build_cila_router({3: ["lexcore", "convert"]})
+        >>> # L3 now has ["pipeline", "process", "lexcore", "convert"]
+        >>> # L4 default ["agent", "loop", "cycle"] is untouched
+    """
+    keywords = {k: list(v) for k, v in DEFAULT_CILA_KEYWORDS.items()}
+    if domain_keywords:
+        for level, words in domain_keywords.items():
+            keywords[level] = keywords.get(level, []) + words
+    return _CILARouterConfig(keywords=keywords)
+
+
+class _CILARouterConfig:
+    """Internal config holder for parametrized CILA routing.
+
+    Attributes:
+        keywords: Merged keyword dict (level -> word list).
+    """
+
+    def __init__(self, keywords: dict[int, list[str]]) -> None:
+        self.keywords = keywords
+        self._sorted_keywords: list[tuple[int, list[str]]] = [
+            (level, words)
+            for level, words in sorted(
+                keywords.items(),
+                reverse=True,
+            )
+            if words
+        ]
+
+    def classify_prompt(self, prompt: str) -> int:
+        """Classify a prompt into a CILA level using this config's keywords.
+
+        Args:
+            prompt: Raw user prompt string.
+
+        Returns:
+            Integer CILA level (0-6).
+        """
+        lower = prompt.lower()
+        for level, kws in self._sorted_keywords:
+            if any(kw in lower for kw in kws):
+                return level
+        return 0
+
 
 _LEVEL_TECHNIQUE: dict[int, str] = {
     0: "direct_response",
     1: "compute_first",
     2: "tool_augmented",
-    3: "antt_pipeline_check",
+    3: "pipeline_check",
     4: "aco_identity",
     5: "self_modifying",
     6: "team_coordination",
