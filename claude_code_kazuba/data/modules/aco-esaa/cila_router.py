@@ -1,0 +1,200 @@
+"""C1 — CILA Router as Saga Manager.
+
+Routes a prompt through CILA L0-L6 as a compensable Saga, with
+every routing decision persisted as a DomainEvent for replay and audit.
+"""
+
+from __future__ import annotations
+
+import time
+import uuid
+from dataclasses import dataclass
+from typing import Any
+
+from scripts.aco.esaa.event_buffer import DomainEvent, new_event_id
+from scripts.aco.esaa.saga_orchestrator_v2 import OptimizedSaga, SagaResult, SagaStep
+from scripts.aco.esaa.sqlite_backend import SQLiteEventStore
+
+# CILA level → keyword triggers (highest level wins on first match)
+_CILA_KEYWORDS: list[tuple[int, list[str]]] = [
+    (6, ["team", "swarm", "orchestrat", "multi-agent"]),
+    (5, ["evolve", "self-modif", "meta"]),
+    (3, ["pipeline", "process", "antt"]),
+    (2, ["search", "retriev", "query"]),
+    (1, ["compute", "calculat", "run"]),
+]
+
+_LEVEL_TECHNIQUE: dict[int, str] = {
+    0: "direct_response",
+    1: "compute_first",
+    2: "tool_augmented",
+    3: "antt_pipeline_check",
+    4: "aco_identity",
+    5: "self_modifying",
+    6: "team_coordination",
+}
+
+
+def _classify_prompt(prompt: str) -> int:
+    """Classify a prompt into a CILA level (0-6).
+
+    Args:
+        prompt: Raw user prompt string.
+
+    Returns:
+        Integer CILA level where 0=direct response, 6=multi-agent.
+    """
+    lower = prompt.lower()
+    for level, keywords in _CILA_KEYWORDS:
+        if any(kw in lower for kw in keywords):
+            return level
+    return 0
+
+
+@dataclass
+class RouteContext:
+    """Mutable routing context shared across saga steps.
+
+    Attributes:
+        prompt: Original prompt text.
+        cila_level: Classified CILA level (0-6).
+        technique: Cognitive technique name for the level.
+        route_event_id: ID of the emitted routing event.
+    """
+
+    prompt: str
+    cila_level: int = 0
+    technique: str = ""
+    route_event_id: str = ""
+
+
+def _make_classify_step(ctx: RouteContext) -> SagaStep:
+    """Build the classify_intent SagaStep (zero-arity action)."""
+
+    def _execute() -> dict[str, Any]:
+        ctx.cila_level = _classify_prompt(ctx.prompt)
+        return {"cila_level": ctx.cila_level}
+
+    def _compensate(_result: Any = None) -> None:
+        ctx.cila_level = 0
+
+    return SagaStep(name="classify_intent", action=_execute, compensation=_compensate)
+
+
+def _make_inject_step(ctx: RouteContext) -> SagaStep:
+    """Build the inject_technique SagaStep."""
+
+    def _execute() -> dict[str, Any]:
+        ctx.technique = _LEVEL_TECHNIQUE.get(ctx.cila_level, "direct_response")
+        return {"technique": ctx.technique}
+
+    def _compensate(_result: Any = None) -> None:
+        ctx.technique = ""
+
+    return SagaStep(name="inject_technique", action=_execute, compensation=_compensate)
+
+
+def _make_emit_step(ctx: RouteContext) -> SagaStep:
+    """Build the emit_route_event SagaStep."""
+
+    def _execute() -> dict[str, Any]:
+        ctx.route_event_id = new_event_id()
+        return {"route_event_id": ctx.route_event_id}
+
+    def _compensate(_result: Any = None) -> None:
+        ctx.route_event_id = ""
+
+    return SagaStep(name="emit_route_event", action=_execute, compensation=_compensate)
+
+
+@dataclass
+class CILARouteSaga:
+    """Routes a prompt through CILA L0-L6 as a compensable saga.
+
+    Attributes:
+        prompt: The prompt to classify and route.
+    """
+
+    prompt: str
+
+    def __post_init__(self) -> None:
+        self.context = RouteContext(prompt=self.prompt)
+        self._saga = OptimizedSaga(
+            saga_id=f"cila-route-{uuid.uuid4().hex[:8]}",
+            steps=[
+                _make_classify_step(self.context),
+                _make_inject_step(self.context),
+                _make_emit_step(self.context),
+            ],
+        )
+
+    def execute(self) -> SagaResult:
+        """Execute the routing saga.
+
+        Returns:
+            SagaResult with SUCCESS or COMPENSATED status.
+        """
+        return self._saga.execute()
+
+
+class CILARouterEventStore:
+    """Routes prompts and persists every decision as a DomainEvent.
+
+    Wraps CILARouteSaga with event sourcing, enabling full replay of
+    all historical routing classifications for debugging and audit.
+
+    Args:
+        store: SQLite event store for durable persistence.
+    """
+
+    def __init__(self, store: SQLiteEventStore) -> None:
+        self._store = store
+
+    def route(self, prompt: str) -> dict[str, Any]:
+        """Route a prompt and persist the classification decision.
+
+        Args:
+            prompt: User prompt to classify.
+
+        Returns:
+            Dict with keys: cila_level, technique, event_id, saga_status.
+        """
+        saga = CILARouteSaga(prompt)
+        result = saga.execute()
+        ctx = saga.context
+
+        event = DomainEvent(
+            event_id=ctx.route_event_id or new_event_id(),
+            event_type="prompt_routed",
+            agent_id="cila_router",
+            timestamp=time.time(),
+            payload={
+                "prompt": prompt[:200],
+                "cila_level": ctx.cila_level,
+                "technique": ctx.technique,
+            },
+        )
+        self._store.append_events([event])
+
+        return {
+            "cila_level": ctx.cila_level,
+            "technique": ctx.technique,
+            "event_id": event.event_id,
+            "saga_status": result.status.value,
+        }
+
+    def get_route_events(self) -> list[DomainEvent]:
+        """Return all persisted routing events.
+
+        Returns:
+            List of DomainEvents with event_type='prompt_routed'.
+        """
+        return self._store.get_stream("cila_router")
+
+    def replay_classifications(self) -> list[int]:
+        """Replay all routing decisions, returning CILA levels in order.
+
+        Returns:
+            List of integer CILA levels in chronological order.
+        """
+        return [int(e.payload.get("cila_level", 0)) for e in self.get_route_events()]
