@@ -17,9 +17,9 @@ from pathlib import Path
 
 import pytest
 
-from claude_code_kazuba.rlm import RLMFacade, RLMFacadeConfig
 from claude_code_kazuba.data.modules.rlm.src.q_table import QTable
 from claude_code_kazuba.data.modules.rlm.src.working_memory import WorkingMemory
+from claude_code_kazuba.rlm import RLMFacade, RLMFacadeConfig
 
 # ---------------------------------------------------------------------------
 # Fixtures

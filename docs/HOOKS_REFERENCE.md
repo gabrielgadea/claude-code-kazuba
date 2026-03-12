@@ -2,6 +2,9 @@
 
 Complete reference for all 18 Claude Code hook events supported by the framework.
 
+> **ESAA Integration**: Tool usage events captured by the `esaa_bridge` hook are converted to ESAA events
+> with cryptographic verification. See [ESAA.md](ESAA.md) for the event sourcing architecture.
+
 ## Hook Contract
 
 All hooks follow the same contract:
@@ -69,6 +72,7 @@ Every hook receives at minimum:
 - `knowledge_manager.py` — Context injection based on tool usage
 - `siac_orchestrator.py` — Quality gates with circuit breaker integration [v0.2.0]
 - `auto_permission_resolver.py` — CILA-aware automatic permission resolution [v0.2.0]
+- `esaa_bridge.py` — Event sourcing: convert tool calls to ESAA events with SHA-256 [v0.3.0]
 
 **Example implementation**:
 ```python

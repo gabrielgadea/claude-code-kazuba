@@ -22,6 +22,7 @@ and preset inclusion.
 | config-hypervisor | Config | none | enterprise |
 | team-orchestrator | Orchestration | config-hypervisor | enterprise |
 | rlm | Learning Memory | none | enterprise |
+| esaa | Event Sourcing | core, rlm | enterprise |
 
 ## Detailed Descriptions
 
@@ -272,3 +273,35 @@ Q-Table learning, working memory with TTL, and reward-based experience replay.
 - `src/models.py` — Pydantic v2 models (State, Action, Experience, Episode)
 - `config/rlm.yaml` — Hyperparameters (learning_rate, discount_factor, epsilon_decay)
 - `lib/rlm.py` — Facade integrating all RLM components into a single callable API
+
+---
+
+### esaa
+
+**Category**: Event Sourcing
+**Dependencies**: core, rlm
+**Presets**: enterprise
+**Version**: v0.3.0
+
+Event Sourcing for Autonomous Agents. Immutable audit logging with cryptographic
+verification and deterministic state reconstruction from event streams.
+
+**Provides**:
+- `models/esaa_types.py` — Pydantic v2 models (ESAAEventEnvelope, CommandPayload, CognitiveTrace)
+- `commands/esaa.py` — CLI commands: init, submit, verify, replay
+- `hooks/esaa_bridge.py` — PreToolUse hook for automatic event capture
+- `reward_calculator.py` — ESAA-aware reward calculation for RLM
+- `rust/esaa-ffi/` — Rust FFI for O(n) event projection with PyO3 bindings
+- `scripts/benchmark_esaa.py` — Shadow mode benchmark (ESAA vs TOON)
+
+**Hook Events**: PreToolUse
+
+**Integration Points**:
+- **RLM**: `ingest_esaa_events()` extracts patterns for Q-learning
+- **CILA**: Automatic complexity level inference (L0-L6) per operation
+- **TOON**: Bidirectional mapping between checkpoint and event stream formats
+
+**Cryptographic Verification**:
+- SHA-256 hash per event (canonical JSON representation)
+- Deterministic projection (same events → same state)
+- Immutable append-only log (`.esaa/activity.jsonl`)

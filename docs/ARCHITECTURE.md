@@ -315,6 +315,58 @@ modules/rlm/
 
 `lib.rlm` provides the facade that integrates all components into a single callable API.
 
+## ESAA — Event Sourcing for Autonomous Agents
+
+ESAA provides immutable audit logging and deterministic state reconstruction for Claude Code operations.
+
+### Architecture Components
+
+```
+esaa/
+├── Models (Python/Pydantic v2)
+│   ├── ESAAEventEnvelope      # Event envelope with SHA-256 hash
+│   ├── CommandPayload         # Operation + cognitive context
+│   ├── CognitiveTrace         # Agent state snapshot (CILA, risk, Q-value)
+│   └── ProjectedState         # Deterministic projection of event stream
+│
+├── Rust FFI (PyO3)
+│   ├── types.rs               # Rust structs mirroring Python models
+│   ├── projector.rs           # O(n) deterministic event projection
+│   └── lib.rs                 # PyO3 bindings for Python interop
+│
+├── CLI
+│   ├── esaa init              # Initialize .esaa/ directory structure
+│   ├── esaa submit            # Manually submit event to log
+│   ├── esaa verify            # Verify cryptographic integrity
+│   └── esaa replay            # Replay events, output TOON/state
+│
+├── Hook
+│   └── esaa_bridge.py         # PreToolUse → ESAA event conversion
+│
+└── RLM Integration
+    ├── ingest_esaa_events()   # Feed events to RL learning
+    ├── RewardCalculator       # Compute reward from ESAA events
+    └── extract_golden_routes() # High-reward trajectory extraction
+```
+
+### Event Flow
+
+1. **Capture**: `esaa_bridge.py` hook intercepts PreToolUse events
+2. **Transform**: Convert tool call → CommandPayload with CILA inference
+3. **Hash**: Compute SHA-256 of canonical JSON representation
+4. **Store**: Append to `.esaa/activity.jsonl` (immutable log)
+5. **Project**: Rust FFI or Python projector rebuilds state from events
+6. **Learn**: RLM extracts patterns and updates Q-values
+
+### Key Properties
+
+- **Determinism**: Same events → same state (enables replay, audit)
+- **Integrity**: SHA-256 per event detects tampering
+- **Immutability**: Append-only log (events never modified)
+- **CILA Integration**: Automatic complexity level inference from operations
+
+See [ESAA.md](ESAA.md) for complete documentation.
+
 ### Benchmark Suite + Self-Hosting (Phase 20)
 
 - `scripts/benchmark_hooks.py` — CLI tool for benchmarking hook performance (p50/p95/p99).

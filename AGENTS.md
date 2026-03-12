@@ -1,7 +1,7 @@
 <!-- gitnexus:start -->
 # GitNexus MCP
 
-This project is indexed by GitNexus as **claude-code-kazuba** (3726 symbols, 9584 relationships, 300 execution flows).
+This project is indexed by GitNexus as **claude-code-kazuba** (3831 symbols, 9974 relationships, 300 execution flows).
 
 ## Always Start Here
 

@@ -45,6 +45,18 @@ Modulo de aprendizado por reforco para Claude Code. Composto por:
 - **RewardCalculator**: reward composto por metricas de performance
 - **RLMFacade**: API unificada para integracao com hooks
 
+### ESAA (Event Sourcing for Autonomous Agents)
+Arquitetura de event sourcing para agentes autonomos. Cada operacao vira um evento imutavel com hash criptografico SHA-256, permitindo auditoria completa e reconstrucao deterministica do estado.
+
+**Componentes**:
+- **ESAAEventEnvelope**: Envelope do evento com campos criptograficos
+- **CommandPayload**: Comando executado + contexto cognitivo
+- **CognitiveTrace**: Snapshot do estado cognitivo (CILA, risk, Q-value)
+- **ProjectedState**: Estado projetado deterministicamente a partir de eventos
+- **esaa_bridge**: Hook PreToolUse que converte tool calls em eventos
+
+**Ver tambem**: [ESAA.md](ESAA.md)
+
 ### Preset
 Bundle predefinido de modulos. Nomes: `minimal`, `standard`, `research`, `professional`, `enterprise`.
 Definidos em `presets/nome.txt` — um modulo por linha.
@@ -94,6 +106,7 @@ Nao e parte do framework open-source claude-code-kazuba.
 |-------|----------|----------|
 | CILA | Complexity Intelligence Layer Architecture | Hook de roteamento |
 | RLM | Reinforcement Learning Memory | Modulo de aprendizado |
+| ESAA | Event Sourcing for Autonomous Agents | Arquitetura v0.3.0 |
 | TOON | Formato de checkpoint (magic bytes) | Persistencia de estado |
 | PRP | Product Requirements Prompt | Template de especificacao |
 | RCA | Root Cause Analysis | Comando `/debug-RCA` |
@@ -104,4 +117,4 @@ Nao e parte do framework open-source claude-code-kazuba.
 
 ---
 
-*Ultima atualizacao: v0.2.0*
+*Ultima atualizacao: v0.3.0 (ESAA)*
