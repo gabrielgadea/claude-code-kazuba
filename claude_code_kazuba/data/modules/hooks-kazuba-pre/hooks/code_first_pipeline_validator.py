@@ -50,7 +50,7 @@ PIPELINE_SKILLS: frozenset[str] = (
 # ADAPTATION: ANTT-specific required phases removed
 # Skill-to-phase validation disabled in generic version
 # Projects can implement domain-specific phase validation via subclassing
-REQUIRED_PHASES: dict[str, list[str]] = {}  # disabled in generic version
+REQUIRED_PHASES: dict[str, list[int]] = {}  # disabled in generic version
 
 # ADAPTATION: ANTT process number pattern replaced with env var KAZUBA_PROCESS_PATTERN
 _PROCESS_PATTERN_ENV = _os.environ.get("KAZUBA_PROCESS_PATTERN", "")
