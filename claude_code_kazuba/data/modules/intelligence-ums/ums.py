@@ -171,6 +171,7 @@ class UnifiedMemorySystem:
 
     def _query_l2(self, query: str, top_k: int) -> list[MemoryItem]:  # noqa: ARG002
         """Query L2 Tantivy index (placeholder — requires tantivy-py)."""
+        _ = top_k  # placeholder — unused until L2 wired
         if not self._l2_root.exists():
             return []
         logger.debug("L2 Tantivy query (not yet wired): %s", query[:50])
@@ -178,11 +179,13 @@ class UnifiedMemorySystem:
 
     def _query_l3(self, query: str, top_k: int) -> list[MemoryItem]:  # noqa: ARG002
         """Query L3 FAISS semantic index (optional, GPU-accelerated)."""
+        _ = top_k  # placeholder — unused until L3 wired
         logger.debug("L3 FAISS query (not enabled): %s", query[:50])
         return []
 
     def _query_l4(self, query: str, top_k: int) -> list[MemoryItem]:  # noqa: ARG002
         """Query L4 Cipher MCP (external knowledge, last resort)."""
+        _ = top_k  # placeholder — unused until L4 wired
         logger.debug("L4 Cipher query (not yet wired): %s", query[:50])
         return []
 

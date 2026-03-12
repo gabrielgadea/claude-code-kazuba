@@ -4,8 +4,6 @@ from __future__ import annotations
 import ast
 from pathlib import Path
 
-import pytest
-
 MODULE_ROOT = (
     Path(__file__).resolve().parent.parent
     / "claude_code_kazuba"
@@ -58,7 +56,7 @@ class TestDspyModules:
                 ast.parse(content)
             except SyntaxError as e:
                 errors.append(f"{py_file.name}: {e}")
-        assert not errors, f"Syntax errors found:\n" + "\n".join(errors)
+        assert not errors, "Syntax errors found:\n" + "\n".join(errors)
 
     def test_no_pipeline_process_analysis_imports(self):
         """Ensure no ANTT-specific pipeline imports leaked in."""

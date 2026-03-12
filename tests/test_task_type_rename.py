@@ -1,4 +1,5 @@
 """Verify ANTTTaskType -> TaskType rename is complete and functional."""
+
 from __future__ import annotations
 
 import importlib.util
@@ -6,21 +7,17 @@ from pathlib import Path
 
 import pytest
 
-MODULE_ROOT = (
-    Path(__file__).resolve().parent.parent
-    / "claude_code_kazuba"
-    / "data"
-    / "modules"
-    / "intelligence-rl"
-)
+MODULE_ROOT = Path(__file__).resolve().parent.parent / "claude_code_kazuba" / "data" / "modules" / "intelligence-rl"
 
 
 def _load_models():
     models_path = MODULE_ROOT / "core" / "models.py"
     assert models_path.exists(), f"models.py not found at {models_path}"
     spec = importlib.util.spec_from_file_location("rl_models", models_path)
+    assert spec is not None, f"Could not load spec from {models_path}"
+    assert spec.loader is not None, "Spec has no loader"
     mod = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(mod)
+    spec.loader.exec_module(mod)  # type: ignore[union-attr]
     return mod
 
 
@@ -28,9 +25,7 @@ class TestTaskTypeRename:
     def test_antt_task_type_not_present_in_source(self):
         for py_file in MODULE_ROOT.rglob("*.py"):
             content = py_file.read_text()
-            assert "ANTTTaskType" not in content, (
-                f"ANTTTaskType still present in {py_file.relative_to(MODULE_ROOT)}"
-            )
+            assert "ANTTTaskType" not in content, f"ANTTTaskType still present in {py_file.relative_to(MODULE_ROOT)}"
 
     def test_task_type_enum_exists(self):
         try:

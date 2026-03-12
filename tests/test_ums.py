@@ -17,10 +17,12 @@ def _load_ums_module():
     assert ums_path.exists(), f"ums.py not found at {ums_path}"
     mod_name = "intelligence_ums_test_module"
     spec = importlib.util.spec_from_file_location(mod_name, ums_path)
+    assert spec is not None, f"Could not load spec from {ums_path}"
+    assert spec.loader is not None, "Spec has no loader"
     mod = importlib.util.module_from_spec(spec)
     # Register in sys.modules so frozen dataclass __module__ lookup works
     sys.modules[mod_name] = mod
-    spec.loader.exec_module(mod)
+    spec.loader.exec_module(mod)  # type: ignore[union-attr]
     return mod
 
 
