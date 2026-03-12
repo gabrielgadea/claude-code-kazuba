@@ -76,10 +76,7 @@ def _load_module_info(module_name: str, modules_dir: Path, core_dir: Path) -> di
     Raises:
         FileNotFoundError: If module MODULE.md doesn't exist.
     """
-    if module_name == "core":
-        module_md = core_dir / "MODULE.md"
-    else:
-        module_md = modules_dir / module_name / "MODULE.md"
+    module_md = core_dir / "MODULE.md" if module_name == "core" else modules_dir / module_name / "MODULE.md"
 
     if not module_md.exists():
         msg = f"Module not found: {module_name} (no MODULE.md at {module_md})"

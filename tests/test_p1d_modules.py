@@ -23,25 +23,25 @@ class TestAcoGeneratorsModule:
         assert (module_dir("aco-generators") / "MODULE.md").exists()
 
     def test_library_py_exists(self) -> None:
-        assert (module_dir("aco-generators") / "src" / "aco" / "generators" / "library.py").exists()
+        assert (module_dir("aco-generators") / "aco" / "generators" / "library.py").exists()
 
     def test_learning_py_exists(self) -> None:
-        assert (module_dir("aco-generators") / "src" / "aco" / "generators" / "learning.py").exists()
+        assert (module_dir("aco-generators") / "aco" / "generators" / "learning.py").exists()
 
     def test_starter_generators_exist(self) -> None:
-        gen_dir = module_dir("aco-generators") / "src" / "aco" / "generators"
+        gen_dir = module_dir("aco-generators") / "aco" / "generators"
         for name in ("gen_rust_module.py", "gen_test_suite.py", "gen_api_endpoint.py"):
             assert (gen_dir / name).exists(), f"Missing starter: {name}"
 
     def test_starters_have_triad(self) -> None:
-        gen_dir = module_dir("aco-generators") / "src" / "aco" / "generators"
+        gen_dir = module_dir("aco-generators") / "aco" / "generators"
         for name in ("gen_rust_module.py", "gen_test_suite.py", "gen_api_endpoint.py"):
             source = (gen_dir / name).read_text()
             for fn in ("execute_script", "validate_script", "rollback_script"):
                 assert f"def {fn}" in source, f"{name} missing {fn}"
 
     def test_starters_compile(self) -> None:
-        gen_dir = module_dir("aco-generators") / "src" / "aco" / "generators"
+        gen_dir = module_dir("aco-generators") / "aco" / "generators"
         for name in ("gen_rust_module.py", "gen_test_suite.py", "gen_api_endpoint.py"):
             source = (gen_dir / name).read_text()
             ast.parse(source, filename=name)
@@ -63,13 +63,13 @@ class TestAcoOrchestratorModule:
         assert "aco-generators" in deps
 
     def test_orchestrator_py_exists(self) -> None:
-        assert (module_dir("aco-orchestrator") / "src" / "aco" / "orchestrator.py").exists()
+        assert (module_dir("aco-orchestrator") / "aco" / "orchestrator.py").exists()
 
     def test_goal_tracker_py_exists(self) -> None:
-        assert (module_dir("aco-orchestrator") / "src" / "aco" / "goal_tracker.py").exists()
+        assert (module_dir("aco-orchestrator") / "aco" / "goal_tracker.py").exists()
 
     def test_rust_bridge_py_exists(self) -> None:
-        assert (module_dir("aco-orchestrator") / "src" / "aco" / "rust_bridge.py").exists()
+        assert (module_dir("aco-orchestrator") / "aco" / "rust_bridge.py").exists()
 
 
 class TestAcoRustCoreModule:

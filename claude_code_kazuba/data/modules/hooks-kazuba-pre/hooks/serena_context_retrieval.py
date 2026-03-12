@@ -39,6 +39,7 @@ PROJECT_DIR = os.environ.get("CLAUDE_PROJECT_DIR", ".")
 sys.path.insert(0, str(Path(PROJECT_DIR) / ".claude" / "hooks"))
 
 # ─── L0 PRE-IMPORT CACHE (stdlib-only, ~2ms) ──────────────────────────────
+import contextlib  # noqa: E402
 import hashlib as _hlib_scr  # noqa: E402
 
 _scr_stdin: dict = {}
@@ -181,10 +182,8 @@ def _output_result(decision: str = "allow", reason: str = "", suppress: bool = T
 
     # Cache ALLOW results for L0 fast path on next invocation
     if decision == "allow":
-        try:
+        with contextlib.suppress(Exception):
             _scr_cp.write_text(out_str)
-        except Exception:
-            pass
 
 
 def _log_operation(hook_name: str, decision: str, metadata: dict[str, Any]) -> None:

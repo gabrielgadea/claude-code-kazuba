@@ -22,8 +22,10 @@ import logging
 import sqlite3
 import time
 from dataclasses import dataclass, field
-from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
@@ -161,7 +163,7 @@ class UnifiedMemorySystem:
                     content=str(dict(row)),
                     source="L1",
                     score=0.7,
-                    metadata={"event_id": row["event_id"] if "event_id" in row.keys() else ""},
+                    metadata={"event_id": row.get("event_id", "")},
                 )
                 for row in cursor.fetchall()
             ]

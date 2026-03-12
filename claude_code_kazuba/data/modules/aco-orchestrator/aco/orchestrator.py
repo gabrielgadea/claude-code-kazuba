@@ -15,25 +15,27 @@ from __future__ import annotations
 import json
 import logging
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from scripts.aco.generator_engine import (
     ExecutionResult,
     ExecutionStatus,
     GeneratorEngine,
 )
-from scripts.aco.generator_graph import MutableGeneratorGraph
 from scripts.aco.goal_tracker import GoalTracker
-from scripts.aco.models import (
-    EvolutionPackage,
-    IntentSpec,
-    ObjectiveSpec,
-)
 from scripts.aco.phases.phase0_intention import extract_intent
 from scripts.aco.phases.phase1_perception import build_objective
 from scripts.aco.phases.phase2_decomposition import decompose
 from scripts.aco.phases.phase5_refinement import refine
 from scripts.aco.phases.phase6_consolidation import consolidate
+
+if TYPE_CHECKING:
+    from scripts.aco.generator_graph import MutableGeneratorGraph
+    from scripts.aco.models import (
+        EvolutionPackage,
+        IntentSpec,
+        ObjectiveSpec,
+    )
 
 logger = logging.getLogger(__name__)
 

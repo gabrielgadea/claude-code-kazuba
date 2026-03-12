@@ -14,6 +14,7 @@ Output (stdout): JSON with reindex stats.
 
 from __future__ import annotations
 
+import contextlib
 import json
 import logging
 import sys
@@ -83,10 +84,8 @@ def main() -> None:
     """Entry point for SessionStart hook."""
     try:
         # Read stdin (SessionStart event) — content unused, just drain stdin
-        try:
+        with contextlib.suppress(json.JSONDecodeError, EOFError):
             json.load(sys.stdin)
-        except (json.JSONDecodeError, EOFError):
-            pass
 
         stats = run_warmup()
 

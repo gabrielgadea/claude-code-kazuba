@@ -136,10 +136,7 @@ def should_capture_knowledge(info: dict) -> bool:
     file_path = Path(info["file_path"])
 
     # Skip binary and temporary files — frozenset O(1) lookup
-    if file_path.suffix in _SKIP_SUFFIXES:
-        return False
-
-    return True
+    return file_path.suffix not in _SKIP_SUFFIXES
 
 
 def extract_knowledge_tags(info: dict) -> list[str]:

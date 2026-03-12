@@ -212,10 +212,7 @@ def get_full_status() -> RustStatus:
     if hooks_ok:
         components.append("rlm-hooks")
 
-    if components:
-        message = ", ".join(components)
-    else:
-        message = "No components available"
+    message = ", ".join(components) if components else "No components available"
 
     return RustStatus(
         pyo3_available=pyo3_ok,

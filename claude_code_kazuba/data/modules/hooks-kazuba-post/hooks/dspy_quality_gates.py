@@ -102,7 +102,7 @@ def check_signature_completeness(source_code: str) -> list[dict[str, Any]]:
                 for item in node.body:
                     if isinstance(item, ast.Assign):
                         for target in item.targets:
-                            if isinstance(target, ast.Name):
+                            if isinstance(target, ast.Name):  # noqa: SIM102
                                 # Check value type
                                 if isinstance(item.value, ast.Call):
                                     func_name = ""

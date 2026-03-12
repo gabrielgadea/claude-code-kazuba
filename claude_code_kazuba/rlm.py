@@ -388,3 +388,55 @@ class RLMFacade:
             f"mem_size={self._memory.size()}/{self._memory.capacity}, "
             f"session_active={self.is_session_active})"
         )
+
+    # ------------------------------------------------------------------
+    # ESAA Integration API
+    # ------------------------------------------------------------------
+
+    def ingest_esaa_events(self, events: list[Any]) -> None:
+        """Ingest ESAA events for learning.
+
+        Extracts patterns from ESAA events to update Q-values.
+
+        Args:
+            events: List of ESAAEventEnvelope objects.
+        """
+        try:
+            from claude_code_kazuba.models.esaa_types import ESAAEventEnvelope
+            from claude_code_kazuba.reward_calculator import RewardCalculator
+
+            for event in events:
+                if not isinstance(event, ESAAEventEnvelope):
+                    continue
+
+                cognitive = event.command.cognitive_state
+                reward = RewardCalculator.from_event(event)
+
+                state = f"{event.command.operation_type.value}:{cognitive.risk_assessment.value}:{cognitive.cila_context.value}"  # noqa: E501
+                action = cognitive.intention
+
+                self.record_step(state=state, action=action, reward=reward)
+        except ImportError:
+            logger.warning("ESAA types not available for ingestion")
+
+    def extract_golden_routes(self, min_q_threshold: float = 0.8) -> list[dict[str, Any]]:
+        """Extract high-reward trajectories as Golden Routes.
+
+        Args:
+            min_q_threshold: Minimum average Q-value for golden route.
+
+        Returns:
+            List of golden route dictionaries.
+        """
+        golden = []
+        # Group by correlation patterns in session history
+        session_stats = self._session.stats()
+        if "episodes" in session_stats:
+            for ep in session_stats["episodes"]:
+                if ep.get("total_reward", 0) >= min_q_threshold:
+                    golden.append({
+                        "episode_id": ep.get("episode_id"),
+                        "avg_reward": ep.get("average_reward", 0),
+                        "steps": ep.get("step_count", 0),
+                    })
+        return sorted(golden, key=lambda x: x["avg_reward"], reverse=True)

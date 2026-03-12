@@ -24,6 +24,8 @@ _PGCC_DIR = Path(__file__).parent
 if str(_PGCC_DIR) not in sys.path:
     sys.path.insert(0, str(_PGCC_DIR))
 
+import contextlib  # noqa: E402
+
 import pgcc_cache  # noqa: E402
 
 ALLOW = 0
@@ -32,10 +34,8 @@ WRITE_TOOLS: frozenset[str] = frozenset({"Write", "Edit", "MultiEdit"})
 # Module-level cache singleton — avoids opening SQLite on every PreToolUse call.
 # Fail-open: if construction raises, _PGCC_CACHE stays None and callers fall back.
 _PGCC_CACHE: pgcc_cache.PGCCCache | None = None
-try:
+with contextlib.suppress(Exception):
     _PGCC_CACHE = pgcc_cache.PGCCCache()
-except Exception:
-    pass
 
 # Drift detection tuning
 DRIFT_THRESHOLD: float = 0.40  # warn if overlap_rate < this (>60% symbols removed)

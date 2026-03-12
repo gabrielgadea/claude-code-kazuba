@@ -281,10 +281,7 @@ class RustBridge:
 
         t0 = time.perf_counter_ns()
         try:
-            if self._use_rust:
-                result = _rust_check_secrets(content, file_path)
-            else:
-                result = _python_check_secrets(content)
+            result = _rust_check_secrets(content, file_path) if self._use_rust else _python_check_secrets(content)
         except Exception:
             if self._config.fallback_on_error:
                 result = _python_check_secrets(content)
@@ -331,10 +328,7 @@ class RustBridge:
         """
         t0 = time.perf_counter_ns()
         try:
-            if self._use_rust:
-                result = _rust_validate_bash(command)
-            else:
-                result = _python_validate_bash(command)
+            result = _rust_validate_bash(command) if self._use_rust else _python_validate_bash(command)
         except Exception:
             if self._config.fallback_on_error:
                 result = _python_validate_bash(command)

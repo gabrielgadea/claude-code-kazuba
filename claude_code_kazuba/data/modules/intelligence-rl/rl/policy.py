@@ -116,10 +116,7 @@ class EpsilonGreedyPolicy:
                 )
 
             # Python fallback
-            if action_mask is not None:
-                valid_indices = np.where(action_mask)[0]
-            else:
-                valid_indices = np.arange(len(q_values))
+            valid_indices = np.where(action_mask)[0] if action_mask is not None else np.arange(len(q_values))
 
             if len(valid_indices) == 0:
                 return self._action_selector.get_action_index(RLAction.SKIP)

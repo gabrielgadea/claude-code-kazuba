@@ -52,10 +52,7 @@ class TestResolveDependencies:
 
     def _make_module(self, tmp_path: Path, name: str, deps: list[str]) -> None:
         """Create a minimal MODULE.md in the right location."""
-        if name == "core":
-            module_dir = tmp_path / "core"
-        else:
-            module_dir = tmp_path / "modules" / name
+        module_dir = tmp_path / "core" if name == "core" else tmp_path / "modules" / name
 
         module_dir.mkdir(parents=True, exist_ok=True)
         dep_str = ", ".join(deps) if deps else ""

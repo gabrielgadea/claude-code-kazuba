@@ -96,10 +96,7 @@ class RLStateBuilder:
         task_type_features = [0.0] * len(TaskType)
         task_type_val = state.task_type
         try:
-            if isinstance(task_type_val, str):
-                task_type_enum = TaskType(task_type_val)
-            else:
-                task_type_enum = task_type_val
+            task_type_enum = TaskType(task_type_val) if isinstance(task_type_val, str) else task_type_val
             task_type_features[list(TaskType).index(task_type_enum)] = 1.0
         except (ValueError, KeyError):
             # Default to UNKNOWN if not found

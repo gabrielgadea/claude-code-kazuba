@@ -254,10 +254,7 @@ def compute_effectiveness(
     avg_loc = int(sum(locs) / total)
 
     validated = [o for o in filtered if o.validation_passed is not None]
-    if validated:
-        validation_pass_rate = sum(1 for o in validated if o.validation_passed) / len(validated)
-    else:
-        validation_pass_rate = 0.0
+    validation_pass_rate = sum(1 for o in validated if o.validation_passed) / len(validated) if validated else 0.0
 
     last_execution = filtered[-1].timestamp
     trend = _compute_trend(filtered)
@@ -387,7 +384,7 @@ def wilson_rank_generators(
             for e in effectiveness
         ]
         scores = wr.wilson_scores_batch(data)
-        ranked = list(zip([e.generator_name for e in effectiveness], scores))
+        ranked = list(zip([e.generator_name for e in effectiveness], scores, strict=False))
     else:
         ranked = [
             (

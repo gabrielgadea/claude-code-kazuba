@@ -88,7 +88,7 @@ def main() -> None:
         print(f"[transcript] Session slug: {slug}", file=sys.stderr)
 
         # Keep last N session summaries (preserve history, evict oldest)
-        MAX_SESSION_SUMMARIES = 5
+        max_session_summaries = 5
         all_entries = guidance.get_all()
         old_summaries = sorted(
             [e for e in all_entries if e.category == "session_summary"],
@@ -96,7 +96,7 @@ def main() -> None:
             reverse=True,
         )
         # Remove excess summaries (keep MAX-1 to make room for the new one)
-        for old_entry in old_summaries[MAX_SESSION_SUMMARIES - 1 :]:
+        for old_entry in old_summaries[max_session_summaries - 1 :]:
             guidance.remove(old_entry.id)
 
         # Also remove old pending_work and preference entries (delivered)

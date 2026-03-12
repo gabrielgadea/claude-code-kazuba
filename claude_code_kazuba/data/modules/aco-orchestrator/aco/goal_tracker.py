@@ -10,7 +10,7 @@ from __future__ import annotations
 import json
 import logging
 from collections.abc import Callable
-from pathlib import Path
+from typing import TYPE_CHECKING
 
 from .models import (
     DimensionScore,
@@ -20,6 +20,9 @@ from .models import (
     ValidationResult,
     ValidationStatus,
 )
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 logger = logging.getLogger(__name__)
 

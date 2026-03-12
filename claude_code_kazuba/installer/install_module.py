@@ -10,7 +10,19 @@ from typing import Any
 from claude_code_kazuba.installer.merge_settings import merge_settings
 
 # Directories within a module that get copied to .claude/
-_CONTENT_DIRS = ("hooks", "skills", "agents", "commands", "contexts", "config", "templates", "src", "rust-core")
+_CONTENT_DIRS = (
+    "hooks",
+    "skills",
+    "agents",
+    "commands",
+    "contexts",
+    "config",
+    "templates",
+    "src",
+    "aco",
+    "intelligence",
+    "rust-core",
+)
 
 # Template file extensions
 _TEMPLATE_EXT = ".template"
@@ -136,8 +148,8 @@ def install_module(
     # Inject TOML sidecar domain config (e.g. cila_router keywords from preset TOML)
     if variables.get("cila_router_config") and module_name == "aco-esaa":
         for candidate in [
+            claude_dir / "aco" / "esaa" / "cila_router.py",
             claude_dir / "src" / "aco" / "esaa" / "cila_router.py",
-            claude_dir / "src" / "aco" / "cila_router.py",
         ]:
             if candidate.exists():
                 domain_kw = variables["cila_router_config"].get("domain_keywords", {})

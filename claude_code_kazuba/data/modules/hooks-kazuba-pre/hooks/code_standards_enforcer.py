@@ -11,6 +11,7 @@ Hook Phase: PreToolUse (before Write, Edit, MultiEdit)
 from __future__ import annotations
 
 import asyncio
+import contextlib
 import hashlib
 import json
 import os
@@ -46,10 +47,8 @@ _cse_stdin: dict[str, Any] = {}
 _cse_fp: str = ""
 _cse_cp: Path | None = None
 if not (len(sys.argv) >= 2 and sys.argv[1] == "--capture-baseline"):
-    try:
+    with contextlib.suppress(Exception):
         _cse_stdin = json.loads(sys.stdin.read())
-    except Exception:
-        pass
     _cse_ti = _cse_stdin.get("tool_input", {})
     _cse_fp = _cse_ti.get("file_path", "")
     _cse_new: str = (_cse_ti.get("content") or _cse_ti.get("new_string") or str(_cse_ti.get("edits", "")))[:4096]
@@ -643,10 +642,7 @@ class CodeStandardsEnforcer(BaseHook):
             if source == "ruff" or code.startswith(("E", "W", "F")):
                 category = IssueCategory.LINT
                 stage: Literal["format", "lint", "types", "pylance", "tests", "infra"] = "lint"
-            elif source in ("pylance", "pyright") or "type" in message.lower():
-                category = IssueCategory.TYPE
-                stage = "types"
-            elif source == "tsc":
+            elif source in ("pylance", "pyright") or "type" in message.lower() or source == "tsc":
                 category = IssueCategory.TYPE
                 stage = "types"
             elif "complexity" in message.lower() or code.startswith("C"):
@@ -805,7 +801,7 @@ class CodeStandardsEnforcer(BaseHook):
 
             # Record success to learning system
             if self.enable_learning and self.learning_bridge:
-                try:
+                with contextlib.suppress(Exception):
                     self.learning_bridge.record_session_summary(
                         {
                             "file": str(file_path),
@@ -814,8 +810,6 @@ class CodeStandardsEnforcer(BaseHook):
                             "time_ms": validation_time,
                         }
                     )
-                except Exception:
-                    pass
 
             return self.format_output(
                 status=HookResult.ALLOW,
@@ -1059,10 +1053,8 @@ class CodeStandardsEnforcer(BaseHook):
                 # Check for line number in source
                 if " L" in source_part:
                     source, line_str = source_part.rsplit(" L", 1)
-                    try:
+                    with contextlib.suppress(ValueError):
                         line = int(line_str)
-                    except ValueError:
-                        pass
                 else:
                     source = source_part
 
@@ -1378,25 +1370,24 @@ class CodeStandardsEnforcer(BaseHook):
         """Attempt auto-fix (optimized with parallel tool execution)."""
         applied_tools = []
 
-        if file_path.suffix.lower() == ".py":
-            if _which_cached("ruff"):
-                try:
-                    # Run format and check --fix in parallel
-                    cmd_format = ["ruff", "format", str(file_path)]
-                    cmd_fix = (
-                        ["ruff", "check", "--fix"] + self.standards["tools"]["ruff"]["check_args"] + [str(file_path)]
-                    )
+        if file_path.suffix.lower() == ".py" and _which_cached("ruff"):
+            try:
+                # Run format and check --fix in parallel
+                cmd_format = ["ruff", "format", str(file_path)]
+                cmd_fix = (
+                    ["ruff", "check", "--fix"] + self.standards["tools"]["ruff"]["check_args"] + [str(file_path)]
+                )
 
-                    # Execute both in parallel
-                    result_format = subprocess.run(cmd_format, capture_output=True, timeout=5, check=False)
-                    result_fix = subprocess.run(cmd_fix, capture_output=True, timeout=5, check=False)
+                # Execute both in parallel
+                result_format = subprocess.run(cmd_format, capture_output=True, timeout=5, check=False)
+                result_fix = subprocess.run(cmd_fix, capture_output=True, timeout=5, check=False)
 
-                    if result_format.returncode == 0:
-                        applied_tools.append("ruff format")
-                    if result_fix.returncode == 0:
-                        applied_tools.append("ruff check --fix")
-                except Exception:
-                    pass
+                if result_format.returncode == 0:
+                    applied_tools.append("ruff format")
+                if result_fix.returncode == 0:
+                    applied_tools.append("ruff check --fix")
+            except Exception:
+                pass
 
         return (len(applied_tools) > 0, applied_tools)
 
@@ -1418,15 +1409,13 @@ class CodeStandardsEnforcer(BaseHook):
 
         # Record session summary to learning system
         if self.enable_learning and self.learning_bridge:
-            try:
+            with contextlib.suppress(Exception):
                 self.learning_bridge.record_session_summary(
                     {
                         "session_type": "code_standards_enforcer",
                         "completed_at": datetime.now(UTC).isoformat(),
                     }
                 )
-            except Exception:
-                pass
 
 
 def capture_baseline(file_path: str) -> bool:
@@ -1497,10 +1486,8 @@ if __name__ == "__main__":
         # Cache ALLOW results for L0 fast path on next invocation
         decision = result.get("hookSpecificOutput", {}).get("permissionDecision", "")
         if decision == "allow" and _cse_fp and _cse_cp is not None:
-            try:
+            with contextlib.suppress(Exception):
                 _cse_cp.write_text(json.dumps(result))
-            except Exception:
-                pass
 
         # Cleanup
         hook.cleanup()

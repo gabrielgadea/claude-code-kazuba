@@ -170,7 +170,7 @@ def _extract_imports(source: str) -> tuple[str, ...]:
     Returns:
         Tuple of top-level external package names.
     """
-    _STDLIB_TOP = sys.stdlib_module_names | {"__future__", "_thread"}
+    _stdlib_top = sys.stdlib_module_names | {"__future__", "_thread"}
 
     try:
         tree = ast.parse(source)
@@ -182,13 +182,12 @@ def _extract_imports(source: str) -> tuple[str, ...]:
         if isinstance(node, ast.Import):
             for alias in node.names:
                 top = alias.name.split(".")[0]
-                if top not in _STDLIB_TOP:
+                if top not in _stdlib_top:
                     external.add(top)
-        elif isinstance(node, ast.ImportFrom):
-            if node.module and node.level == 0:
-                top = node.module.split(".")[0]
-                if top not in _STDLIB_TOP:
-                    external.add(top)
+        elif isinstance(node, ast.ImportFrom) and node.module and node.level == 0:
+            top = node.module.split(".")[0]
+            if top not in _stdlib_top:
+                external.add(top)
 
     return tuple(sorted(external))
 

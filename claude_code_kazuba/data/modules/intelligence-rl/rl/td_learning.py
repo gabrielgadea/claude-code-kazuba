@@ -222,10 +222,7 @@ class TDLambdaLearner:
         current_q = self._q_table[state_hash][action]
 
         # Next Q-value (max over actions)
-        if done:
-            next_q = 0.0
-        else:
-            next_q = max(self._q_table[next_state_hash].values())
+        next_q = 0.0 if done else max(self._q_table[next_state_hash].values())
 
         # TD error
         td_error = reward + self._config.discount_factor * next_q - current_q

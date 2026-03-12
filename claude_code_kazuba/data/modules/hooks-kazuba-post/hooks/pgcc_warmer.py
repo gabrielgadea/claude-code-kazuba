@@ -25,6 +25,8 @@ _PGCC_DIR = Path(__file__).parent
 if str(_PGCC_DIR) not in sys.path:
     sys.path.insert(0, str(_PGCC_DIR))
 
+import contextlib  # noqa: E402
+
 import lifecycle_bridge as lb  # noqa: E402
 import models  # noqa: E402
 import pgcc_cache  # noqa: E402
@@ -118,21 +120,17 @@ def _apply_pii(symbols: list[str], imports: list[str]) -> tuple[dict[str, Any], 
 
 def _log_wal(file_path: str, session_id: str, file_hash: str) -> None:
     """Log warm event to WAL. Fail-open."""
-    try:
+    with contextlib.suppress(Exception):
         lb.log_wal(
             "PGCC_WARM",
             {"file_path": file_path, "session_id": session_id, "hash": file_hash},
         )
-    except Exception:
-        pass
 
 
 def _emit_event(file_path: str) -> None:
     """Emit IndexUpdated event. Fail-open — EC4 compliance."""
-    try:
+    with contextlib.suppress(Exception):
         tb.emit_cache_update(file_path, "update")
-    except Exception:
-        pass
 
 
 # ─────────────────────────────────────────────────────────────────

@@ -89,7 +89,7 @@ def cmd_validate(args: argparse.Namespace) -> int:
     return 0 if results.get("all_passed") else 1
 
 
-def cmd_list_presets(_args: argparse.Namespace) -> int:
+def cmd_list_presets(_: argparse.Namespace) -> int:
     """List available presets."""
     from claude_code_kazuba.data.paths import get_presets_dir
 
@@ -99,7 +99,7 @@ def cmd_list_presets(_args: argparse.Namespace) -> int:
     return 0
 
 
-def cmd_list_modules(_args: argparse.Namespace) -> int:
+def cmd_list_modules(_: argparse.Namespace) -> int:
     """List available modules."""
     from claude_code_kazuba.data.paths import get_modules_dir
 
