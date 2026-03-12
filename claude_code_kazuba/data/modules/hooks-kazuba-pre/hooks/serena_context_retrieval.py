@@ -39,7 +39,7 @@ PROJECT_DIR = os.environ.get("CLAUDE_PROJECT_DIR", ".")
 sys.path.insert(0, str(Path(PROJECT_DIR) / ".claude" / "hooks"))
 
 # ─── L0 PRE-IMPORT CACHE (stdlib-only, ~2ms) ──────────────────────────────
-import hashlib as _hlib_scr
+import hashlib as _hlib_scr  # noqa: E402
 
 _scr_stdin: dict = {}
 try:

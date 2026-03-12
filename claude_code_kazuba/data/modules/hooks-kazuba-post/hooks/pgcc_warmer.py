@@ -25,10 +25,10 @@ _PGCC_DIR = Path(__file__).parent
 if str(_PGCC_DIR) not in sys.path:
     sys.path.insert(0, str(_PGCC_DIR))
 
-import lifecycle_bridge as lb
-import models
-import pgcc_cache
-import tantivy_bridge as tb
+import lifecycle_bridge as lb  # noqa: E402
+import models  # noqa: E402
+import pgcc_cache  # noqa: E402
+import tantivy_bridge as tb  # noqa: E402
 
 logger = logging.getLogger(__name__)
 
@@ -68,9 +68,7 @@ def warm_file(file_path: str, session_id: str) -> None:
     # L0 check: skip if same hash seen recently (within L0_TTL_S)
     cache = pgcc_cache.PGCCCache()
     existing = cache.get(file_path)
-    if existing and existing.file_hash == file_hash and not existing.is_stale(
-        ttl_s=L0_TTL_S
-    ):
+    if existing and existing.file_hash == file_hash and not existing.is_stale(ttl_s=L0_TTL_S):
         return  # L0 cache hit — no re-warm needed
 
     # Extract AST symbols
@@ -110,9 +108,7 @@ def _extract_safe(file_path: str) -> dict[str, list[str]]:
         return {"functions": [], "classes": [], "imports": []}
 
 
-def _apply_pii(
-    symbols: list[str], imports: list[str]
-) -> tuple[dict[str, Any], bool]:
+def _apply_pii(symbols: list[str], imports: list[str]) -> tuple[dict[str, Any], bool]:
     """Apply PII filter — returns (data, was_filtered). Fail-open."""
     try:
         return lb.filter_pii({"symbols": symbols, "imports": imports})
@@ -206,8 +202,7 @@ def get_teammate_context(role: str) -> dict[str, object]:
             "hints": [
                 f"PGCC has {size} warmed files in cache",
                 "Use warmed symbols for faster context injection",
-                f"Self-heal triggers after {SELF_HEAL_CONSECUTIVE_SESSIONS} "
-                "sessions with hit_rate < 30%",
+                f"Self-heal triggers after {SELF_HEAL_CONSECUTIVE_SESSIONS} sessions with hit_rate < 30%",
             ],
         }
     except Exception:

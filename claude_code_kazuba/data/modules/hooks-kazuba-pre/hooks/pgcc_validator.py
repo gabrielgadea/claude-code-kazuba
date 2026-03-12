@@ -24,7 +24,7 @@ _PGCC_DIR = Path(__file__).parent
 if str(_PGCC_DIR) not in sys.path:
     sys.path.insert(0, str(_PGCC_DIR))
 
-import pgcc_cache
+import pgcc_cache  # noqa: E402
 
 ALLOW = 0
 WRITE_TOOLS: frozenset[str] = frozenset({"Write", "Edit", "MultiEdit"})
@@ -77,9 +77,7 @@ def _parse_symbols_from_content(content: str) -> list[str]:
         return []
 
     symbols: list[str] = [
-        node.name
-        for node in ast.walk(tree)
-        if isinstance(node, ast.FunctionDef | ast.AsyncFunctionDef | ast.ClassDef)
+        node.name for node in ast.walk(tree) if isinstance(node, ast.FunctionDef | ast.AsyncFunctionDef | ast.ClassDef)
     ]
     return symbols
 
@@ -178,7 +176,7 @@ def validate_edit(
             if drift_rate >= (1.0 - DRIFT_THRESHOLD):
                 removed_sorted = tuple(sorted(cache_symbols_removed))
                 sample = ", ".join(removed_sorted[:3])
-                msg = f"[PGCC] Edit removes cached symbols in {Path(file_path).name}: " f"{sample}"
+                msg = f"[PGCC] Edit removes cached symbols in {Path(file_path).name}: {sample}"
                 return ValidationResult(
                     ok=True,
                     message=msg,

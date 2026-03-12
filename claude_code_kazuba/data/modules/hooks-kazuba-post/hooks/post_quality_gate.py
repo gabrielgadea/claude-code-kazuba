@@ -27,7 +27,7 @@ _h = _script_dir.parent
 sys.path[:0] = list(map(str, [_script_dir, _h, _h / "common", _h / "qa", _h.parent]))
 
 # Import modular components (required)
-from commands import (
+from commands import (  # noqa: E402
     infra_cmds_for,
     node_format_cmds_for,
     node_lint_cmds_for,
@@ -38,8 +38,8 @@ from commands import (
     py_typecheck_cmds_for,
     pylance_cmds_for,
 )
-from common.cache import ResultCache
-from common.config import (
+from common.cache import ResultCache  # noqa: E402
+from common.config import (  # noqa: E402
     AI_DIR,
     BACKEND_DIR,
     FAIL_FAST,
@@ -53,8 +53,8 @@ from common.config import (
     VERBOSE,
     WARN_ONLY,
 )
-from common.output import OutputBuffer
-from common.utils import ext, is_subpath, run_with_cache
+from common.output import OutputBuffer  # noqa: E402
+from common.utils import ext, is_subpath, run_with_cache  # noqa: E402
 
 # Optional: error pattern extractor for learning system
 extract_and_store_errors: Any = None
