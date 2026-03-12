@@ -1,4 +1,5 @@
 # LexCore preset — Tier 1 (core) + Tier 2 (ACO full-stack) + domain config
+rules-core
 core
 hooks-essential
 hooks-quality

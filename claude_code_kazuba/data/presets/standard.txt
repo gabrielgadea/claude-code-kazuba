@@ -1,5 +1,13 @@
+# Standard preset — essential hooks + intelligence, no ESAA/ACO
+# Suitable for most Python/TypeScript projects
+rules-core
 core
 hooks-essential
+hooks-kazuba-session
+hooks-kazuba-pre
+hooks-kazuba-post
+hooks-kazuba-lifecycle
+intelligence-ums
 skills-meta
 skills-planning
 contexts
